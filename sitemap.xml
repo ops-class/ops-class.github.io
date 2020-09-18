@@ -99,13 +99,13 @@
 		<priority>0.6</priority>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/404/index.html</loc>
+		<loc>https://www.ops-class.org/403/index.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>yearly</changefreq>
 		<priority>0.1</priority>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/403/index.html</loc>
+		<loc>https://www.ops-class.org/404/index.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>yearly</changefreq>
 		<priority>0.1</priority>
@@ -336,12 +336,12 @@
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/slides/2017-03-03-schedulingstory/deck.html</loc>
+		<loc>https://www.ops-class.org/slides/2017-02-01-setup/deck.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/slides/2017-02-01-setup/deck.html</loc>
+		<loc>https://www.ops-class.org/slides/2017-03-03-schedulingstory/deck.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
@@ -366,12 +366,12 @@
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/slides/2017-03-13-pagetranslation/deck.html</loc>
+		<loc>https://www.ops-class.org/slides/2017-03-15-paging/deck.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/slides/2017-03-15-paging/deck.html</loc>
+		<loc>https://www.ops-class.org/slides/2017-03-13-pagetranslation/deck.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
@@ -706,12 +706,12 @@
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/slides/2017-03-03-schedulingstory/index.html</loc>
+		<loc>https://www.ops-class.org/slides/2017-02-01-setup/index.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/slides/2017-02-01-setup/index.html</loc>
+		<loc>https://www.ops-class.org/slides/2017-03-03-schedulingstory/index.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
@@ -736,12 +736,12 @@
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/slides/2017-03-13-pagetranslation/index.html</loc>
+		<loc>https://www.ops-class.org/slides/2017-03-15-paging/index.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/slides/2017-03-15-paging/index.html</loc>
+		<loc>https://www.ops-class.org/slides/2017-03-13-pagetranslation/index.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
@@ -1146,12 +1146,12 @@
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/man/syscall/stat.html</loc>
+		<loc>https://www.ops-class.org/man/syscall/symlink.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/man/syscall/symlink.html</loc>
+		<loc>https://www.ops-class.org/man/syscall/stat.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
@@ -1376,22 +1376,22 @@
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/man/libc/realloc.html</loc>
-		<lastmod>2020-09-18</lastmod>
-		<changefreq>monthly</changefreq>
-	</url>
-	<url>
 		<loc>https://www.ops-class.org/man/libc/random.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/man/libc/puts.html</loc>
+		<loc>https://www.ops-class.org/man/libc/realloc.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
 		<loc>https://www.ops-class.org/man/libc/putchar.html</loc>
+		<lastmod>2020-09-18</lastmod>
+		<changefreq>monthly</changefreq>
+	</url>
+	<url>
+		<loc>https://www.ops-class.org/man/libc/puts.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
@@ -1586,12 +1586,12 @@
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/man/dev/lamebus.html</loc>
+		<loc>https://www.ops-class.org/man/dev/lhd.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
 	<url>
-		<loc>https://www.ops-class.org/man/dev/lhd.html</loc>
+		<loc>https://www.ops-class.org/man/dev/lamebus.html</loc>
 		<lastmod>2020-09-18</lastmod>
 		<changefreq>monthly</changefreq>
 	</url>
