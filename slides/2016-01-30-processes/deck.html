@@ -1,0 +1,856 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | The Process Abstraction</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Introduction to the process abstraction and standard UNIX utilities.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="http://en.wikipedia.org/wiki/Ada_Lovelace" target="_blank"><img src="/img/slides/women/011.jpg" alt="011" style="width: 100%;"></a>
+</div>
+<div class="title">Figure 1. Augusta Ada Lovelace King</div>
+</div>
+<div class="paragraph center h2">
+<p><span class="fa fa-music"></span> <a href="http://www.alessiacara.com/" target="_blank" class="external">Wild Things by Alessia Cara</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/g5vUBQBykJ4?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+
+</div>
+<div class="nooutline slide" id="_ps_aux_processes">
+<h2>$ ps -aux # Processes</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Operating system abstractions.</p>
+</li>
+<li>
+<p>Processes.</p>
+</li>
+<li>
+<p>Inter-process communication (IPC).</p>
+</li>
+<li>
+<p>Process examples.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_cat_announce_txt">
+<h2>$ cat announce.txt</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Thanks for taking the preterm!</p>
+</li>
+<li class="slide">
+<p>If you are enrolled in the class you should be receiving course emails. If
+you would like to sign up for the email list, here is the link:
+<span class="spelling_exception"><a href="https://www.ops-class.org/mailman/listinfo/ub" class="bare external" target="_blank">https://www.ops-class.org/mailman/listinfo/ub</a></span></p>
+</li>
+<li class="slide">
+<p>We are still working on the website</p>
+</li>
+<li class="slide">
+<p>Recitations will start next week.</p>
+</li>
+<li class="slide">
+<p>The add/drop deadline is <strong>Monday February 1st.</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>You still have time this weekend to examine the assignments and
+decide if this course is right for you right now.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_office_hours_protocol">
+<h2>Office Hours Protocol</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Location</strong>&#x2009;&#x2014;&#x2009;we&#x2019;ll start in the third floor area outside the official TA
+office and see how we go.</p>
+</li>
+<li class="slide">
+<p>Please be respectful of the TAs and ninjas:</p>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Bother them relentlessly <em>during</em> office hours&#x2026;&#x200B;</p>
+</li>
+<li class="slide">
+<p>and leave them alone <em>outside of</em> office hours.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_cold_calling">
+<h2>Cold Calling</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>I will cold call students during class, possibly using a tool integrate with
+the slides.</p>
+</li>
+<li class="slide">
+<p>Cold calling is <strong>not</strong> designed to make anyone uncomfortable! Feel free to
+pass or say &quot;I don&#x2019;t know.&quot;</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_operating_system_abstractions">
+<h2>Operating System Abstractions</h2>
+
+<div class="ulist">
+<div class="title slide">Abstractions <em>simplify application design</em> by:</div>
+<ul>
+<li class="slide">
+<p><strong>hiding undesirable properties</strong>,</p>
+</li>
+<li class="slide">
+<p><strong>adding new capabilities</strong>, and</p>
+</li>
+<li class="slide">
+<p><strong>organizing information</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Abstractions provide an <strong class="slide">interface</strong> to application programmers that
+separates <strong class="slide">policy</strong>&#x2009;&#x2014;&#x2009;what the interface commits to accomplishing&#x2014;&#x200B;from
+<strong class="slide">mechanism</strong>&#x2009;&#x2014;&#x2009;how the interface is implemented.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_example_abstraction_file">
+<h2>Example Abstraction: File</h2>
+
+<div class="ulist">
+<div class="title slide">What <strong>undesirable properties</strong> do files hide?</div>
+<ul>
+<li class="slide">
+<p>Disks are slow!</p>
+</li>
+<li class="slide">
+<p>Chunks of storage are actually distributed all over the disk.</p>
+</li>
+<li class="slide">
+<p>Disk storage may fail!</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">What <strong>new capabilities</strong> do files add?</div>
+<ul>
+<li class="slide">
+<p>Growth and shrinking.</p>
+</li>
+<li class="slide">
+<p>Organization into directories.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">What <strong>information</strong> do files help organize?</div>
+<ul>
+<li class="slide">
+<p>Ownership and permissions.</p>
+</li>
+<li class="slide">
+<p>Access time, modification time, type, etc.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_preview_of_coming_abstractions">
+<h2>Preview of Coming Abstractions</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Threads</strong> abstract the CPU.</p>
+</li>
+<li class="slide">
+<p><strong>Address spaces</strong> abstract memory.</p>
+</li>
+<li class="slide">
+<p><strong>Files</strong> abstract the disk.</p>
+</li>
+<li class="slide">
+<p>We will return to these abstractions. We are starting with an
+organizing principle.</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="/img/slides/figures/thread.svg" alt="thread" title="Thread" style="width: 90%;"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="/img/slides/figures/addressspace.svg" alt="addressspace" title="Address Space" style="width: 90%;"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="/img/slides/figures/file.svg" alt="file" title="File" style="width: 90%;"></span></p></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="slide" id="_the_process">
+<h2>The Process</h2>
+
+<div class="ulist">
+<div class="title slide"><strong>Processes are the most fundamental operating system abstraction.</strong></div>
+<ul>
+<li class="slide">
+<p>Processes organize information about other abstractions and represent
+a single thing that the computer is &quot;doing.&quot;</p>
+</li>
+<li class="slide">
+<p>You know processes as <span class="spelling_exception">app(lication)s</span>.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_organizing_information">
+<h2>Organizing Information</h2>
+
+<div class="paragraph">
+<p>Unlike threads, address spaces and files, processes are <strong>not tied to a
+hardware component</strong>. Instead, they contain other abstractions.</p>
+</div>
+<div class="ulist small">
+<div class="title slide">Processes contain:</div>
+<ul>
+<li class="slide">
+<p>one or more <strong>threads</strong>,</p>
+</li>
+<li class="slide">
+<p>an <strong>address space</strong>, and</p>
+</li>
+<li class="slide">
+<p>zero or more open <strong>file handles</strong> representing <strong>files</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock expand hascaption">
+<div class="content">
+<img src="/img/slides/figures/process.svg" alt="process" style="width: 50%;">
+</div>
+<div class="title">Figure 2. The Process</div>
+</div>
+
+</div>
+<div class="slide" id="_process_as_protection_boundary">
+<h2>Process as Protection Boundary</h2>
+
+<div class="paragraph">
+<p>The operating system is responsible for isolating processes from each
+other.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>What you do in your own process is your own business <strong>but it shouldn&#x2019;t
+be able to crash the machine or effect other processes</strong>&#x2014;or at least
+processes started by other users.</p>
+</li>
+<li class="slide">
+<p>Thus: safe intra-process communication is <strong>your</strong> problem; safe
+inter-process communication is an <strong>operating system</strong> problem.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_intra_process_communication_easy">
+<h2>Intra-Process Communication: Easy</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/intraprocess.svg" alt="intraprocess" style="width: 100%;">
+</div>
+</div>
+<div class="ulist small">
+<ul>
+<li class="slide">
+<p>Communication between multiple threads in a process is usually
+accomplished using <strong>shared memory</strong>.</p>
+</li>
+<li class="slide">
+<p>Threads within a process also share open file handles and both static
+and dynamically-allocated global variables.</p>
+</li>
+<li class="slide">
+<p>Thread stacks and thus thread local variables are typically private.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_intra_process_communication_easy_maybe">
+<h2><span class="small">Intra-Process Communication: Easy&#x2026;&#x200B; Maybe</span></h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/intraprocess.svg" alt="intraprocess" style="width: 100%;">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Sharing data requires synchronization mechanisms to ensure
+consistency.</strong></p>
+</li>
+<li class="slide">
+<p>We will return to this later.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_inter_process_communication_harder">
+<h2><span class="small">Inter-Process Communication: Harder</span></h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/interprocess.svg" alt="interprocess" style="width: 100%;">
+</div>
+</div>
+<div class="ulist small">
+<ul>
+<li class="slide">
+<p>A variety of mechanism exist to enable inter-process communication
+(IPC), including shared files or sockets, exit codes, signals, pipes and
+shared memory.</p>
+</li>
+<li class="slide">
+<p>All require coordination between the communicating processes.</p>
+</li>
+<li class="slide">
+<p>Most have semantics limiting the degree to which processes can
+interfere with each other.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>A process can&#x2019;t just send a SIGKILL to any other process running on
+the machine!</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_wait_ipc_return_codes">
+<h2>$ wait # IPC: return codes</h2>
+
+<div class="imageblock expand">
+<div class="content">
+<img src="/img/slides/figures/returncode.svg" alt="returncode" style="width: 80%;">
+</div>
+</div>
+<div class="ulist smaller">
+<ul>
+<li class="slide">
+<p>Simplest and most-limited form of IPC.</p>
+</li>
+<li class="slide">
+<p>Allows processes to return a single int to the process that created
+them.</p>
+</li>
+<li class="slide">
+<p>0 typically indicates success; non-0, failure.</p>
+</li>
+<li class="slide">
+<p>Analogous to older computers that would transform a set of punch cards
+into a &quot;result.&quot;</p>
+</li>
+<li class="slide">
+<p><code>bash</code> exposes return codes as <code>$?</code>:</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="imageblock expand">
+<div class="content">
+<img src="/img/slides/figures/returncode-bash.svg" alt="returncode bash" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_p_pes_ipc_pipes">
+<h2><span class="spelling_exception">$ p | pes # IPC: pipes</span></h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/pipes.svg" alt="pipes" style="width: 100%;">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Pipes create a producer-consumer buffer between two processes.</p>
+</li>
+<li class="slide">
+<p>Allows the output from one process to be used as the input to another.</p>
+</li>
+<li class="slide">
+<p>The operating system manages a queue for each pipe to accommodate
+different input and output rates.</p>
+</li>
+<li class="slide">
+<p>Facilitates the canonical chaining together of small UNIX utilities to
+do more sophisticated processing.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" style="background-image: url(&quot;http://www6.pcmag.com/media/images/429142-a-remembrance-and-defense-of-ted-stevens-series-of-tubes.jpg?thumb=y&amp;width=740&amp;height=426&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Systems programming:</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>A series of pipes!</p>
+</div>
+
+</div>
+<div class="slide" id="_kill_9_ubshuttle_ipc_signals">
+<h2><span class="spelling_exception">$ kill -9 ubshuttle # IPC: signals</span></h2>
+
+<div class="paragraph">
+<p><span class="image"><img src="/img/slides/figures/signals.svg" alt="signals" style="width: 100%;"></span></p>
+</div>
+<div class="ulist small">
+<ul>
+<li class="slide">
+<p>Signals are a limited form of asynchronous communication between
+processes.</p>
+</li>
+<li class="slide">
+<p>Processes can register a <strong>signal handler</strong> to run when a signal is
+received.</p>
+</li>
+<li class="slide">
+<p>Users can send signals to processes owned by them; the super-user can
+send a signal to any process.</p>
+</li>
+<li class="slide">
+<p>Processes can ignore most signals.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>SIGKILL</code> is a notable exception; used for non-graceful termination.</p>
+</li>
+<li>
+<p><code>SIGTERM</code> is used for graceful shutdown.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_2" style="background-image: url(&quot;http://media.ossblog.it/s/sud/sudo.jpg&quot;);">
+
+
+
+
+</div>
+<div class="slide" id="_we_will_return_to_ipc">
+<h2>We Will Return to IPC</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>return codes</strong>&#x2009;&#x2014;&#x2009;we will discuss again when we learn about <code>wait()</code> and
+<code>_exit()</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>You will implement return codes for ASST2.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p><strong>pipes</strong>&#x2009;&#x2014;&#x2009;we will discuss again when we learn about <code>fork()</code>.</p>
+</li>
+<li class="slide">
+<p><strong>signals</strong>&#x2009;&#x2014;&#x2009;are difficult to use and implement and not something we will
+return to.</p>
+</li>
+<li class="slide">
+<p><strong>shared memory</strong>&#x2009;&#x2014;&#x2009;we will discuss again when we learn about address
+spaces and virtual memory.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_processes_v_threads">
+<h2>Processes v. Threads</h2>
+
+<div class="ulist small">
+<ul>
+<li class="slide">
+<p>Potential confusing due to overlapping terminology&#x2014;&#x200B;we can describe
+both a <strong>process</strong> and a <strong>thread</strong> as running.</p>
+</li>
+<li class="slide">
+<p>Terminology can be helpful for remembering the distinction:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>A computing <strong>process</strong> requires multiple resources: the CPU, memory,
+files, etc.</p>
+</li>
+<li>
+<p>A <strong>thread</strong> of execution abstracts CPU state.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Processes <em>contain</em> threads; threads <em>belong</em> to a process.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Only one exception: the kernel may have threads of execution not
+associated with any user process</p>
+</li>
+<li>
+<p>(Except the kernel process, which is a process, remember?)</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>A process is considered to be running when one or more of its threads
+are running.</p>
+</li>
+<li class="slide">
+<p>Different operating systems use different terminology, but share
+common ideas.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_process_example_firefox">
+<h2>Process Example: Firefox</h2>
+
+<div class="openblock small">
+<div class="content">
+<div class="ulist">
+<div class="title slide"><strong>Firefox has multiple threads. What are they doing?</strong></div>
+<ul>
+<li class="slide">
+<p>Waiting for and processing interface events: mouse clicks, keyboard
+input, etc.</p>
+</li>
+<li class="slide">
+<p>Redrawing the screen as necessary in response to user input, web page
+loading, etc.</p>
+</li>
+<li class="slide">
+<p>Loading web pages&#x2014;&#x200B;usually multiple parts <em>in parallel</em> to speed
+things up.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide"><strong>Firefox is using memory. For what?</strong></div>
+<ul>
+<li class="slide">
+<p>Firefox.exe: the executable code of Firefox itself.</p>
+</li>
+<li class="slide">
+<p>Shared libraries for web page parsing, security, etc.</p>
+</li>
+<li class="slide">
+<p>Stacks storing local variables for running threads.</p>
+</li>
+<li class="slide">
+<p>A heap storing dynamically-allocated memory.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide"><strong>Firefox has files open. Why?</strong></div>
+<ul>
+<li class="slide">
+<p>Configuration files.</p>
+</li>
+<li class="slide">
+<p>Fonts.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_top_more_process_information">
+<h2>$ top # more process information</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/top.svg" alt="top" style="width: 100%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_process_example_bash">
+<h2>Process Example: bash</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Let&#x2019;s do this for real using standard Linux system utilities.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_finding_bash">
+<h2>Finding bash</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/finding-bash.svg" alt="finding bash" style="width: 100%;">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><code>ps aux</code> gives me all process, then <code>grep</code> for the one I&#x2019;m after.</p>
+</li>
+<li class="slide">
+<p>&#x2026;&#x200B;or, do it all in one shot using <code>pgrep</code>.</p>
+</li>
+<li class="slide">
+<p>&#x2026;&#x200B;or, if I know it&#x2019;s running in my current session a bare <code>ps</code> will do.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_bash">
+<h2>bash</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/process-bash-3.svg" alt="process bash 3" style="width: 100%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_ps_lf_thread_information">
+<h2><span class="spelling_exception">$ ps -Lf # thread information</span></h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/threads-bash.svg" alt="threads bash" style="width: 100%;">
+</div>
+</div>
+<div class="ulist small">
+<div class="title slide">What are:</div>
+<ul>
+<li class="slide">
+<p><code>UID</code>: user the process is running as.</p>
+</li>
+<li class="slide">
+<p><code>PID</code>: process ID.</p>
+</li>
+<li class="slide">
+<p><code>PPID</code>: parent process ID.</p>
+</li>
+<li class="slide">
+<p><code>PRI</code>: scheduling priority.</p>
+</li>
+<li class="slide">
+<p><code>SZ</code>: size of the core image of the process (kB).</p>
+</li>
+<li class="slide">
+<p><code>WCHAN</code>: if the process is not running, description of what it is
+waiting on.</p>
+</li>
+<li class="slide">
+<p><code>RSS</code>: total amount of resident memory is use by the process (kB).</p>
+</li>
+<li class="slide">
+<p><code>TIME</code>: measure of the amount of time that the process has spent
+running.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_ps_lf_thread_information_2">
+<h2><span class="spelling_exception">$ ps -Lf # thread information</span></h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/threads-bash.svg" alt="threads bash" style="width: 100%;">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>If <code>bash</code> had multiple threads running this view would show them, so
+<code>bash</code> does not have multiple threads.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_bash_2">
+<h2>bash</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/process-bash-2.svg" alt="process bash 2" style="width: 100%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_ps_process_information">
+<h2>$ ps # process information</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>I wish we could see a process with multiple threads&#x2026;&#x200B;</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_ps_lf_thread_information_3">
+<h2><span class="spelling_exception">$ ps -Lf # thread information</span></h2>
+
+<div class="imageblock expand">
+<div class="content">
+<img src="/img/slides/figures/ps-threads.svg" alt="ps threads" style="width: 90%;">
+</div>
+</div>
+
+</div>
+<div class="nooutline slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="ulist">
+<div class="title slide">The process lifecycle:</div>
+<ul>
+<li class="slide">
+<p><strong>birth</strong> (<code>fork()</code>),</p>
+</li>
+<li class="slide">
+<p><strong>change</strong> (<code>exec()</code>),</p>
+</li>
+<li class="slide">
+<p><strong>death</strong> (<code>exit()</code>), and</p>
+</li>
+<li class="slide">
+<p><strong>seance</strong> (<code>wait()</code>).</p>
+</li>
+<li class="slide">
+<p>Seance?</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-01-30-processes">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

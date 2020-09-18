@@ -1,0 +1,682 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Performance and Benchmarking</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Discussion of the process of benchmarking and performance improvement.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2016-04-22-atlantis/" title="Previous: Atlantis: Robust, Extensible Execution Environments for Web Applications" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2016-04-27-hints/" title="Next: Hints for Computer System Design">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="bJtHveUF7oA"><img class="youtube-thumb" src="//i.ytimg.com/vi/bJtHveUF7oA/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Performance and Benchmarking</h1>
+				
+
+
+<div class="sect1">
+<a class="anchor" id="_operating_system_performance"></a><h2>Operating System Performance</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Why do we care?</div>
+<ul>
+<li>
+<p>Understandable but interesting fact: people prefer a <strong>mostly-correct</strong>
+but <strong>extremely fast</strong> system to a completely correct and slow system.</p>
+</li>
+<li>
+<p><strong>Thought experiment</strong>: would crashes bother you <em>at all</em> if your system
+rebooted <strong>instantaneously</strong>?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_the_last_correct_operating_system"></a><h2>THE Last Correct Operating System</h2>
+<div class="sectionbody">
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>We have found it is possible to design a refined multiprogramming system
+in such a way that its logical soundness can be proved a priori and that
+its implementation admits exhaustive testing. The only errors that
+showed up during testing were trivial coding errors (occurring with a
+density of only one error per 500 instructions), each of them located
+with 10 minutes (classical) inspection at the machine and each of them
+correspondingly easy to remedy.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#x2014; Edsger Dijkstra
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_operating_system_performance_2"></a><h2>Operating System Performance</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>OK, so we care about performance&#x2026;&#x200B; <span class="slide">but operating system performance
+is <strong>not so different</strong> from improving the performance of any other computer
+system or program.</span></p>
+</div>
+<div class="olist arabic sliders spelling_exception">
+<div class="title">Here&#x2019;s what to do:</div>
+<ol class="arabic">
+<li>
+<p><strong>Measure</strong> your system.</p>
+</li>
+<li>
+<p><strong>Analyze</strong> the results.</p>
+</li>
+<li>
+<p><strong>Improve</strong> the slow parts.</p>
+</li>
+<li>
+<p><strong>Drink</strong> celebratory beer.</p>
+</li>
+<li>
+<p><strong>Goto</strong> 1.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+
+
+<div class="sect1">
+<a class="anchor" id="_but_seriously"></a><h2>But Seriously&#x2026;&#x200B;</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<div class="title">What&#x2019;s so hard here?</div>
+<ol class="arabic">
+<li>
+<p><strong>Measure</strong> your system. <span class="slide"><strong>How</strong> And doing <strong>what</strong>?</span></p>
+</li>
+<li>
+<p><strong>Analyze</strong> the results. <span class="slide">You mean <strong>statistics</strong>? Ugh.</span></p>
+</li>
+<li>
+<p><strong>Improve</strong> the slow parts. <span class="slide"><strong>How</strong> And <strong>which</strong> slow parts?</span></p>
+</li>
+<li>
+<p><strong>Drink</strong> celebratory beer. <span class="slide"><strong>Which</strong> beer? And <strong>where</strong>? (But I&#x2019;m ready for one after the
+statistics.)</span></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_measuring_your_system_how"></a><h2>Measuring Your System: How?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Should be <strong>easy</strong> to measure time passed on a single computer, right?</p>
+</div>
+<div class="ulist">
+<div class="title">Welcome to the <strong>wonderful</strong> world of hardware:</div>
+<ul>
+<li>
+<p>High-level software counters may not have fine enough resolution to
+measure extremely fast events.</p>
+</li>
+<li>
+<p>Low-level hardware counters may have extremely device-specific
+interfaces, making cross-platform measurement more difficult.</p>
+</li>
+<li>
+<p>All counters <strong>roll</strong> eventually, and the higher-resolution the faster.</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="paragraph">
+<p>Measurements should be <strong>repeatable</strong>, right?</p>
+</div>
+<div class="ulist">
+<div class="title"><strong>Wrong!</strong></div>
+<ul>
+<li>
+<p>You are trying to measure the present, but the rest of the system is trying
+to <strong class="slide">use the past to predict the future</strong>.</p>
+</li>
+<li>
+<p>In general <em>real</em> systems are almost <strong>never</strong> in the exact same state
+that they were the last time you measured whatever you are trying to measure.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_measuring_real_systems"></a><h2>Measuring Real Systems</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Yet another problem: measurement tends to affect <strong>the thing you are trying to
+measure</strong>!</p>
+</div>
+<div class="olist arabic">
+<div class="title">This has three results:</div>
+<ol class="arabic">
+<li>
+<p>Measurement may <strong>destroy</strong> the problem you are trying to measure.</p>
+</li>
+<li>
+<p>Must separate <strong>results</strong> from the noise produced by measurement.</p>
+</li>
+<li>
+<p>Measurement overhead may <strong>limit</strong> your access to real systems.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Vendor: &quot;<em>No way</em> am I running your instrumented binary. Your software
+is slow enough already!&quot;</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_aside_measuring_operating_systems"></a><h2>(Aside) Measuring Operating Systems</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can imagine that this is <strong>even more</strong> fraught given how central the
+operating system is to the operation of the computer itself.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Difficult to find the appropriate places to insert debugging hooks.</p>
+</li>
+<li>
+<p>Operating systems can generate <strong>a lot</strong> of debugging output: imagine
+tracing <em>every</em> page fault. (And imagine how slow that system would be!)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_lets_measure_something_else"></a><h2>Let&#x2019;s Measure Something Else&#x2026;&#x200B;</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>OK, benchmarking <strong>real</strong> systems seem <strong>real</strong> hard.</p>
+</div>
+<div class="ulist">
+<div class="title">What else can we do?</div>
+<ul>
+<li>
+<p>Build a <strong>model</strong>: abstract away all of the low-level details and
+reason analytically.</p>
+</li>
+<li>
+<p>Build a <strong>simulator</strong>: write some additional code to perform a
+simplified simulation of more complex parts of the system&#x2014;particularly
+hardware.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Distinguishing <strong>models</strong> from <strong>simulations</strong> is pretty easy:</div>
+<ul>
+<li>
+<p>&quot;I see equations.&quot; <strong>That&#x2019;s a model.</strong></p>
+</li>
+<li>
+<p>&quot;I see code.&quot; <strong>That&#x2019;s a simulation.</strong></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_choosing_the_right_virtual_reality"></a><h2>Choosing the Right Virtual Reality</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Models:</div>
+<ul>
+<li>
+<p><strong>Pro</strong>: can make <strong>strong</strong> mathematical guarantees about system
+performance&#x2026;&#x200B;</p>
+</li>
+<li>
+<p><strong>Con</strong>: &#x2026;&#x200B;usually after making a bunch of <strong>unrealistic</strong> assumptions.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Simulations:</div>
+<ul>
+<li>
+<p><strong>Pro</strong>: in the best case, experimental speedup outweighs lack of
+hardware details&#x2026;&#x200B;</p>
+</li>
+<li>
+<p><strong>Con</strong>: &#x2026;&#x200B;and in the worst case bugs in the simulator lead you in all
+sorts of wrong directions.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_measuring_your_system_what"></a><h2>Measuring Your System: What?</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What metric do I use to compare:</div>
+<ul>
+<li>
+<p>Two <strong>disk drives</strong>?</p>
+</li>
+<li>
+<p>Two <strong>scheduling algorithms</strong>?</p>
+</li>
+<li>
+<p>Two <strong>page replacement algorithms</strong>?</p>
+</li>
+<li>
+<p>Two <strong>file systems</strong>?</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/elephant.gif" alt="image" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_benchmarks_definitions"></a><h2>Benchmarks: Definitions</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title"><strong>Micro</strong>benchmarks:</div>
+<ul>
+<li>
+<p>try to isolate <strong>one</strong> aspect of system performance.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><strong>Macro</strong>benchmarks:</div>
+<ul>
+<li>
+<p>measure one operation involving many parts of the system working
+together.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><strong>Application</strong> benchmarks:</div>
+<ul>
+<li>
+<p>focus on the performance of the system as observed by one
+application.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_benchmarks_examples"></a><h2>Benchmarks: Examples</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#x2019;s say we are interested in improving our <strong>virtual memory</strong> system.
+(Just a random choice.)</p>
+</div>
+<div class="ulist">
+<div class="title"><strong>Micro</strong>benchmarks:</div>
+<ul>
+<li>
+<p>Time to handle single <strong>page fault</strong>. (Micro enough?)</p>
+</li>
+<li>
+<p>Time to <strong>look up</strong> page in the page table?</p>
+</li>
+<li>
+<p>Time to <strong>choose</strong> a page to evict?</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><strong>Macro</strong>benchmarks:</div>
+<ul>
+<li>
+<p>Aggregate time to handle page faults on a heavily-loaded system?</p>
+</li>
+<li>
+<p>Page fault rate?</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><strong>Application</strong> benchmarks:</div>
+<ul>
+<li>
+<p><strong><code>triplesort</code></strong>?</p>
+</li>
+<li>
+<p><strong><code>parallelvm</code></strong>?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_benchmarks_problems"></a><h2>Benchmarks: Problems</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title"><strong>Micro</strong>benchmarks:</div>
+<ul>
+<li>
+<p>Tree, meet forest. <strong>May not</strong> be studying the right thing!</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><strong>Macro</strong>benchmarks:</div>
+<ul>
+<li>
+<p>Forest, meet trees. Introduces <strong>many, many</strong> variables that can
+complicate analysis.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><strong>Application</strong> benchmarks:</div>
+<ul>
+<li>
+<p>Who cares about your stupid application? Improvements for it <strong>may
+harm</strong> others!</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_benchmark_bias"></a><h2>Benchmark Bias</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Bigger problem with benchmarking in practice.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>People <strong>choosing and running</strong> the benchmarks may be trying to
+justify some change by <strong>making their system look faster</strong>.</p>
+</li>
+<li>
+<p>Alternatively, the people <strong>chose</strong> a benchmark and did a lot of work to
+improve its performance while ignoring other effects on the system.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_benchmarking_blues"></a><h2>Benchmarking Blues</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This isn&#x2019;t (all) just human folly. There&#x2019;s a <strong>fundamental</strong> tension here.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The <strong>most useful</strong> system is a general-purpose system.</p>
+</li>
+<li>
+<p>The <strong>fastest</strong> system is a single-purpose system.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_what_to_do"></a><h2>What TO Do</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Have a <strong>goal</strong> in mind more specific than &quot;I want to make this blob of
+code faster.&quot; This helps choose measurement techniques and benchmarks.</p>
+</li>
+<li>
+<p><strong>Validate</strong> your models and simulator <strong>before</strong> you start changing
+things.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Do their results match your intuition? If not, something is wrong.</p>
+</li>
+<li>
+<p>Do their results match reality? If not, something is <em>really</em> wrong.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Use modeling, simulation, and real experiments as appropriate.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>If you can&#x2019;t convince yourself analytically that a new approach is an
+improvement, don&#x2019;t bother simulating.</p>
+</li>
+<li>
+<p>If your simulator doesn&#x2019;t show improvement, don&#x2019;t bother
+implementing.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2016-04-22-atlantis/" title="Previous: Atlantis: Robust, Extensible Execution Environments for Web Applications" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2016-04-27-hints/" title="Next: Hints for Computer System Design">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">Operating System Performance</a>
+					</li>
+					<li class="h5"><a href="#_the_last_correct_operating_system">THE Last Correct Operating System</a>
+					</li>
+					<li class="h5"><a href="#_operating_system_performance_2">Operating System Performance</a>
+					</li>
+					<li class="h5"><a href="#_but_seriously">But Seriously&#x2026;&#x200B;</a>
+					</li>
+					<li class="h5"><a href="#_measuring_your_system_how">Measuring Your System: How?</a>
+					</li>
+					<li class="h5"><a href="#_measuring_real_systems">Measuring Real Systems</a>
+					</li>
+					<li class="h5"><a href="#_aside_measuring_operating_systems">(Aside) Measuring Operating Systems</a>
+					</li>
+					<li class="h5"><a href="#_lets_measure_something_else">Let&#x2019;s Measure Something Else&#x2026;&#x200B;</a>
+					</li>
+					<li class="h5"><a href="#_choosing_the_right_virtual_reality">Choosing the Right Virtual Reality</a>
+					</li>
+					<li class="h5"><a href="#_measuring_your_system_what">Measuring Your System: What?</a>
+					</li>
+					<li class="h5"><a href="#_benchmarks_definitions">Benchmarks: Definitions</a>
+					</li>
+					<li class="h5"><a href="#_benchmarks_examples">Benchmarks: Examples</a>
+					</li>
+					<li class="h5"><a href="#_benchmarks_problems">Benchmarks: Problems</a>
+					</li>
+					<li class="h5"><a href="#_benchmark_bias">Benchmark Bias</a>
+					</li>
+					<li class="h5"><a href="#_benchmarking_blues">Benchmarking Blues</a>
+					</li>
+					<li class="h5"><a href="#_what_to_do">What TO Do</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/2016/performance.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/2016/performance.adoc" target="_blank">View</a>
+			<br>
+			Built 4/24/2016 @ 20:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

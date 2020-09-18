@@ -1,0 +1,634 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | RAID</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Overview of Redundant Arrays of Inexpensive Disks (RAID).">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<img src="/img/slides/women/005.jpg" alt="005" style="width: 100%;">
+</div>
+<div class="title">Figure 1. Susan Landau</div>
+</div>
+<div class="paragraph h4 center">
+<p><span class="fa fa-music"></span> <a href="http://www.chvrch.es/" target="_blank" class="external">&quot;Leave a Trace&quot; by CHVRCHES</a></p>
+</div>
+<div class="paragraph h4 center">
+<p><span class="fa fa-music"></span> <a href="http://iggypop.com" target="_blank" class="external">The Passenger by Iggy Pop</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/4Eo84jDIMKI?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/hLhN__oEHaw?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_1"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_1"></div><div class="anim-pause slide" data-what="iframe#_iframe_1"></div></div>
+
+</div>
+<div class="nooutline slide" id="_today">
+<h2>Today</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>How to read a research paper.</p>
+</li>
+<li>
+<p>Redundant Arrays of Inexpensive Disks (RAID).</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_cat_announce_txt">
+<h2>$ cat announce.txt</h2>
+
+
+
+</div>
+<div class="slide" id="_how_to_read_a_research_paper">
+<h2>How To Read A Research Paper</h2>
+
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p>Don&#x2019;t be afraid: <strong>you&#x2019;re ready!</strong></p>
+</li>
+<li class="slide">
+<p>Read good papers from the top conferences</p>
+</li>
+<li class="slide">
+<p><em>Skim</em> to get the big picture, <em>read</em> for the details.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Most systems papers have one or two big ideas and a lot of implementation.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Understand the <em>places where papers get published</em></p>
+</li>
+<li class="slide">
+<p>Understand the <em>kinds of papers</em></p>
+</li>
+<li class="slide">
+<p>Understand the <em>parts of a paper</em></p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="small spelling_exception slide" id="_places_where_papers_get_published">
+<h2>Places Where Papers Get Published</h2>
+
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p><strong>Workshop papers</strong>: <em>short</em> (5-6 pages), usually containing only a
+provocative argument, system design, or very preliminary results.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Example:
+<a href="http://www.eecs.harvard.edu/margo/papers/hotos09/paper.pdf" target="_blank" class="external">Hierarchical
+Filesystems Are Dead (PDF)</a>, by Margo Seltzer and Nicholas Murphy. Published at
+<a href="https://www.usenix.org/conferences/byname/155" target="_blank" class="external">HotOS</a>, a workshop on hot
+topics in operating systems.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p><strong>Conference papers</strong>: <em>long</em> (12-14 pages), enough space to describe and
+evaluate a complete novel system.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Example: <a href="http://pdos.csail.mit.edu/papers/commutativity:sosp13.pdf" target="_blank" class="external">The
+Scalable Commutativity Rule (PDF)</a>, by Austin Clements, M. Frans Kaashoek, Nickolai
+Zeldovich, Robert Morris and Eddie Kohler. Published at
+<a href="http://sosp.org/" target="_blank" class="external">SOSP</a>, the top conference on computer systems.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p><strong>Journal papers</strong>: <em>longer</em> (than conference papers), usually a published
+conference paper with extra material (frequently all of the unneccesary
+results that they removed to make the conference page limit).</p>
+<div class="ulist">
+<ul>
+<li>
+<p>My advice: read the conference paper.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="smaller slide" id="_kinds_of_papers">
+<h2>Kinds of Papers</h2>
+
+<div class="paragraph">
+<p>Clearly this is an incomplete list, but identifying the kind of paper can
+help you read it and understand its contributions.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p><strong>(Big) idea papers</strong>: presents a <em>new approach</em> to an existing problem or a new
+idea about how to build systems. Should convince you that the solution is (1)
+new, (2) works, and (3) is useful.</p>
+</li>
+<li class="slide">
+<p><strong>Problem papers</strong>: presents a <em>new problem</em> and, usually, some ideas about
+how to solve it. Should convince you that the problem is (1), (2) matters and
+(3) that there are some ways to solve it.</p>
+</li>
+<li class="slide">
+<p><strong>Data papers</strong>: present <em>novel analysis</em> or <em>analysis of a novel data set</em> that
+produces interesting insights. Should convince you that the results are
+useful to the design of future systems.</p>
+</li>
+<li class="slide">
+<p><strong>New technology papers</strong>: describe some new hardware capability or device
+feature and why it&#x2019;s interesting. Should convince you that the hardware can
+be used to build better systems.</p>
+</li>
+<li class="slide">
+<p><strong>Wrong way papers</strong>: argue that the community is solving an <em>existing
+problem incorrectly</em>. Frequently these are workshop-length papers and
+eventually lead to idea papers. Should be able to convince you that everyone
+else is confused and misguided. (Good luck!)</p>
+</li>
+</ol>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>We&#x2019;ll read examples of all of these kinds of papers.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="small slide" id="_parts_of_a_research_paper">
+<h2>Parts of a Research Paper</h2>
+
+<div class="paragraph">
+<p>Not all of these are included in every paper, and they are not always called
+the same thing. Many variants exist but these are the common elements.</p>
+</div>
+<div class="olist arabic">
+<div class="title">The &quot;why you should read this paper&quot; parts:</div>
+<ol class="arabic">
+<li class="slide">
+<p><strong>Abstract</strong>: an overview of the paper and its contribution. Great place to
+get the <em>big picture</em>.</p>
+</li>
+<li class="slide">
+<p><strong>Introduction</strong>: an extension of the abstract. Usually contains:</p>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>A problem and solution statement (if appropriate)</p>
+</li>
+<li class="slide">
+<p>Persuasive arguments to keep you reading</p>
+</li>
+<li class="slide">
+<p>A preview of the interesting results ahead</p>
+</li>
+<li class="slide">
+<p>Navigational information to guide you through the rest of the paper</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p><strong>Motivation</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>More arguments about why this is a problem, why people have been solving
+this problem the wrong way, or why this data is interesting&#x2014;&#x200B;depending on the
+type of paper.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="olist arabic">
+<div class="title">The &quot;what we did&quot; parts:</div>
+<ol class="arabic">
+<li class="slide">
+<p><strong>Design</strong>: presents the design of the system, usually at as high a level as
+possible.</p>
+</li>
+<li class="slide">
+<p><strong>Implementation</strong>: presents details of the implementation and any
+interesting implementation challenges.</p>
+</li>
+<li class="slide">
+<p><strong>Related work</strong>: put the work in context by comparing it to other systems.
+Important to establish <em>novelty</em>.</p>
+</li>
+<li class="slide">
+<p><strong>Results</strong>: for data analysis papers, most of the paper is spent analyzing
+the data set that was collected and evaluated. This usually replaces an
+typical evaluation since there may not be a new idea.</p>
+</li>
+</ol>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="olist arabic">
+<div class="title">The &quot;did it work&quot; part:</div>
+<ol class="arabic">
+<li class="slide">
+<p><strong>Evaluation</strong>: measures things about the prototype system intended to
+demonstrate that it works.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="nooutline slide" id="_questions_about_approaching_a_research_paper">
+<h2>Questions About Approaching A Research Paper?</h2>
+
+
+
+</div>
+<div class="slide" id="_redundant_arrays_of_inexpensive_disks">
+<h2>Redundant Arrays of Inexpensive Disks</h2>
+
+<div class="ulist">
+<div class="title slide">What kind of paper is this?</div>
+<ul>
+<li class="slide">
+<p><strong>Big idea</strong> paper!</p>
+</li>
+<li class="slide">
+<p>Spawned a commonly-used technology, an entire industry, and lots of similar
+approaches.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">What is the big idea? (Hint: it has nothing to do with disks&#x2026;&#x200B;)</div>
+<ul>
+<li class="slide">
+<p>Several cheap things can be better than one expensive thing!</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Where else do we see this idea applied today?</div>
+<ul>
+<li class="slide">
+<p>Multicore processors.</p>
+</li>
+<li class="slide">
+<p>Google.</p>
+</li>
+<li class="slide">
+<p>Crowdsourcing.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="small slide" id="_raid_problems">
+<h2>RAID: Problems</h2>
+
+<div class="ulist">
+<div class="title slide">What is the problem that the RAID paper identifies?</div>
+<ul>
+<li class="slide">
+<p>Computer CPUs are getting faster&#x2026;&#x200B;</p>
+</li>
+<li class="slide">
+<p>Computer memory is getting faster&#x2026;&#x200B;</p>
+</li>
+<li class="slide">
+<p>Hard drives are not keeping up!</p>
+</li>
+</ul>
+</div>
+<div class="quoteblock slide">
+<blockquote>
+<div class="paragraph">
+<p>While we can imagine improvements in software file systems via buffering for
+near term I/O demands, we need innovation to avoid an I/O crisis.</p>
+</div>
+</blockquote>
+</div>
+<div class="ulist">
+<div class="title slide">What is the problem with the RAID solution?</div>
+<ul>
+<li class="slide">
+<p>Many cheap things fail much more frequently than one expensive thing.</p>
+</li>
+<li class="slide">
+<p>So need a plan to handle failures.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_the_raid_report">
+<h2>The RAID Report</h2>
+
+<div class="paragraph">
+<p><a href="http://www.eecs.berkeley.edu/Pubs/TechRpts/1987/CSD-87-391.pdf" target="_blank" class="external">Here is the
+link to a classic paper. (PDF)</a></p>
+</div>
+<div class="embed-responsive-16by9" style="height:400px;">
+<iframe style="width:100%; height:400px;" src="//www.eecs.berkeley.edu/Pubs/TechRpts/1987/CSD-87-391.pdf#view=fitH" id="_iframe_2"></iframe>
+<div class="anim-play slide" data-what="iframe#_iframe_2"></div><div class="anim-pause slide" data-what="iframe#_iframe_2"></div></div>
+
+</div>
+<div class="small slide" id="_raid_1">
+<h2>RAID 1</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="http://upload.wikimedia.org/wikipedia/commons/b/b7/RAID_1.svg" alt="RAID 1" height="200">
+</div>
+</div>
+<div class="ulist">
+<div class="title">RAID 1 (Mirroring)</div>
+<ul>
+<li>
+<p>Two duplicate disks.</p>
+</li>
+<li>
+<p>Writes must go to both disks, reads can
+come from either.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Performance: <strong class="slide">better for reads.</strong></p>
+</li>
+<li class="slide">
+<p>Capacity: <strong class="slide">unchanged!</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="small slide" id="_raid_2">
+<h2>RAID 2</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="http://upload.wikimedia.org/wikipedia/commons/b/b5/RAID2_arch.svg" alt="RAID2 arch" height="200">
+</div>
+</div>
+<div class="ulist">
+<div class="title">RAID 2</div>
+<ul>
+<li>
+<p><strong>Byte-level striping</strong>, single error disk.</p>
+</li>
+<li>
+<p><strong>Hamming codes</strong> to detect failures and correct errors.</p>
+</li>
+<li>
+<p>Most reads and writes require all disks.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Capacity: <strong class="slide">improved.</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="small slide" id="_raid_3">
+<h2>RAID 3</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="http://upload.wikimedia.org/wikipedia/commons/f/f9/RAID_3.svg" alt="RAID 3" height="200">
+</div>
+</div>
+<div class="ulist">
+<div class="title">RAID 3</div>
+<ul>
+<li>
+<p><strong>Only correct errors</strong> since disks can detect when they fail.</p>
+</li>
+<li>
+<p>Byte-level striping, single <strong>parity</strong> disk.</p>
+</li>
+<li>
+<p>Most reads and writes require all disks.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Capacity: <strong class="slide">improved.</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="small slide" id="_raid_4">
+<h2>RAID 4</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="http://upload.wikimedia.org/wikipedia/commons/a/ad/RAID_4.svg" alt="RAID 4" height="200">
+</div>
+</div>
+<div class="ulist">
+<div class="title">RAID 4</div>
+<ul>
+<li>
+<p><strong>Block-level striping</strong>, single parity disk.</p>
+</li>
+<li>
+<p>Better distribution of reads between disks due to larger stripe size,</p>
+</li>
+<li>
+<p>but all writes all must access the parity disk.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Performance: <strong class="slide">improved for reads.</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="small slide" id="_raid_5_full_victory">
+<h2>RAID 5 (Full Victory)</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="http://upload.wikimedia.org/wikipedia/commons/6/64/RAID_5.svg" alt="RAID 5" height="200">
+</div>
+</div>
+<div class="ulist">
+<div class="title">RAID 5</div>
+<ul>
+<li>
+<p>Block-level striping</p>
+</li>
+<li>
+<p><strong>Multiple parity disks</strong>.</p>
+</li>
+<li>
+<p>Better distribution of writes between disks.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Performance: <strong class="slide">improved for writes.</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_raid_0_non_raid">
+<h2>RAID 0 (Non-RAID)</h2>
+
+<div class="ulist">
+<div class="title">RAID 0</div>
+<ul>
+<li>
+<p>Each disk stores half of the data.</p>
+</li>
+<li>
+<p>No error correction or redundancy.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Performance: <strong class="slide">fantastic!</strong></p>
+</li>
+<li class="slide">
+<p>Capacity: <strong class="slide">fantastic!</strong></p>
+</li>
+<li class="slide">
+<p>Redundancy: <strong class="slide">ZERO!</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_raid_redundancy">
+<h2>RAID: Redundancy</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>RAID arrays can tolerate the failure of one (or more) disks.</p>
+</li>
+<li class="slide">
+<p>Once a (or several) fail, the array is vulnerable to data loss.</p>
+</li>
+<li class="slide">
+<p>An administrator must replace the disk(s) and then rebuild the array.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_raid_questions">
+<h2>RAID: Questions?</h2>
+
+
+
+</div>
+<div class="nooutline slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Full virtualization.</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-04-15-raid">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

@@ -1,0 +1,705 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Swapping</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="A discussion of how to swap in and out pages.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2017-03-15-paging/" title="Previous: Paging" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2017-03-29-pagereplacement/" title="Next: Page Replacement">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="zWOu20yM2yg"><img class="youtube-thumb" src="//i.ytimg.com/vi/zWOu20yM2yg/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Swapping</h1>
+				
+
+
+<div class="sect1">
+<a class="anchor" id="_out_of_core"></a><h2>Out of Core</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When we <strong>run out</strong>, there are two options:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Fail</strong>, and either don&#x2019;t load the process (<code>exec()</code>), don&#x2019;t create a
+new process (<code>fork()</code>), refuse to allocate more heap (<code>sbrk()</code>), or kill the
+process if it is trying to allocate more stack.</p>
+</li>
+<li>
+<p><strong>Create more space</strong>, preserving the contents of memory for later use.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_virtually_sneaky"></a><h2>Virtually Sneaky</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Virtual address translation gives the kernel the ability to remove
+memory from a process <strong>behind its back</strong>.</p>
+</div>
+<div class="ulist">
+<div class="title">What are the requirements for doing this?</div>
+<ul>
+<li>
+<p>The <em>last time</em> the process used the virtual address, it behaved like
+memory.</p>
+</li>
+<li>
+<p>The <em>next time</em> the process uses the virtual address, it behaves like
+memory.</p>
+</li>
+<li>
+<p>In between, whatever data was stored at that address must be
+<strong>preserved</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_swapping"></a><h2>Swapping</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The place operating systems typically place data stored in memory in
+order to borrow the memory from the process is <strong>on disk</strong>.</p>
+</li>
+<li>
+<p>We call the process of moving data back and forth from memory to disk
+in order to improve memory usage <strong>swapping</strong>.</p>
+</li>
+<li>
+<p><strong>Goal:</strong> when swapping is done well your system <strong>feels</strong> like it has
+memory that is as <em>large</em> as the size of the disk but as <em>fast</em> as
+actual RAM.</p>
+</li>
+<li>
+<p>Unfortunately, when swapping is not done well your system <strong>feels</strong> like
+it has memory that is as <em>small</em> as RAM and as <em>slow</em> as the disk.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_tlb_v_page_faults"></a><h2>TLB v. Page Faults</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">We distinguish between two kinds of memory-related fault:</div>
+<ul>
+<li>
+<p><strong>TLB Fault:</strong> a required virtual to physical address translation is
+not in the TLB.</p>
+</li>
+<li>
+<p><strong>Page Fault:</strong> the contents of a virtual page are either not
+initialized or not in memory.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><em>Every</em> page fault is preceded by a TLB fault.</div>
+<ul>
+<li>
+<p>If the contents of the virtual page are not in memory, a translation
+cannot exist for it!</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><em>Not every</em> TLB fault generates a page fault.</div>
+<ul>
+<li>
+<p>If page is in memory and the translation is the page table, the TLB
+fault can be handled without generating a page fault.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_swap_out"></a><h2>Swap Out</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<div class="title">To swap a page to disk we must:</div>
+<ol class="arabic">
+<li>
+<p><strong>Remove</strong> the translation from the TLB, if it exists.</p>
+</li>
+<li>
+<p><strong>Copy</strong> the contents of the page to disk.</p>
+</li>
+<li>
+<p><strong>Update</strong> the page table entry to indicate that the page is on disk.</p>
+</li>
+</ol>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapoutexample-1.svg" alt="swapoutexample 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapoutexample-2.svg" alt="swapoutexample 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapoutexample-3.svg" alt="swapoutexample 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapoutexample-4.svg" alt="swapoutexample 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapoutexample-5.svg" alt="swapoutexample 5" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapoutexample-6.svg" alt="swapoutexample 6" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapoutexample-7.svg" alt="swapoutexample 7" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapoutexample-8.svg" alt="swapoutexample 8" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapoutexample-9.svg" alt="swapoutexample 9" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapoutexample-10.svg" alt="swapoutexample 10" style="width: 80%;">
+</div>
+</div>
+</div>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_swap_out_speed"></a><h2>Swap Out Speed</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Remove</strong> the translation from the TLB: <span class="slide">fast.</span></p>
+</li>
+<li>
+<p><strong>Copy</strong> the contents of the page to disk: <strong class="slide spelling_exception">sloooowwww&#x2026;&#x200B;</strong></p>
+</li>
+<li>
+<p><strong>Update</strong> the page table entry to indicate that the page is on disk:
+<span class="slide">fast.</span></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_page_cleaning"></a><h2>Page Cleaning</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Frequently when we are swapping out a page it is in order to allocate
+new memory to a running process, or possibly to swap <em>in</em> a page.</p>
+</div>
+<div class="paragraph">
+<p>So it would be <strong>great</strong> if swapping out were fast.</p>
+</div>
+<div class="ulist">
+<div class="title">Can we prepare the system to optimize swap out?</div>
+<ul>
+<li>
+<p><strong>Yes!</strong></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Each page has a dedicated place on disk.</p>
+</li>
+<li>
+<p>During idle periods operating system writes data from active memory
+pages to swap disk.</p>
+</li>
+<li>
+<p>Pages with matching content on the swap disk are called <strong>clean</strong>.</p>
+</li>
+<li>
+<p>Pages that do not match their swap disk content are called <strong>dirty</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_swap_in"></a><h2>Swap In</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">When <strong>must</strong> we swap in a page?</div>
+<ul>
+<li>
+<p>When the virtual address is used by the process!</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">To translate a virtual address used by a process that points to a page that has been swapped out, we must:</div>
+<ol class="arabic">
+<li>
+<p><strong>Stop</strong> the instruction that is trying to translate the address until
+we can retrieve the contents.</p>
+</li>
+<li>
+<p><strong>Allocate</strong> a page in memory to hold the new page contents.</p>
+</li>
+<li>
+<p><strong>Locate</strong> the page on disk using the page table entry.</p>
+</li>
+<li>
+<p><strong>Copy</strong> the contents of the page from disk.</p>
+</li>
+<li>
+<p><strong>Update</strong> the page table entry to indicate that the page is in
+memory.</p>
+</li>
+<li>
+<p><strong>Load</strong> the TLB.</p>
+</li>
+<li>
+<p><strong>Restart</strong> the instruction that was addressing the virtual address we
+retrieved.</p>
+</li>
+</ol>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapinexample-1.svg" alt="swapinexample 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapinexample-2.svg" alt="swapinexample 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapinexample-3.svg" alt="swapinexample 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapinexample-4.svg" alt="swapinexample 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapinexample-5.svg" alt="swapinexample 5" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapinexample-6.svg" alt="swapinexample 6" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapinexample-7.svg" alt="swapinexample 7" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapinexample-8.svg" alt="swapinexample 8" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapinexample-9.svg" alt="swapinexample 9" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapinexample-10.svg" alt="swapinexample 10" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/swapinexample-11.svg" alt="swapinexample 11" style="width: 80%;">
+</div>
+</div>
+</div>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_on_demand_paging"></a><h2>(On) Demand Paging</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Sometimes procrastination is useful, particularly when you end up
+<strong>never</strong> having to do the thing you&#x2019;re being asked to do!</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>Process:</em> Kernel! Load this huge chunk of code into my address space!</p>
+</li>
+<li>
+<p><em>Kernel:</em> Well, I&#x2019;m kind of busy now, so maybe later? But I&#x2019;ll make a
+note of it!</p>
+</li>
+<li>
+<p><em>Process:</em> Kernel! Give me 4 MB more heap!</p>
+</li>
+<li>
+<p><em>Kernel:</em> Your request is granted, but come back and ask again when
+you <strong>really</strong> need it.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Until:</div>
+<ul>
+<li>
+<p>an instruction on a code page is <strong>executed</strong>, or</p>
+</li>
+<li>
+<p>a <strong>read</strong> or <strong>write</strong> occurs to a data or heap page.</p>
+</li>
+<li>
+<p>the kernel does <strong>not</strong> load the contents of that page into memory!</p>
+</li>
+</ul>
+</div><div class="ulist">
+<div class="title">Why not?</div>
+<ul>
+<li>
+<p>A <strong>lot</strong> of code is never executed and some global variables are never
+used. <strong>Why waste memory?</strong></p>
+</li>
+</ul>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_demanded_paging"></a><h2>Demanded Paging</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What happens the first time a process executes an instruction from a new code page?</div>
+<ul>
+<li>
+<p>That page contents are loaded from disk and the instruction is restarted.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">What happens the first time a does a load or store to an uninitialized heap, stack or data page?</div>
+<ul>
+<li>
+<p>The kernel allocates a new page filled with zeros and the instruction
+is restarted.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_aside_hardware_managed_tlbs"></a><h2>Aside: Hardware-Managed TLBs</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>On certain architectures the MMU will search the page table <strong>itself</strong>
+to locate virtual-to-physical address translations missing from the TLB.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Pro</strong>: hardware is faster!</p>
+</li>
+<li>
+<p><strong>Con</strong>: operating system must set up the page tables in a fixed way
+that the hardware understands.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>With a hardware-managed TLB, the kernel never sees TLB faults: they
+are handled in hardware.</p>
+</li>
+<li>
+<p>Don&#x2019;t worry: System/161 has a <strong>software-managed</strong> TLB, so you get to do
+all of the hard work <strong>and</strong> design your own page table structures!</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2017-03-15-paging/" title="Previous: Paging" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2017-03-29-pagereplacement/" title="Next: Page Replacement">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">Out of Core</a>
+					</li>
+					<li class="h5"><a href="#_virtually_sneaky">Virtually Sneaky</a>
+					</li>
+					<li class="h5"><a href="#_swapping">Swapping</a>
+					</li>
+					<li class="h5"><a href="#_tlb_v_page_faults">TLB v. Page Faults</a>
+					</li>
+					<li class="h5"><a href="#_swap_out">Swap Out</a>
+					</li>
+					<li class="h5"><a href="#_swap_out_speed">Swap Out Speed</a>
+					</li>
+					<li class="h5"><a href="#_page_cleaning">Page Cleaning</a>
+					</li>
+					<li class="h5"><a href="#_swap_in">Swap In</a>
+					</li>
+					<li class="h5"><a href="#_on_demand_paging">(On) Demand Paging</a>
+					</li>
+					<li class="h5"><a href="#_demanded_paging">Demanded Paging</a>
+					</li>
+					<li class="h5"><a href="#_aside_hardware_managed_tlbs">Aside: Hardware-Managed TLBs</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 3/27/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/swapping.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/swapping.adoc" target="_blank">View</a>
+			<br>
+			Built 3/26/2017 @ 20:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

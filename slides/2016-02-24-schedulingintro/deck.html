@@ -1,0 +1,652 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Introduction to Scheduling</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Completion of a discussion of thread states followed by a motivation of the what, when and how of thread scheduling.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline slide" id="_today">
+<h2>Today</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Scheduling goals.</p>
+</li>
+<li>
+<p>Human-computer expectations:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Responsiveness</p>
+</li>
+<li>
+<p>Continuity</p>
+</li>
+<li>
+<p>Throughput</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Simple scheduling algorithms.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_thread_states">
+<h2>Thread States</h2>
+
+<div class="ulist">
+<div class="title slide">We talk about threads&#x2014;and sometimes the processes containing them&#x2014;as being in several different states:</div>
+<ul>
+<li class="slide">
+<p><strong>Running:</strong> executing instructions on a CPU core.</p>
+</li>
+<li class="slide">
+<p><strong>Ready:</strong> not executing instructions but capable of being restarted.</p>
+</li>
+<li class="slide">
+<p><strong>Waiting, Blocked or Sleeping:</strong> not executing instructions and not
+able to be restarted until some event occurs.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_thread_state_transitions">
+<h2>Thread State Transitions</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Running &#x2192; Ready: <span class="slide">a thread was <strong>descheduled</strong>.</span></p>
+</li>
+<li class="slide">
+<p>Running &#x2192; Waiting: <span class="slide">a thread performed a <strong>blocking system call</strong>.</span></p>
+</li>
+<li class="slide">
+<p>Waiting &#x2192; Ready: <span class="slide">the event the thread was waiting for happened.</span></p>
+</li>
+<li class="slide">
+<p>Ready &#x2192; Running: <span class="slide">a thread was <strong>scheduled</strong>.</span></p>
+</li>
+<li class="slide">
+<p>Running &#x2192; Terminated: <span class="slide">a thread <strong>exited</strong> or hit a fatal
+<strong>exception</strong>.</span></p>
+</li>
+</ul>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Operating systems have data structures to organize threads into these
+groups which you encountered during ASST1.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_scheduling_what">
+<h2>Scheduling: What?</h2>
+
+<div class="ulist">
+<div class="title slide">What is scheduling?</div>
+<ul>
+<li class="slide">
+<p><strong>Scheduling</strong> is the process of choosing the next thread (or threads)
+to run on the CPU (or CPUs).</p>
+</li>
+<li class="slide">
+<p>We will primarily discuss <strong>single core</strong> scheduling for most of the
+week but return to multi-core scheduling issues later.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_scheduling_why">
+<h2>Scheduling: Why?</h2>
+
+<div class="ulist">
+<div class="title slide">Why schedule threads?</div>
+<ul>
+<li class="slide">
+<p><strong>CPU multiplexing</strong>: we have more threads that cores to run them on.</p>
+</li>
+<li class="slide">
+<p><strong>Kernel privilege</strong>: we are in charge of allocating the CPU and must
+try to make good decisions. <strong>Applications rely on it.</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_scheduling_when">
+<h2>Scheduling: When?</h2>
+
+<div class="olist arabic">
+<div class="title">When does scheduling happen?</div>
+<ol class="arabic">
+<li class="slide">
+<p>When a thread <strong>voluntarily</strong> gives up the CPU by calling yield().</p>
+</li>
+<li class="slide">
+<p>When a thread makes a blocking <strong>system call</strong> and must sleep until
+the call completes.</p>
+</li>
+<li class="slide">
+<p>When a thread <strong>exits</strong>.</p>
+</li>
+<li class="slide">
+<p>When the <strong>kernel decides</strong> that a thread has run for long enough.</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>#4</strong> is what makes a scheduling policy <strong>preemptive</strong>, as opposed to
+<strong>cooperative</strong>: the kernel can preempt (or stop) a thread that has not
+requested to be stopped.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_why_yield">
+<h2>Why <code>yield()</code>?</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>We have not discussed yield().</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">What is the rationale behind having a way for threads to voluntarily give up the CPU?</div>
+<ul>
+<li class="slide">
+<p><code>yield()</code> can be a useful way of allowing a well-behaved thread to tell
+the CPU that it has no more useful work to do.</p>
+</li>
+<li class="slide">
+<p><code>yield()</code> is inherently cooperative. &quot;Let me get out of the way so that
+another, more useful, thread can run.&quot;</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_scheduling_how">
+<h2>Scheduling: How?</h2>
+
+<div class="ulist">
+<div class="title slide">Two separate questions here:</div>
+<ul>
+<li class="slide">
+<p><strong>Mechanism:</strong> how do we switch between threads?</p>
+</li>
+<li class="slide">
+<p><strong>Policy:</strong> how do we choose the next thread to run?</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">How do we <strong>switch between threads</strong>?</div>
+<ul>
+<li class="slide">
+<p>Perform a <strong>context switch</strong> and move threads between the <strong>ready</strong>,
+<strong>running</strong>, and <strong>waiting</strong> queues.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">How do we <strong>choose the next thread to run</strong></div>
+<ul>
+<li class="slide">
+<p>Nice of you to ask. That&#x2019;s our focus this week.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_policy_v_mechanism">
+<h2>Policy v. Mechanism</h2>
+
+<div class="ulist">
+<div class="title slide">Scheduling is as example of useful separation between <strong>policy</strong> and <strong>mechanism</strong>:</div>
+<ul>
+<li class="slide">
+<p><strong class="slide">P</strong>: deciding what thread to run.</p>
+</li>
+<li class="slide">
+<p><strong class="slide">M</strong>: context switch.</p>
+</li>
+<li class="slide">
+<p><strong class="slide">M</strong>: maintaining the running, ready and waiting queues.</p>
+</li>
+<li class="slide">
+<p><strong class="slide">P</strong>: giving preference to interactive tasks.</p>
+</li>
+<li class="slide">
+<p><strong class="slide">M</strong>: using timer interrupts to stop running threads.</p>
+</li>
+<li class="slide">
+<p><strong class="slide">P</strong>: choosing a thread to run at random.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_scheduling_matters">
+<h2>Scheduling Matters</h2>
+
+<div class="paragraph">
+<p>How the CPU is scheduled impacts <strong>every other part</strong> of the system.</p>
+</div>
+<div class="ulist">
+<div class="title slide">Why?</div>
+<ul>
+<li class="slide">
+<p>Using other system resources requires the CPU!</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Intelligent scheduling</strong> makes a modestly-powered system seem fast and responsive.</p>
+</li>
+<li class="slide">
+<p><strong>Stupid scheduling</strong> makes a powerful system seem sluggish and laggy.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_human_computer_interaction_and_expectations">
+<h2>Human-Computer Interaction (and Expectations)</h2>
+
+<div class="ulist">
+<div class="title slide">What do you expect from your machine?</div>
+<ul>
+<li class="slide">
+<p><strong>Respond</strong> (Click)</p>
+</li>
+<li class="slide">
+<p><strong>Continue</strong> (Watch, or active waiting)</p>
+</li>
+<li class="slide">
+<p><strong>Finish</strong> (Expect, or passive waiting)</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_respond_click">
+<h2>Respond (Click)</h2>
+
+<div class="paragraph">
+<p><strong>Responsiveness</strong>: when you give the computer and instruction, or input, it
+<strong>responds in a timely manner</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>It may not <strong>finish</strong>, but at least you know it has <strong>started</strong> (or
+understood).</p>
+</li>
+</ul>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Most of what we do with computers consists of responsive tasks. This
+is <strong>using</strong> a computer, and what makes computers different from
+television.</p>
+</div>
+</div>
+</div>
+<div class="ulist">
+<div class="title slide">Examples of responsive tasks:</div>
+<ul>
+<li class="slide">
+<p>Web browsing: when a link is clicked, retrieve the web page.</p>
+</li>
+<li class="slide">
+<p>Editing: when I enter text at the keyboard, place it at the cursor.</p>
+</li>
+<li class="slide">
+<p>Chatting: when I hit send, transmit the text to my chat partner.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_continue_watch">
+<h2>Continue (Watch)</h2>
+
+<div class="paragraph">
+<p><strong>Continuity</strong>: when you ask the computer to perform a continuous task it does so smoothly.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Continuity implies <strong>active waiting</strong>: you are not interacting with the
+computer, but you are expecting it to continue to perform a task you
+have initiated.</p>
+</li>
+</ul>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>As computers have started to deliver media, this function is
+<strong>increasingly important</strong>.</p>
+</div>
+</div>
+</div>
+<div class="ulist">
+<div class="title slide">Examples of continuous tasks:</div>
+<ul>
+<li class="slide">
+<p>Blinking a cursor.</p>
+</li>
+<li class="slide">
+<p>Playing music or a movie.</p>
+</li>
+<li class="slide">
+<p>Stupid (!) web animations.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_finish_expect">
+<h2>Finish (Expect)</h2>
+
+<div class="paragraph">
+<p><strong>Completion</strong>: when we ask to the computer to perform a task&#x2014;or it
+performs one on our behalf&#x2014;that we expect to take a long time, we want
+it to complete eventually.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Completion implies <strong>passive waiting</strong>: you are asking the computer to
+continue to deliver interactive performance while working on your
+long-running task. (We also consider these <strong>background</strong> tasks.)</p>
+</li>
+<li class="slide">
+<p>Unlike responsive and continuous task, background tasks may <strong>not be
+user initiated.</strong></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Examples of background tasks:</div>
+<ul>
+<li class="slide">
+<p>Performing a system backup.</p>
+</li>
+<li class="slide">
+<p>Indexing files on my computer.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_click_watch_expect">
+<h2>Click, Watch, Expect</h2>
+
+<div class="paragraph">
+<p>Many applications <strong>combine</strong> all three system expectations.</p>
+</div>
+<div class="ulist">
+<div class="title slide">Music player:</div>
+<ul>
+<li class="slide">
+<p><strong>Click</strong>: <span class="slide">change tracks.</span></p>
+</li>
+<li class="slide">
+<p><strong>Watch</strong>: <span class="slide">play the selected track.</span></p>
+</li>
+<li class="slide">
+<p><strong>Finish</strong>: <span class="slide">update album artwork.</span></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Web browser:</div>
+<ul>
+<li class="slide">
+<p><strong>Click</strong>: <span class="slide">follow a link.</span></p>
+</li>
+<li class="slide">
+<p><strong>Watch</strong>: <span class="slide">play web video.</span></p>
+</li>
+<li class="slide">
+<p><strong>Finish</strong>: <span class="slide">index search history.</span></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="small slide" id="_conflicting_goals">
+<h2>Conflicting Goals</h2>
+
+<div class="paragraph">
+<p>Scheduling is a balance between <strong>meeting deadlines</strong> and <strong>optimizing
+resource allocation</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Optimal resource allocation: carefully allocate tasks so that all
+resources are constantly in used.</p>
+</li>
+<li class="slide">
+<p>Meeting deadlines: drop everything and do this <strong>now</strong>!</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Responsiveness and continuity require meeting deadlines&#x2014;unpredictable or
+predictable:</p>
+</div>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Responsiveness</strong> &#x2192; unpredictable deadlines. &quot;When the user moves the
+mouse I need to be ready to redraw the cursor.&quot;</p>
+</li>
+<li class="slide">
+<p><strong>Continuity</strong> &#x2192; predictable deadlines. &quot;Every 5 ms I need to write more
+data to the sound card buffer.&quot;</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Throughput requires careful resource allocation:</p>
+</div>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Throughput</strong> &#x2192; optimal resource allocation. &quot;I should really give the
+backup process more resources so that it can finish overnight.&quot;</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_deadlines_win">
+<h2>Deadlines Win</h2>
+
+<div class="ulist">
+<div class="title slide">Humans are sensitive to <strong>responsiveness</strong> and <strong>continuity</strong>.</div>
+<ul>
+<li class="slide">
+<p>We don&#x2019;t notice resource allocation (as much).</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Heard:</strong> <span class="slide">&quot;My computer feels slow.&quot;</span></p>
+</li>
+<li class="slide">
+<p><strong>Unheard:</strong> <span class="slide">&quot;My computer is not using all of its RAM.&quot;</span></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide"><strong>Why</strong></div>
+<ul>
+<li class="slide">
+<p>Poor responsiveness or continuity wastes <strong>our time</strong>! (&quot;The mouse
+jumped all over and I couldn&#x2019;t click anywhere.&quot;, &quot;The movie kept
+stalling and I couldn&#x2019;t watch it.&quot;)</p>
+</li>
+<li class="slide">
+<p>Poor throughput usually just wastes computer time. (&quot;The backup took
+12 hours but I was sleeping.&quot;)</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_scheduling_goals">
+<h2>Scheduling Goals</h2>
+
+<div class="paragraph">
+<p>(Or, <strong>how to evaluate schedulers</strong>.)</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>How well does it meet deadlines&#x2014;unpredictable or predictable?</p>
+</li>
+<li class="slide">
+<p>How completely does it allocate system resources?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>No point having idle CPU, memory, or disk bandwidth when something
+useful could be happening.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">On human-facing systems, deadlines (or <strong>interactivity</strong>) usually wins. Why?</div>
+<ul>
+<li class="slide">
+<p>Your time is more valuable than your computer&#x2019;s.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_aside_realtime_scheduling">
+<h2>(Aside) Realtime Scheduling</h2>
+
+<div class="paragraph">
+<p>We have established that deadlines are important to human-facing
+systems. This is mainly because systems that don&#x2019;t meet deadlines are
+<strong>annoying</strong>. (&quot;Buffering&#x2026;&#x200B;&quot;, &quot;Buffering&#x2026;&#x200B;&quot;, etc.)</p>
+</div>
+<div class="ulist">
+<div class="title slide">There are other classes of systems where the failure to meet deadlines can be <strong>fatal</strong>.</div>
+<ul>
+<li class="slide">
+<p>&quot;I meant to get around to running the motion_stop task 1 s ago, but I
+didn&#x2019;t quite make it. And&#x2026;&#x200B;<span class="slied">the robot rolled off of the cliff.</span></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_scheduling_principles_questions">
+<h2>Scheduling Principles: Questions?</h2>
+
+
+
+</div>
+<div class="nooutline slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Simple scheduling algorithms.</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-02-24-schedulingintro">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

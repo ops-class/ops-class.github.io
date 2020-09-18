@@ -1,0 +1,919 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Virtual Addresses</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Discussion of creating and translating virtual addresses.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2017-03-06-addressspaces/" title="Previous: Introduction to Memory Management" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2017-03-10-addresstranslation/" title="Next: Address Translation">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="NDP_Ti_rnj8"><img class="youtube-thumb" src="//i.ytimg.com/vi/NDP_Ti_rnj8/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Virtual Addresses</h1>
+				
+
+
+<div class="sect1">
+<a class="anchor" id="_convention"></a><h2>Convention</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Process layout is specified by the Executable and Linker Format (ELF)
+file. (Remember ELF?)</p>
+</li>
+<li>
+<p>Some layout is the function of <strong>convention</strong>.</p>
+</li>
+<li>
+<p>Example: why not load the code at <code>0x0</code>?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>To catch possibly the most common programmer error: <code>NULL</code> pointer
+problems!</p>
+</li>
+<li>
+<p>Leaving a large portion of the process address space starting at <code>0x0</code>
+empty allows the kernel to catch these errors, including offsets against
+<code>NULL</code> caused by <code>NULL</code> structures:</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock slide">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">bar</span> * <span class="hljs-title">foo</span> = <span class="hljs-title">NULL</span>;</span>
+foo-&gt;bar = <span class="hljs-number">10</span>;</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+<div class="sect1">
+<a class="anchor" id="_destined_to_ever_meet"></a><h2>Destined To Ever Meet?</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The <strong>stack</strong> starts at the top of the address space and grows &#x2193;.</p>
+</li>
+<li>
+<p>The <strong>heap</strong> starts towards the bottom and grows &#x2191;.</p>
+</li>
+<li>
+<p><strong>Will they ever meet?</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Probably not!</strong> That would mean either the stack or probably the heap
+was <em>huge</em>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_relocation"></a><h2>Relocation</h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">int</span> data[<span class="hljs-number">128</span>];
+...
+data[<span class="hljs-number">5</span>] = <span class="hljs-number">8</span>; <span class="hljs-comment">// Where the heck is data[5]?</span>
+...
+result = foo(data[<span class="hljs-number">5</span>]); <span class="hljs-comment">// Where the heck is foo?</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So given our address space model, no more problems with locating
+things, right?</p>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p><strong>Not quite!</strong> Dynamically-loaded libraries still need to be relocated at
+run time. Cool: but not something we&#x2019;ll cover in this course.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_address_spaces_a_great_idea"></a><h2>Address Spaces: A Great Idea?</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The address space abstraction sounds powerful and useful. (It would be
+better if it cooked breakfast.)</p>
+</li>
+<li>
+<p><strong>But can we implement it?</strong></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_implementing_address_spaces"></a><h2>Implementing Address Spaces</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What&#x2019;s required?</div>
+<ul>
+<li>
+<p><strong>Address translation</strong>: 0x10000 to Process 1 is not the same as 0x10000
+to Process 2 is not the same as&#x2026;&#x200B;</p>
+</li>
+<li>
+<p><strong>Protection</strong>: address spaces are intended to provide a <em>private</em> view
+of memory to each process.</p>
+</li>
+<li>
+<p><strong>Memory management</strong>: together one or several processes may have <strong>more
+address space</strong> allocated than physical memory on the machine.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>In a way, we are <em>encouraging</em> processes to spread out and let us
+handle the details.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+<div class="sect1">
+<a class="anchor" id="_your_mission_implement_address_spaces"></a><h2><span class>Your Mission: Implement Address Spaces</span></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Clearly implementing address spaces requires <strong>breaking</strong> the direct
+connection between a memory address and physical memory.</p>
+</li>
+<li>
+<p>Introducing another <strong>level of indirection</strong> is a <em>classic</em> systems
+technique. We have seen it before. <strong>Where?</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>File handles!</strong></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_translation_is_control"></a><h2>Translation is Control</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Forcing processes to <strong>translate</strong> a reference to gain access to the
+underlying object provides the kernel with a great deal of <strong>control</strong>.</p>
+</div>
+<div class="paragraph">
+<p>References can be <strong class="slide">revoked,</strong> <strong class="slide">shared,</strong> <strong class="slide">moved,</strong>
+<span class="slide">and <strong>altered</strong>.</span></p>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translation-1.svg" alt="translation 1" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translation-2.svg" alt="translation 2" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translation-3.svg" alt="translation 3" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translation-4.svg" alt="translation 4" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translation-5.svg" alt="translation 5" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translation-6.svg" alt="translation 6" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_memory_interface"></a><h2>Memory Interface</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We don&#x2019;t usually think about memory as having an interface, but it
+does:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>load(address)</code>: load data from the given address, usually into a
+register or possible into another memory location.</p>
+</li>
+<li>
+<p><code>store(address, value)</code>: store value to the given address, where value
+may be in a register or another memory location.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_virtual_v_physical_addresses"></a><h2>Virtual v. Physical Addresses</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The <strong>address space</strong> abstraction requires breaking the connection
+between a memory address and physical memory.</p>
+</li>
+<li>
+<p>We refer to data accessed via the memory interface as using <strong>virtual
+addresses</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>A <strong>physical address</strong> points to memory.</p>
+</li>
+<li>
+<p>A <strong>virtual address</strong> points to something that <em>acts like</em> memory.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Virtual addresses have much richer <strong>semantics</strong> than physical
+addresses, encapsulating <strong>location</strong>, <strong>permanence</strong> and <strong>protection</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_virtual_addresses_location"></a><h2>Virtual Addresses: Location</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The data referenced by a virtual address might be:</p>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>in memory</strong>! (Duh.) <span class="slide">But&#x2026;&#x200B;the kernel may have moved it to the
+<em>disk</em>.</span></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="slide">Virtual Address &#x2192;</span> <span class="slide">Physical Address</span></p>
+</div>
+</div>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>on disk</strong>, <span class="slide">but&#x2026;&#x200B;the kernel may be caching it in <em>memory</em>.</span></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="slide">Virtual Address &#x2192;</span> <span class="slide">Disk, Block, Offset</span></p>
+</div>
+</div>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>in memory on <strong>another machine</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Virtual Address &#x2192; <span class="slide">IP Address, Physical Address</span></p>
+</div>
+</div>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>a port on a <strong>hardware device</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Virtual Address &#x2192; Device, Port</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_virtual_addresses_permanence"></a><h2>Virtual Addresses: Permanence</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Processes expect data written to virtual addresses that point to
+<strong>physical memory</strong> to store values <strong class="slide">transiently</strong>.</p>
+</div>
+<div class="paragraph">
+<p>Processes expect data written to virtual addresses that point to
+<strong>disk</strong> to store values <strong class="slide">permanently</strong>.</p>
+</div>
+<div class="ulist">
+<div class="title">What about virtual addresses that point to <strong>device ports</strong>?</div>
+<ul>
+<li>
+<p>Hardware may change its registers independently, so a read will not
+necessarily return the last value written.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_virtual_addresses_permissions_and_protection"></a><h2>Virtual Addresses: Permissions and Protection</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Some virtual addresses may only be used by the <strong>kernel</strong> while in
+kernel mode.</p>
+</li>
+<li>
+<p>Virtual addresses may also be assigned <strong>read</strong>, <strong>write</strong> or <strong>execute</strong>
+permissions.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>read/write</strong>: <span class="slide">a process can load/store to this address.</span></p>
+</li>
+<li>
+<p><strong>execute</strong>: <span class="slide">a process can load and execute instructions from this
+address.</span></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_creating_virtual_addresses_exec"></a><h2>Creating Virtual Addresses: <code>exec()</code></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><code>exec()</code> uses a <strong>blueprint</strong> from an ELF file to determine how the
+address space should look when <code>exec()</code> completes.</p>
+</li>
+<li>
+<p>Specifically, <code>exec()</code> creates and initializes <strong>virtual addresses</strong> that
+(mainly) point to <strong>memory</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>code</strong>, usually marked <em>read-only</em>.</p>
+</li>
+<li>
+<p><strong>data</strong>, marked <em>read-write</em>, but not executable.</p>
+</li>
+<li>
+<p><strong>heap</strong>, an area used for <em>dynamic allocations</em>, marked read-write.</p>
+</li>
+<li>
+<p><strong>stack</strong> space for the <em>first</em> thread.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_pmap_memory_mappings"></a><h2>$ <code>pmap</code> # memory mappings</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><span class="image"><img src="/img/slides/figures/pmap.svg" alt="pmap" style="width: 100%;"></span></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_creating_virtual_addresses_fork"></a><h2>Creating Virtual Addresses: <code>fork()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><code>fork()</code> <strong>copies</strong> the address space of the calling process.</p>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/fork-3.svg" alt="fork 3" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/fork-2.svg" alt="fork 2" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p>The child has the <strong>same</strong> virtual addresses as the parent but they
+point to <strong>different</strong> memory locations.</p>
+</div><div class="listingblock slide replace">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">int</span> i = <span class="hljs-number">2</span>;
+ret = fork();
+<span class="hljs-keyword">if</span> (ret != <span class="hljs-number">0</span>) {
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%x&quot;</span>, &amp;i); <span class="hljs-comment">// prints virtual address 0x20010</span>
+  i = <span class="hljs-number">4</span>;
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d&quot;</span>, i);
+} <span class="hljs-keyword">else</span> {
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%x&quot;</span>, &amp;i);
+  i = <span class="hljs-number">3</span>;
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d&quot;</span>, i);
+}</code></pre>
+</div>
+</div><div class="listingblock slide replace">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">int</span> i = <span class="hljs-number">2</span>;
+ret = fork();
+<span class="hljs-keyword">if</span> (ret != <span class="hljs-number">0</span>) {
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%x&quot;</span>, &amp;i); <span class="hljs-comment">// prints virtual address 0x20010</span>
+  i = <span class="hljs-number">4</span>;
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d&quot;</span>, i); <span class="hljs-comment">// prints 4. virtual address points to private memory.</span>
+} <span class="hljs-keyword">else</span> {
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%x&quot;</span>, &amp;i);
+  i = <span class="hljs-number">3</span>;
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d&quot;</span>, i);
+}</code></pre>
+</div>
+</div><div class="listingblock slide replace">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">int</span> i = <span class="hljs-number">2</span>;
+ret = fork();
+<span class="hljs-keyword">if</span> (ret != <span class="hljs-number">0</span>) {
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%x&quot;</span>, &amp;i); <span class="hljs-comment">// prints virtual address 0x20010</span>
+  i = <span class="hljs-number">4</span>;
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d&quot;</span>, i); <span class="hljs-comment">// prints 4. virtual address points to private memory.</span>
+} <span class="hljs-keyword">else</span> {
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%x&quot;</span>, &amp;i); <span class="hljs-comment">// prints virtual address 0x20010</span>
+  i = <span class="hljs-number">3</span>;
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d&quot;</span>, i);
+}</code></pre>
+</div>
+</div><div class="listingblock slide replace">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">int</span> i = <span class="hljs-number">2</span>;
+ret = fork();
+<span class="hljs-keyword">if</span> (ret != <span class="hljs-number">0</span>) {
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%x&quot;</span>, &amp;i); <span class="hljs-comment">// prints virtual address 0x20010</span>
+  i = <span class="hljs-number">4</span>;
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d&quot;</span>, i); <span class="hljs-comment">// prints 4. virtual address points to private memory.</span>
+} <span class="hljs-keyword">else</span> {
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%x&quot;</span>, &amp;i); <span class="hljs-comment">// prints virtual address 0x20010</span>
+  i = <span class="hljs-number">3</span>;
+  <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;%d&quot;</span>, i); <span class="hljs-comment">// prints 3. virtual address points to private memory.</span>
+}</code></pre>
+</div>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_issues_with_fork"></a><h2>Issues with <code>fork()</code></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Copying all that memory is expensive!</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Especially when the next thing that a process frequently does is start
+load a new binary which destroys most of the state <code>fork()</code> has carefully
+copied!</p>
+</li>
+<li>
+<p>We will come back to this problem next week when we talk about <strong>clever
+memory-management tricks</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_creating_virtual_addresses_sbrk"></a><h2>Creating Virtual Addresses: <code>sbrk()</code></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Dynamic memory allocation is performed by the <code>sbrk()</code> system call.</p>
+</li>
+<li>
+<p><code>sbrk()</code> asks the kernel to move the <strong>break point</strong>, or the point at
+which the process heap ends.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="/img/slides/figures/memory/sbrk-1.svg" alt="sbrk 1" style="width: 100%;"></span></p>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="/img/slides/figures/memory/sbrk-2.svg" alt="sbrk 2" style="width: 100%;"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_creating_virtual_addresses_mmap"></a><h2>Creating Virtual Addresses: <code>mmap()</code></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><code>mmap()</code> is a system call that creates virtual addresses that map to a
+portion of a <strong>file</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_example_machine_memory_layout_system161"></a><h2>Example Machine Memory Layout: System/161</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>System/161 emulates a 32-bit MIPS architecture.</p>
+</li>
+<li>
+<p>Addresses are 32-bits wide: from 0x0 to 0xFFFFFFFF.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">This MIPS architecture defines <strong>four</strong> address regions:</div>
+<ul>
+<li>
+<p><code>0x0&#x2013;0x7FFFFFFF</code>: <strong>process virtual addresses</strong>. Accessible to user
+processes, translated by the kernel. 2 GB.</p>
+</li>
+<li>
+<p><code>0x80000000&#x2013;0x9FFFFFFF</code>: <strong>kernel direct-mapped addresses</strong>. Only
+accessible to the kernel, translated by subtracting 0x80000000. 512 MB.
+Cached.</p>
+</li>
+<li>
+<p><code>0xA0000000&#x2013;0xBFFFFFFF</code>: <strong>kernel direct-mapped addresses</strong>. Only
+accessible to the kernel. 512 MB. Uncached.</p>
+</li>
+<li>
+<p><code>0xC0000000&#x2013;0xFFFFFFFF</code>: <strong>kernel virtual addresses</strong>. Only accessible to
+the kernel, translated by the kernel. 1 GB.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="/img/slides/figures/memory/mips-1.svg" alt="mips 1" style="width: 100%;"></span></p>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="/img/slides/figures/memory/mips-2.svg" alt="mips 2" style="width: 100%;"></span></p>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="/img/slides/figures/memory/mips-3.svg" alt="mips 3" style="width: 100%;"></span></p>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="/img/slides/figures/memory/mips-4.svg" alt="mips 4" style="width: 100%;"></span></p>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="paragraph">
+<p><span class="image"><img src="/img/slides/figures/memory/mips-5.svg" alt="mips 5" style="width: 100%;"></span></p>
+</div>
+</div>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_mechanism_v_policy"></a><h2>Mechanism v. Policy</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>We will get to the details of virtual address <strong>translation</strong> next time.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">However, it is important to note that <strong>both</strong> hardware and software are involved:</div>
+<ul>
+<li>
+<p>The hardware <strong>memory management unit</strong> <em>speeds</em> the process of
+translation once the kernel has told it how to translate an address or
+according to architectural conventions. The MMU is the <strong>mechanism</strong>.</p>
+</li>
+<li>
+<p>The operating system memory management subsystem manages translation
+<strong>policies</strong> by telling the MMU what to do.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Goal: system follows operating system established <strong>policies</strong> while
+involving the operating system directly as rarely as possible.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2017-03-06-addressspaces/" title="Previous: Introduction to Memory Management" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2017-03-10-addresstranslation/" title="Next: Address Translation">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">Convention</a>
+					</li>
+					<li class="h5"><a href="#_destined_to_ever_meet">Destined To Ever Meet?</a>
+					</li>
+					<li class="h5"><a href="#_relocation">Relocation</a>
+					</li>
+					<li class="h5"><a href="#_address_spaces_a_great_idea">Address Spaces: A Great Idea?</a>
+					</li>
+					<li class="h5"><a href="#_implementing_address_spaces">Implementing Address Spaces</a>
+					</li>
+					<li class="h5"><a href="#_your_mission_implement_address_spaces">Your Mission: Implement Address Spaces</a>
+					</li>
+					<li class="h5"><a href="#_translation_is_control">Translation is Control</a>
+					</li>
+					<li class="h5"><a href="#_memory_interface">Memory Interface</a>
+					</li>
+					<li class="h5"><a href="#_virtual_v_physical_addresses">Virtual v. Physical Addresses</a>
+					</li>
+					<li class="h5"><a href="#_virtual_addresses_location">Virtual Addresses: Location</a>
+					</li>
+					<li class="h5"><a href="#_virtual_addresses_permanence">Virtual Addresses: Permanence</a>
+					</li>
+					<li class="h5"><a href="#_virtual_addresses_permissions_and_protection">Virtual Addresses: Permissions and Protection</a>
+					</li>
+					<li class="h5"><a href="#_creating_virtual_addresses_exec">Creating Virtual Addresses: exec()</a>
+					</li>
+					<li class="h5"><a href="#_pmap_memory_mappings">$ pmap # memory mappings</a>
+					</li>
+					<li class="h5"><a href="#_creating_virtual_addresses_fork">Creating Virtual Addresses: fork()</a>
+					</li>
+					<li class="h5"><a href="#_issues_with_fork">Issues with fork()</a>
+					</li>
+					<li class="h5"><a href="#_creating_virtual_addresses_sbrk">Creating Virtual Addresses: sbrk()</a>
+					</li>
+					<li class="h5"><a href="#_creating_virtual_addresses_mmap">Creating Virtual Addresses: mmap()</a>
+					</li>
+					<li class="h5"><a href="#_example_machine_memory_layout_system161">Example Machine Memory Layout: System/161</a>
+					</li>
+					<li class="h5"><a href="#_mechanism_v_policy">Mechanism v. Policy</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 3/7/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/virtualaddresses.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/virtualaddresses.adoc" target="_blank">View</a>
+			<br>
+			Built 3/7/2017 @ 19:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

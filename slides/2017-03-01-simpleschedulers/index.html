@@ -1,0 +1,1078 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Simple Schedulers</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="An overview of simple schedulers including the know-nothings (random, round-robin) and oracle schedulers.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2017-02-27-schedulingintro/" title="Previous: Introduction to Scheduling" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2017-03-03-schedulingstory/" title="Next: A Scheduling Story">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="R65MX-D3GVA"><img class="youtube-thumb" src="//i.ytimg.com/vi/R65MX-D3GVA/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Simple Schedulers</h1>
+				
+
+
+
+
+
+
+
+
+
+<div class="sect1">
+<a class="anchor" id="_scheduling_information"></a><h2>Scheduling Information</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Today we will talk about schedulers that use <strong>three</strong> kinds of
+additional information in order to choose what thread to run next:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>What will happen next?</strong> Oracular schedulers can <em>cannot be
+implemented</em> but can be a good point of comparison.</p>
+</li>
+<li>
+<p><strong>What just happened?</strong> Typical schedulers&#x2014;and many other operating
+system algorithms&#x2014;<em>use the past to predict the future</em>.</p>
+</li>
+<li>
+<p><strong>What does the user want?</strong> Schedulers usually have ways to
+incorporate user input.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_the_know_nothings"></a><h2>The Know Nothings</h2>
+<div class="sectionbody">
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random.svg" alt="random" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-1.svg" alt="random 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-2.svg" alt="random 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-3.svg" alt="random 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-4.svg" alt="random 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-5.svg" alt="random 5" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-6.svg" alt="random 6" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-7.svg" alt="random 7" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-8.svg" alt="random 8" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-9.svg" alt="random 9" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-10.svg" alt="random 10" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-11.svg" alt="random 11" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-12.svg" alt="random 12" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-13.svg" alt="random 13" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-14.svg" alt="random 14" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-15.svg" alt="random 15" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-16.svg" alt="random 16" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-17.svg" alt="random 17" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-18.svg" alt="random 18" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-19.svg" alt="random 19" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-20.svg" alt="random 20" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-21.svg" alt="random 21" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/random-22.svg" alt="random 22" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_random_scheduling"></a><h2>Random Scheduling</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Choose a <strong>scheduling quantum</strong>. This is the maximum amount of time any
+thread will be able to run at one time.</p>
+</li>
+<li>
+<p>Then:</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Choose a thread a random from the <strong>ready pile</strong>.</p>
+</li>
+<li>
+<p>Run the thread until it it blocks or the scheduling quantum expires.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">What happens when a thread leaves the waiting state?</div>
+<ul>
+<li>
+<p>Just return it to the ready pile!</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_round_robin_scheduling"></a><h2>Round-Robin Scheduling</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Choose a <strong>scheduling quantum</strong>. This is the maximum amount of time any
+thread will be able to run at one time.</p>
+</li>
+<li>
+<p>Establish an ordered ready queue. For example, when a thread is
+created add it to the tail of the ready queue.</p>
+</li>
+<li>
+<p>Then:</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Choose the thread at the head of the ready queue.</p>
+</li>
+<li>
+<p>Run the thread until it it blocks or the scheduling quantum expires.</p>
+</li>
+<li>
+<p>If its scheduling quantum expires, place it at the tail of the ready
+queue.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>What happens when a thread leaves the waiting state?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Could put it at the head of the ready queue, or at the tail.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_the_know_nothings_2"></a><h2>The Know Nothings</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The <strong>random</strong> and <strong>round robin</strong> scheduling algorithms:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>require no information about a threads past, present, or future, and</p>
+</li>
+<li>
+<p>accept no user input.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>These are rarely useful algorithms except as straw men to compare
+other approaches to.</p>
+</li>
+<li>
+<p>Both <strong>penalize</strong>&#x2014;or at least do not reward&#x2014;threads that give up the CPU
+before their quantums expire.</p>
+</li>
+<li>
+<p>As one exception, <strong>round robin</strong> scheduling is sometimes used once
+other scheduling decisions have been made and a set of threads are
+considered equivalent.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>As an example, you might rotate round-robin though a set of threads
+with the same priority.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_the_know_it_alls"></a><h2>The Know-It-Alls</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Let&#x2019;s say we can predict the future. What might we like to know about
+the thread we are about to execute?</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>How long</strong> is it going to use the CPU!</p>
+</li>
+<li>
+<p>Will it <strong>block</strong> or <strong>yield</strong>?</p>
+</li>
+<li>
+<p>How long will it wait?</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/sjf-1.svg" alt="sjf 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/sjf-2.svg" alt="sjf 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/sjf-3.svg" alt="sjf 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/sjf-4.svg" alt="sjf 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/sjf-5.svg" alt="sjf 5" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/sjf-6.svg" alt="sjf 6" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/sjf-7.svg" alt="sjf 7" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/sjf-8.svg" alt="sjf 8" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/sjf-9.svg" alt="sjf 9" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/sjf-10.svg" alt="sjf 10" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/sjf-11.svg" alt="sjf 11" style="width: 80%;">
+</div>
+</div>
+</div>
+</div></div>
+</div>
+
+
+<div class="sect1">
+<a class="anchor" id="_shortest_job_first"></a><h2>Shortest-Job First</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Why would we use this algorithm?</div>
+<ul>
+<li>
+<p><strong>Minimizes waiting time!</strong></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">More generally, why would we prefer threads that give up the CPU before their time quantum ends?</div>
+<ul>
+<li>
+<p>They are probably waiting for <strong>something else</strong>, which can be done in parallel with CPU use.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_the_know_it_alls_3"></a><h2>The Know-It-Alls</h2>
+<div class="sectionbody">
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-1.svg" alt="waiting 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-2.svg" alt="waiting 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-3.svg" alt="waiting 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-4.svg" alt="waiting 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-5.svg" alt="waiting 5" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-6.svg" alt="waiting 6" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-7.svg" alt="waiting 7" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-8.svg" alt="waiting 8" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-9.svg" alt="waiting 9" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-10.svg" alt="waiting 10" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-11.svg" alt="waiting 11" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-12.svg" alt="waiting 12" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-13.svg" alt="waiting 13" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-14.svg" alt="waiting 14" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-15.svg" alt="waiting 15" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-16.svg" alt="waiting 16" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-17.svg" alt="waiting 17" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-18.svg" alt="waiting 18" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-18.svg" alt="waiting 18" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/waiting-19.svg" alt="waiting 19" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_oracular_spectacular"></a><h2>Oracular Spectacular</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Normally we <strong>cannot predict the future</strong></div>
+<ul>
+<li>
+<p>Control flow is unpredictable.</p>
+</li>
+<li>
+<p>Users are unpredictable.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Instead, <strong>use the past to predict the future</strong>.</div>
+<ul>
+<li>
+<p>What did the thread do recently? It will probably keep doing that.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_multi_level_feedback_queues"></a><h2>Multi-Level Feedback Queues</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Choose a <strong>scheduling quantum</strong>. This is the maximum amount of time any
+thread will be able to run at one time.</p>
+</li>
+<li>
+<p>Establish some number of queues; each represents a <strong>level</strong>.</p>
+</li>
+<li>
+<p>Threads from the highest-level queues are chosen first.</p>
+</li>
+<li>
+<p>Then:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Choose and run a thread from the highest-level non-empty queue.</p>
+</li>
+<li>
+<p>If the thread <strong>blocks</strong> or <strong>yields</strong>, promote it to a higher level
+queue.</p>
+</li>
+<li>
+<p>If the thread must be <strong>preempted</strong> at the end of a quantum, demote it
+to a lower level queue.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-1.svg" alt="mlfq 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-2.svg" alt="mlfq 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-3.svg" alt="mlfq 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-4.svg" alt="mlfq 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-5.svg" alt="mlfq 5" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-6.svg" alt="mlfq 6" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-7.svg" alt="mlfq 7" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-8.svg" alt="mlfq 8" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-9.svg" alt="mlfq 9" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-10.svg" alt="mlfq 10" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-11.svg" alt="mlfq 11" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-12.svg" alt="mlfq 12" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-13.svg" alt="mlfq 13" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-14.svg" alt="mlfq 14" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-15.svg" alt="mlfq 15" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-16.svg" alt="mlfq 16" style="width: 80%;">
+</div>
+</div>
+</div>
+</div></div>
+</div>
+
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2017-02-27-schedulingintro/" title="Previous: Introduction to Scheduling" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2017-03-03-schedulingstory/" title="Next: A Scheduling Story">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">Scheduling Information</a>
+					</li>
+					<li class="h5"><a href="#_the_know_nothings">The Know Nothings</a>
+					</li>
+					<li class="h5"><a href="#_random_scheduling">Random Scheduling</a>
+					</li>
+					<li class="h5"><a href="#_round_robin_scheduling">Round-Robin Scheduling</a>
+					</li>
+					<li class="h5"><a href="#_the_know_nothings_2">The Know Nothings</a>
+					</li>
+					<li class="h5"><a href="#_the_know_it_alls">The Know-It-Alls</a>
+					</li>
+					<li class="h5"><a href="#_shortest_job_first">Shortest-Job First</a>
+					</li>
+					<li class="h5"><a href="#_the_know_it_alls_3">The Know-It-Alls</a>
+					</li>
+					<li class="h5"><a href="#_oracular_spectacular">Oracular Spectacular</a>
+					</li>
+					<li class="h5"><a href="#_multi_level_feedback_queues">Multi-Level Feedback Queues</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 3/1/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/simpleschedulers.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/simpleschedulers.adoc" target="_blank">View</a>
+			<br>
+			Built 2/28/2017 @ 19:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

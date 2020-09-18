@@ -1,0 +1,590 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Page Translation</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Discussion of page translation.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2017-03-10-addresstranslation/" title="Previous: Address Translation" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2017-03-15-paging/" title="Next: Paging">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="pxqcRCWzlzs"><img class="youtube-thumb" src="//i.ytimg.com/vi/pxqcRCWzlzs/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Page Translation</h1>
+				
+
+
+
+
+
+
+
+
+
+
+
+<div class="sect1">
+<a class="anchor" id="_lets_regroup"></a><h2>Let&#x2019;s Regroup</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Ideally, what would we like?</div>
+<ul>
+<li>
+<p><strong>Fast</strong> mapping from <em>any</em> virtual byte to <em>any</em> physical byte.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Operating system <strong>cannot</strong> do this. Can hardware help?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_translation_lookaside_buffer"></a><h2>Translation Lookaside Buffer</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Common systems trick: when something is too slow, throw a <strong>cache</strong> at
+it.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_tlb_example"></a><h2>TLB Example</h2>
+<div class="sectionbody">
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/tlb-1.svg" alt="tlb 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/tlb-2.svg" alt="tlb 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/tlb-3.svg" alt="tlb 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/tlb-4.svg" alt="tlb 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_whats_the_catch"></a><h2>What&#x2019;s the Catch?</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>CAMs are <strong>limited</strong> in size. We cannot make them arbitrarily large.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">So at this point:</div>
+<ul>
+<li>
+<p><strong>Segments</strong> are too <em>large</em> and lead to internal fragmentation.</p>
+</li>
+<li>
+<p>Mapping individual <strong>bytes</strong> would mean that the TLB would not be able
+to cache many entries and performance would suffer.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Is there a middle ground?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_pages"></a><h2>Pages</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Modern solution is to choose a translation granularity that is <strong class="slide">small
+enough</strong> to limit internal fragmentation but <strong class="slide">large</strong> enough to allow the
+TLB to cache entries covering a significant amount of memory.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Also limits the size of kernel data structures associated with memory
+management.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Execution <strong>locality</strong> also helps here: processes memory accesses are typically
+highly spatially <em>clustered</em>, meaning that even a small cache can be very
+effective.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_page_size"></a><h2>Page Size</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>4K is a very common page size. 8K or larger pages are also sometimes used.</p>
+</li>
+<li>
+<p>4K pages and a 128-entry TLB allow caching translations for 512 KB of
+memory.</p>
+</li>
+<li>
+<p>You can think of pages as <strong>fixed size</strong> segments, so the <strong>bound</strong> is the
+same for each.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_page_translation"></a><h2>Page Translation</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>We refer to the portion of the virtual address that identifies the
+page as the <strong>virtual page number (VPN)</strong> and the remainder as the
+<strong>offset</strong>.</p>
+</li>
+<li>
+<p>Virtual pages map to physical pages.</p>
+</li>
+<li>
+<p>All addresses inside a single virtual page map to the <strong>same</strong> physical
+page.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Check:</strong> for 4K pages, split 32-bit address into <strong>virtual page number</strong>
+(top 20 bits) and offset (bottom 12 bits). Check if a virtual page to
+physical page translation exists for this page.</p>
+</li>
+<li>
+<p><strong>Translate:</strong> Physical Address = Physical Page + offset.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_tlb_example_2"></a><h2>TLB Example</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Assume we are using <strong>4K</strong> pages.</p>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-1.svg" alt="pagetranslation 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-2.svg" alt="pagetranslation 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-3.svg" alt="pagetranslation 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-4.svg" alt="pagetranslation 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-5.svg" alt="pagetranslation 5" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-6.svg" alt="pagetranslation 6" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-7.svg" alt="pagetranslation 7" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-8.svg" alt="pagetranslation 8" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-9.svg" alt="pagetranslation 9" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-10.svg" alt="pagetranslation 10" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-11.svg" alt="pagetranslation 11" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-12.svg" alt="pagetranslation 12" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/pagetranslation-13.svg" alt="pagetranslation 13" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_tlb_management"></a><h2>TLB Management</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Where do entries in the TLB come from?</div>
+<ul>
+<li>
+<p>The operating system loads them.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">What happens if a process tries to access an address that is <strong>not</strong> in the TLB?</div>
+<ul>
+<li>
+<p>The TLB asks the operating system for help via a <strong>TLB exception</strong>. The
+operating system must either load the mapping or figure out what to do
+with the process. (Maybe boom.)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_paging_pros"></a><h2>Paging: Pros</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Maintains many of the pros of segmentation, which can be layered on
+top of paging.</p>
+</li>
+<li>
+<p>Pro: can <strong>organize</strong> and <strong>protect</strong> regions of memory appropriately.</p>
+</li>
+<li>
+<p>Pro: better fit for <strong>address spaces</strong>. Even less internal fragmentation
+than segmentation due to smaller allocation size.</p>
+</li>
+<li>
+<p>Pro: <strong>no</strong> external fragmentation due to fixed allocation size!</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_paging_cons"></a><h2>Paging: Cons</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Con: requires per-page hardware translation. <strong>Use hardware to help
+us.</strong></p>
+</li>
+<li>
+<p>Con: requires per-page operating system state. <strong>A lot of clever
+engineering here.</strong></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2017-03-10-addresstranslation/" title="Previous: Address Translation" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2017-03-15-paging/" title="Next: Paging">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">Let&#x2019;s Regroup</a>
+					</li>
+					<li class="h5"><a href="#_translation_lookaside_buffer">Translation Lookaside Buffer</a>
+					</li>
+					<li class="h5"><a href="#_tlb_example">TLB Example</a>
+					</li>
+					<li class="h5"><a href="#_whats_the_catch">What&#x2019;s the Catch?</a>
+					</li>
+					<li class="h5"><a href="#_pages">Pages</a>
+					</li>
+					<li class="h5"><a href="#_page_size">Page Size</a>
+					</li>
+					<li class="h5"><a href="#_page_translation">Page Translation</a>
+					</li>
+					<li class="h5"><a href="#_tlb_example_2">TLB Example</a>
+					</li>
+					<li class="h5"><a href="#_tlb_management">TLB Management</a>
+					</li>
+					<li class="h5"><a href="#_paging_pros">Paging: Pros</a>
+					</li>
+					<li class="h5"><a href="#_paging_cons">Paging: Cons</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 3/11/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/pagetranslation.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/pagetranslation.adoc" target="_blank">View</a>
+			<br>
+			Built 3/12/2017 @ 20:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

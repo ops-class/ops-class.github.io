@@ -1,0 +1,683 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Threads and Thread Implementations</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Introduction to the thread abstraction and discussion of different threading implementations.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline slide" id="_today">
+<h2>Today</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Threads.</p>
+</li>
+<li>
+<p>Threading implementations: user v. kernel.</p>
+</li>
+<li>
+<p>Thread states.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_thread_transitions">
+<h2>Review: Thread Transitions</h2>
+
+<div class="paragraph">
+<p>A transition between two threads is called a <span class="slide"><strong>context switch</strong></span>.</p>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_cpu_limitations">
+<h2>Review: CPU Limitations</h2>
+
+<div class="ulist">
+<div class="title slide">What are problems with the CPU that the operating system tries to correct?</div>
+<ul>
+<li class="slide">
+<p>There is only one, and</p>
+</li>
+<li class="slide">
+<p>it is way faster than other parts of the system.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_batch_scheduling">
+<h2>Review: Batch Scheduling</h2>
+
+<div class="ulist">
+<div class="title slide">What is batch scheduling?</div>
+<ul>
+<li class="slide">
+<p>Running jobs sequentially until completion.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">What is the problem with batch scheduling?</div>
+<ul>
+<li class="slide">
+<p>Slow devices can idle the CPU.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_the_illusion_of_concurrency">
+<h2><span class="small">Review: The Illusion of Concurrency</span></h2>
+
+<div class="ulist">
+<div class="title slide">How does the operating system create the illusion of concurrency?</div>
+<ul>
+<li class="slide">
+<p>By <strong>rapidly switching</strong> the CPU between multiple running tasks.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_seize_the_day">
+<h2>Review: Seize the Day</h2>
+
+<div class="ulist">
+<div class="title slide">How does the operating system ensure that it retains control over what threads are using the CPU?</div>
+<ul>
+<li class="slide">
+<p>By using a <strong>periodic timer</strong> to generate hardware interrupts.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_the_illusion_of_concurrency_2">
+<h2><span class="small">Review: The Illusion of Concurrency</span></h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Timer interrupts mean that a running thread may be stopped <strong>at any time.</strong></p>
+</li>
+<li class="slide">
+<p>When the thread restarts we want it to <em>appear</em> that nothing has happened.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_saving_thread_state">
+<h2>Review: Saving Thread State</h2>
+
+<div class="ulist">
+<div class="title slide">What does thread state consist of?</div>
+<ul>
+<li class="slide">
+<p><strong>Registers</strong></p>
+</li>
+<li class="slide">
+<p><strong>Stack</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_context_switch_overhead">
+<h2>Review: Context Switch Overhead</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Context switches are <strong>not free</strong>, require executing many instructions
+and saving fair amount of state.</p>
+</li>
+<li class="slide">
+<p>Context switching creates the <strong>cost</strong> to enter the kernel.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">How does this affect the rate at which the hardware timer fires to allow the kernel to (potentially) switch between threads?</div>
+<ul>
+<li class="slide">
+<p>Can&#x2019;t go <strong>too fast</strong> otherwise overhead starts to dominate!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_questions_cpu_limitations_concurrency_context_switching">
+<h2>Questions: CPU Limitations, Concurrency, Context Switching?</h2>
+
+
+
+</div>
+<div class="slide" id="_threads">
+<h2>Threads</h2>
+
+<div class="ulist">
+<div class="title slide">So what is a thread?</div>
+<ul>
+<li class="slide">
+<p>Registers</p>
+</li>
+<li class="slide">
+<p>Stack</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">How are each of the following shared between threads or processes?</div>
+<ul>
+<li class="slide">
+<p>Registers</p>
+</li>
+<li class="slide">
+<p>Stack</p>
+</li>
+<li class="slide">
+<p>Memory</p>
+</li>
+<li class="slide">
+<p>File descriptor table.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_threads_2">
+<h2>Threads</h2>
+
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock expand">
+<div class="content">
+<img src="/img/slides/figures/threads/process-0.svg" alt="process 0" style="width: 70%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock expand">
+<div class="content">
+<img src="/img/slides/figures/threads/process-1.svg" alt="process 1" style="width: 70%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock expand">
+<div class="content">
+<img src="/img/slides/figures/threads/process-2.svg" alt="process 2" style="width: 70%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock expand">
+<div class="content">
+<img src="/img/slides/figures/threads/process-3.svg" alt="process 3" style="width: 70%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock expand">
+<div class="content">
+<img src="/img/slides/figures/threads/process-4.svg" alt="process 4" style="width: 70%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_why_use_threads">
+<h2>Why Use Threads?</h2>
+
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p>Threads can be a good way of thinking about applications that do multiple things &quot;simultaneously.&quot;</p>
+</li>
+<li class="slide">
+<p>Threads may naturally encapsulate some data about a certain thing that the application is doing.</p>
+</li>
+<li class="slide">
+<p>Threads may help applications hide or parallelize delays caused by slow devices.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="small slide" id="_threads_v_processes_part_ii">
+<h2>Threads v. Processes Part II</h2>
+
+<div class="paragraph">
+<p>Good example from Wikipedia: multiple threads within a single process
+are like multiple cooks trying to prepare the same meal together.</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/threads/kitchen.svg" alt="kitchen" style="width: 40%;">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Each one is doing one thing.</p>
+</li>
+<li class="slide">
+<p>They are probably doing different things.</p>
+</li>
+<li class="slide">
+<p>They all share the same recipe but may be looking at different parts
+of it.</p>
+</li>
+<li class="slide">
+<p>They have private state but can communicate easily.</p>
+</li>
+<li class="slide">
+<p>They must coordinate!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_meme">
+<h2>Meme</h2>
+
+<div class="paragraph meme-top">
+<p>The OS corrupted</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>The cake</p>
+</div>
+
+</div>
+<div class="slide" id="_aside_threads_v_events">
+<h2>Aside: Threads v. Events</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>While threads are a reasonable way of thinking about concurrent programming,
+they are not the only way&#x2014;&#x200B;or even always the <em>best</em> way&#x2014;&#x200B;to make use of
+system resources.</p>
+</li>
+<li class="slide">
+<p>Another approach is known as
+<a href="https://en.wikipedia.org/wiki/Event-driven_programming" target="_blank" class="external">event-driven programming</a>.</p>
+</li>
+<li class="slide">
+<p>Anyone who has done JavaScript development or used frameworks like
+<a href="http://nodejs.org/" target="_blank" class="external">node.js</a> has grown familiar with this programming model.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Events v. threads (over)simplified:</div>
+<ul>
+<li class="slide">
+<p>Threads <strong>can block</strong>, so we make use of the CPU by switching between
+threads!</p>
+</li>
+<li class="slide">
+<p>Event handlers <strong>cannot block</strong>, so we can make use of the CPU by simply
+running events until completion.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_naturally_multithreaded_applications">
+<h2><span class="small">Naturally Multithreaded Applications</span></h2>
+
+<div class="ulist">
+<div class="title slide">Web server:</div>
+<ul>
+<li class="slide">
+<p>Use a separate thread to handle each incoming request.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Web browser:</div>
+<ul>
+<li class="slide">
+<p>Separate threads for each open tab.</p>
+</li>
+<li class="slide">
+<p>When loading a page, separate threads to request and receive each
+unique part of the page.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Scientific applications:</div>
+<ul>
+<li class="slide">
+<p>Divide-and-conquer &quot;embarrassingly parallelizable&quot; data sets.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_why_not_processes">
+<h2>Why Not Processes?</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>IPC is more difficult because the kernel tries to protect processes
+from each other.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Inside a single process, anything goes!</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>State (what?) associated with processes doesn&#x2019;t scale well.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_implementing_threads">
+<h2>Implementing Threads</h2>
+
+<div class="openblock small">
+<div class="content">
+<div class="ulist">
+<div class="title slide">Threads can be implemented in user space by unprivileged libraries.</div>
+<ul>
+<li class="slide">
+<p>This is the M:1 threading model, M user threads that look like 1
+thread to the operating system kernel.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Threads can be implemented by the kernel directly.</div>
+<ul>
+<li class="slide">
+<p>This is the 1:1 threading model.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="paragraph">
+<p><span class="image expand"><img src="/img/slides/figures/threads/threadmodel-base.svg" alt="threadmodel base" style="width: 40%;"></span></p>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="paragraph">
+<p><span class="image expand"><img src="/img/slides/figures/threads/threadmodel-M1.svg" alt="threadmodel M1" style="width: 40%;"></span></p>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="paragraph">
+<p><span class="image expand"><img src="/img/slides/figures/threads/threadmodel-11.svg" alt="threadmodel 11" style="width: 40%;"></span></p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_implementing_threads_in_user_space">
+<h2>Implementing Threads in User Space</h2>
+
+<div class="ulist">
+<div class="title slide">How is this possible?</div>
+<ul>
+<li class="slide">
+<p>Doesn&#x2019;t involve multiplexing between processes so no kernel privilege
+required!</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">How do I:</div>
+<ul>
+<li class="slide">
+<p><strong>Save and restore context?</strong> <span class="slide">This is just saving and restoring
+registers. The C library has an implementation called <code>setjmp()</code>/<code>longjmp()</code>.</span></p>
+</li>
+<li class="slide">
+<p><strong>Preempt other threads?</strong> <span class="slide">Use periodic signals delivered by the
+operating system to activate a user space thread scheduler.</span></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_aside_setjmplongjmp_wizardry">
+<h2>Aside: <code>setjmp()</code>/<code>longjmp()</code> Wizardry</h2>
+
+<div class="paragraph">
+<p>What will the following code do?</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock smallest">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span><span class="hljs-params">(<span class="hljs-keyword">int</span> argc, <span class="hljs-keyword">void</span> * argv)</span> </span>{
+  <span class="hljs-keyword">int</span> i, restored = <span class="hljs-number">0</span>;
+  jump_buf saved;
+  <span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++) {
+    <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Value of i is now %d\n&quot;</span>, i);
+    <span class="hljs-keyword">if</span> (i == <span class="hljs-number">5</span>) {
+      <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;OK, saving state...\n&quot;</span>);
+      <span class="hljs-keyword">if</span> (setjmp(saved) == <span class="hljs-number">0</span>) {
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Saved CPU state.\n&quot;</span>);
+        <span class="hljs-keyword">break</span>;
+      } <span class="hljs-keyword">else</span> {
+        <span class="hljs-built_in">printf</span>(<span class="hljs-string">&quot;Restored CPU state.\n&quot;</span>);
+        restored = <span class="hljs-number">1</span>;
+      }
+    }
+  }
+  <span class="hljs-keyword">if</span> (!restored) {
+    longjmp(saved, <span class="hljs-number">1</span>);
+  }
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock smallest slide">
+<div class="content">
+<pre class="highlight"><code class="language-bash lang-bash" data-lang="bash">Value of i is now 0
+Value of i is now 1
+Value of i is now 2
+Value of i is now 3
+Value of i is now 4
+Value of i is now 5
+OK, saving state...
+Saved CPU state.
+Restored CPU state.
+Value of i is now 6
+Value of i is now 7
+Value of i is now 8
+Value of i is now 9</code></pre>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="ulist smaller">
+<ul>
+<li class="slide">
+<p>Use these tricks to impress your (new) friends!</p>
+</li>
+<li class="slide">
+<p>(Or get rid of old ones&#x2026;&#x200B;)</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="spelling_exception slide">
+<h2>!</h2>
+
+<div class="paragraph background">
+<p>image:http://i2.kym-cdn.com/entries/icons/original/000/011/057/unimpressed.PNG</p>
+</div>
+<div class="paragraph meme-top">
+<p>Nailed the longjmp</p>
+</div>
+<div class="paragraph meme-bottom slide">
+<p>Forgot the setjmp</p>
+</div>
+
+</div>
+<div class="slide" id="_comparing_threading_implementations">
+<h2><span class="small">Comparing Threading Implementations</span></h2>
+
+<div class="paragraph">
+<p><strong>M:1 (user space) threading</strong></p>
+</div>
+<div class="ulist">
+<div class="title slide">Pros:</div>
+<ul>
+<li class="slide">
+<p>Threading operations are much faster because they do not have to
+cross the user/kernel boundary.</p>
+</li>
+<li class="slide">
+<p>Thread state can be smaller.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Cons:</div>
+<ul>
+<li class="slide">
+<p>Can&#x2019;t use multiple cores!</p>
+</li>
+<li class="slide">
+<p>Operating system may not schedule the application correctly because
+it doesn&#x2019;t know about the fact that it contains more than one thread.</p>
+</li>
+<li class="slide">
+<p>A single thread may block the entire process in the kernel when there
+are other threads that could run.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_comparing_threading_implementations_2">
+<h2><span class="small">Comparing Threading Implementations</span></h2>
+
+<div class="paragraph">
+<p><strong>1:1 (kernel) threading</strong></p>
+</div>
+<div class="ulist">
+<div class="title slide">Pros:</div>
+<ul>
+<li class="slide">
+<p>Scheduling might improve because kernel can schedule all threads in
+the process.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Cons:</div>
+<ul>
+<li class="slide">
+<p>Context switch overhead for all threading operations.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_next_thread_scheduling">
+<h2>Next: Thread Scheduling</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>We have discussed the mechanisms (context switching) used the multiplex
+the CPU&#x2026;&#x200B;</p>
+</li>
+<li>
+<p>and the abstraction (threads).</p>
+</li>
+<li>
+<p>We will start talking about scheduling next week: the <strong>policies</strong> the ensure
+that the multiplexing makes the best use of the available system resources.</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-02-22-threading">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

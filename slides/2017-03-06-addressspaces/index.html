@@ -1,0 +1,764 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Introduction to Memory Management</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Introduction to the challenge of OS energy management and the address space abstraction.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2017-03-03-schedulingstory/" title="Previous: A Scheduling Story" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2017-03-08-virtualaddresses/" title="Next: Virtual Addresses">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="zVe58hORk2U"><img class="youtube-thumb" src="//i.ytimg.com/vi/zVe58hORk2U/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Introduction to Memory Management</h1>
+				
+
+
+
+
+
+
+
+
+
+
+<div class="sect1">
+<a class="anchor" id="_space_v_time_multiplexing"></a><h2>Space v. Time Multiplexing</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title"><strong>Time multiplexing:</strong> sharing a resource by dividing up access to it over time.</div>
+<ul>
+<li>
+<p>Example: CPU scheduling on a single-core system.</p>
+</li>
+<li>
+<p>Example: Room scheduling using temporal scheduling.</p>
+</li>
+<li>
+<p>Example: Car share programs.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><strong>Space multiplexing:</strong> sharing a resource by dividing it into smaller pieces.</div>
+<ul>
+<li>
+<p>Example: CPU scheduling on a multi-core system. <strong>Low granularity</strong>.</p>
+</li>
+<li>
+<p>Example: memory management. <strong>High granularity.</strong></p>
+</li>
+<li>
+<p>Example: splitting up a cake.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_clarification_memory_allocation"></a><h2>Clarification: Memory Allocation</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<div class="title">Memory allocation happens in several steps:</div>
+<ol class="arabic">
+<li>
+<p>A process requests large chunks of memory from the OS kernel&#x2026;&#x200B;</p>
+</li>
+<li>
+<p>&#x2026;&#x200B;and then divides available memory up using a process-level allocation
+library (such as <code>malloc</code>).</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You&#x2019;re probably more familiar with the second step, but we&#x2019;re going to
+focus on the first. (Although allocators are fascinating and still an area of
+active research&#x2026;&#x200B;)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_direct_physical_memory_multiplexing"></a><h2><span class>Direct Physical Memory Multiplexing</span></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Why not just <strong>divide physical memory</strong> between processes?</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-1.svg" alt="physical 1" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-2.svg" alt="physical 2" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-3.svg" alt="physical 3" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-4.svg" alt="physical 4" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-5.svg" alt="physical 5" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-6.svg" alt="physical 6" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-7.svg" alt="physical 7" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-8.svg" alt="physical 8" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_direct_multiplexing_problems"></a><h2>Direct Multiplexing: Problems</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Limited to the amount of physical memory on the machine.</p>
+</li>
+<li>
+<p>What happens if processes request memory that they <strong>do not use</strong>?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_direct_physical_memory_multiplexing_2"></a><h2><span class>Direct Physical Memory Multiplexing</span></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Why not just <strong>divide physical memory</strong> between processes?</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-8.svg" alt="physical 8" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-9.svg" alt="physical 9" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-10.svg" alt="physical 10" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-11.svg" alt="physical 11" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/physical-12.svg" alt="physical 12" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_direct_multiplexing_problems_2"></a><h2>Direct Multiplexing: Problems</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Limited to the amount of physical memory on the machine.</p>
+</li>
+<li>
+<p>Potentially discontiguous allocations.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Complicates process memory layout.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Potential for <strong>fragmentation</strong> to reduce allocation efficiency.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_process_memory_layout"></a><h2>Process Memory Layout</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>How do processes know where their code and data is located?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">int</span> data[<span class="hljs-number">128</span>];
+...
+data[<span class="hljs-number">5</span>] = <span class="hljs-number">8</span>; <span class="hljs-comment">// Where the heck is data[5]?</span>
+...
+result = foo(data[<span class="hljs-number">5</span>]); <span class="hljs-comment">// Where the heck is foo?</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_fragmentation"></a><h2>Fragmentation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Fragmentation</strong>: when a request for contiguous memory fails <em>despite
+the fact that there is enough unused memory available</em> (on the system).</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Internal</strong> fragmentation: unused memory is <em>inside</em> existing
+allocations.</p>
+</li>
+<li>
+<p><strong>External</strong> fragmentation: unused memory is <em>between</em> existing
+allocations.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Note that it is not always feasible to split data structures across
+multiple pieces of discontiguous memory:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">int</span> data[<span class="hljs-number">10240</span>]; <span class="hljs-comment">// I had better be contiguous.</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_direct_multiplexing_problems_3"></a><h2>Direct Multiplexing: Problems</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Limited to the amount of physical memory on the machine.</p>
+</li>
+<li>
+<p>Potentially discontiguous allocations.</p>
+</li>
+<li>
+<p>Potential for <strong>fragmentation</strong> to reduce allocation efficiency.</p>
+</li>
+<li>
+<p>Can I enforce my allocations?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Not without checking <strong>every</strong> memory access. Way too slow, but
+hardware could help&#x2026;&#x200B;</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Can I safely reclaim unused memory?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Leads to increased discontiguity and suffers from the same
+enforcement problem.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_memory_multiplexing_requirements"></a><h2>Memory Multiplexing Requirements</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Grant</strong>: the kernel should be able to allocate memory to processes
+statically (at startup) and dynamically (as needed).</p>
+</li>
+<li>
+<p><strong>Enforce</strong>: the kernel should be able to enforce memory allocations
+efficiently.</p>
+</li>
+<li>
+<p><strong>Reclaim</strong>: the kernel should be able to repurpose unused memory
+without destroying its contents.</p>
+</li>
+<li>
+<p><strong>Revoke</strong>: the kernel should be able to stop a process from using
+memory that it was previously allocated.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_comparison_to_cpu"></a><h2>Comparison to CPU</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Grant</strong>: schedule a thread via a context switch.</p>
+</li>
+<li>
+<p><strong>Enforce</strong>: interrupt a thread using a timer interrupt.</p>
+</li>
+<li>
+<p><strong>Reclaim</strong>: this is new.</p>
+</li>
+<li>
+<p><strong>Revoke</strong>: deschedule a thread via a context switch.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_address_spaces_the_memory_management_abstraction"></a><h2>Address Spaces: The Memory Management Abstraction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We provide every process with an <strong>identical</strong> view of memory that makes
+it appear:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>plentiful</strong>, <strong class="slide">contiguous,</strong> <strong class="slide">uniform,</strong> and <strong class="slide">private.</strong></p>
+</li>
+</ul>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock hascaption">
+<div class="content">
+<img src="/img/slides/figures/memory/addressspace-1.svg" alt="addressspace 1" style="width: 50%;">
+</div>
+<div class="title">Figure 2. The Address Space</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock hascaption">
+<div class="content">
+<img src="/img/slides/figures/memory/addressspace-2.svg" alt="addressspace 2" style="width: 50%;">
+</div>
+<div class="title">Figure 3. The Address Space</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock hascaption">
+<div class="content">
+<img src="/img/slides/figures/memory/addressspace-3.svg" alt="addressspace 3" style="width: 50%;">
+</div>
+<div class="title">Figure 4. The Address Space</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock hascaption">
+<div class="content">
+<img src="/img/slides/figures/memory/addressspace-4.svg" alt="addressspace 4" style="width: 50%;">
+</div>
+<div class="title">Figure 5. The Address Space</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock hascaption">
+<div class="content">
+<img src="/img/slides/figures/memory/addressspace-5.svg" alt="addressspace 5" style="width: 50%;">
+</div>
+<div class="title">Figure 6. The Address Space</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_address_spaces_layout"></a><h2>Address Spaces: Layout</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The uniformity of address spaces simplifies process <strong>layout</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>&quot;I always put my code and static variables at 0x10000.&quot;</p>
+</li>
+<li>
+<p>&quot;My heap always starts at 0x20000000 and grows <strong>up</strong>.&quot;</p>
+</li>
+<li>
+<p>&quot;My stack always starts at 0xFFFFFFFF and grows <strong>down</strong>.&quot;</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/layout-1.svg" alt="layout 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/layout-2.svg" alt="layout 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/layout-3.svg" alt="layout 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/layout-4.svg" alt="layout 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_convention"></a><h2>Convention</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Process layout is specified by the Executable and Linker Format (ELF)
+file. (Remember ELF?)</p>
+</li>
+<li>
+<p>Some layout is the function of <strong>convention</strong>.</p>
+</li>
+<li>
+<p>Example: why not load the code at <code>0x0</code>?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>To catch possibly the most common programmer error: <code>NULL</code> pointer
+problems!</p>
+</li>
+<li>
+<p>Leaving a large portion of the process address space starting at <code>0x0</code>
+empty allows the kernel to catch these errors, including offsets against
+<code>NULL</code> caused by <code>NULL</code> structures:</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="listingblock slide">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">bar</span> * <span class="hljs-title">foo</span> = <span class="hljs-title">NULL</span>;</span>
+foo-&gt;bar = <span class="hljs-number">10</span>;</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2017-03-03-schedulingstory/" title="Previous: A Scheduling Story" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2017-03-08-virtualaddresses/" title="Next: Virtual Addresses">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">Space v. Time Multiplexing</a>
+					</li>
+					<li class="h5"><a href="#_clarification_memory_allocation">Clarification: Memory Allocation</a>
+					</li>
+					<li class="h5"><a href="#_direct_physical_memory_multiplexing">Direct Physical Memory Multiplexing</a>
+					</li>
+					<li class="h5"><a href="#_direct_multiplexing_problems">Direct Multiplexing: Problems</a>
+					</li>
+					<li class="h5"><a href="#_direct_physical_memory_multiplexing_2">Direct Physical Memory Multiplexing</a>
+					</li>
+					<li class="h5"><a href="#_direct_multiplexing_problems_2">Direct Multiplexing: Problems</a>
+					</li>
+					<li class="h5"><a href="#_process_memory_layout">Process Memory Layout</a>
+					</li>
+					<li class="h5"><a href="#_fragmentation">Fragmentation</a>
+					</li>
+					<li class="h5"><a href="#_direct_multiplexing_problems_3">Direct Multiplexing: Problems</a>
+					</li>
+					<li class="h5"><a href="#_memory_multiplexing_requirements">Memory Multiplexing Requirements</a>
+					</li>
+					<li class="h5"><a href="#_comparison_to_cpu">Comparison to CPU</a>
+					</li>
+					<li class="h5"><a href="#_address_spaces_the_memory_management_abstraction">Address Spaces: The Memory Management Abstraction</a>
+					</li>
+					<li class="h5"><a href="#_address_spaces_layout">Address Spaces: Layout</a>
+					</li>
+					<li class="h5"><a href="#_convention">Convention</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 3/5/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/addressspaces.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/addressspaces.adoc" target="_blank">View</a>
+			<br>
+			Built 3/5/2017 @ 19:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

@@ -1,0 +1,724 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Page Replacement</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Discussion of page replacement policies.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2016-03-25-swapping/" title="Previous: Swapping" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2016-03-30-disks/" title="Next: Disks">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="kdlIQT7HEQw"><img class="youtube-thumb" src="//i.ytimg.com/vi/kdlIQT7HEQw/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Page Replacement</h1>
+				
+
+
+
+
+
+
+
+
+<div class="sect1">
+<a class="anchor" id="_page_eviction"></a><h2>Page Eviction</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In order to swap <em>out</em> a page we need to choose <strong>which</strong> page to move
+to disk.</p>
+</div>
+<div class="paragraph">
+<p>In order to swap <em>in</em> a page we might need to choose which page to
+swap out.</p>
+</div>
+<div class="ulist">
+<div class="title">Swapping cost-benefit calculation:</div>
+<ul>
+<li>
+<p><strong>Cost</strong>: <span class="slide">mainly the <strong>time</strong> and disk <strong>bandwidth</strong> required to move a
+page to and from disk.</span></p>
+</li>
+<li>
+<p><strong>Benefit</strong>: <span class="slide">the use of 4K (or a page) of memory as long as the page on disk
+remains unused.</span></p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>There are tricks that the operating might play to <strong>minimize</strong> the cost,
+but mainly we will focus on algorithms designed to <strong>maximize</strong> the
+benefit.</p>
+</div>
+<div class="paragraph">
+<p>(Another complementary description of our goal is <strong>minimizing</strong> the <strong>page
+fault rate</strong>.)</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_page_eviction_fail_thrashing"></a><h2>Page Eviction FAIL: Thrashing</h2>
+<div class="sectionbody">
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Thrashing is a colloquialism normally used to describe a computer whose
+virtual memory subsystem is in a constant state of paging, rapidly
+exchanging data in memory for data on disk, to the exclusion of most
+application-level processing. This causes the performance of the
+computer to degrade or collapse.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#x2014; Wikipedia
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_maximizing_benefit"></a><h2>Maximizing Benefit</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Benefit</strong>: the use of 4K of memory as long as the page on disk remains unused.</p>
+</div>
+<div class="ulist">
+<div class="title">How do we <strong>maximize</strong> the benefit?</div>
+<ul>
+<li>
+<p>Pick the page to evict that will remain unused <strong>the longest</strong>!</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_the_best_bet"></a><h2>The Best Bet</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What is the absolute best page to evict, the one that page replacement algorithms <em>dream</em> about?</div>
+<ul>
+<li>
+<p>A page that will <strong>never be used again</strong>!</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_break_out_the_ball"></a><h2>Break Out the Ball</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Think back to scheduling algorithms. (This is a bit simpler.)</p>
+</div>
+<div class="ulist">
+<div class="title">What would we like to know about a page when choosing one to evict?</div>
+<ul>
+<li>
+<p><strong>How long</strong> will it be before this page is used again?</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>The <strong>optimal scheduler</strong> evicts the page that will remain unused the
+longest. This clearly maximizes our swapping cost-benefit calculation.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>This scheduler is <strong>difficult to implement</strong>!</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_what_now"></a><h2>What Now?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When we can&#x2019;t predict the future, we&#x2026;&#x200B; <strong class="slide">use the past to predict the
+future!</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_the_past_didnt_go_anywhere"></a><h2>The Past Didn&#x2019;t Go Anywhere</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<div class="title">Intelligent page replacement requires three things:</div>
+<ol class="arabic">
+<li>
+<p>determining <strong>what</strong> information to track,</p>
+</li>
+<li>
+<p>figuring out how to <strong>collect</strong> that information, and</p>
+</li>
+<li>
+<p>how to <strong>store</strong> it.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_there_be_tradeoffs"></a><h2>There Be Tradeoffs</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Collecting statistics may be <strong>expensive</strong>, slowing down the process of
+translating virtual addresses.</p>
+</li>
+<li>
+<p>Storing statistics may be <strong>expensive</strong>, occupying kernel memory that
+could be better used for other things.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_simplest"></a><h2>Simplest</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What is the simplest possible page replacement algorithm?</div>
+<ul>
+<li>
+<p><strong>Random</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Pros:</div>
+<ul>
+<li>
+<p>Extremely simple.</p>
+</li>
+<li>
+<p>Good baseline for algorithms that try to be smarter.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Cons:</div>
+<ul>
+<li>
+<p>Too simple. We can probably do better.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_use_the_past_luke"></a><h2>Use The Past, Luke</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What is an algorithm that <strong>uses a page&#x2019;s past to predict its future</strong>?</div>
+<ul>
+<li>
+<p><strong>Least Recently Used (LRU)</strong>:</p>
+</li>
+<li>
+<p>Choose the page that has not been used for the longest period of time.</p>
+</li>
+<li>
+<p>Hopefully this is a page that will not be used <strong>again</strong> for a while.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Pros:</div>
+<ul>
+<li>
+<p>Might be as good as we can do without predicting the future.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Cons:</div>
+<ul>
+<li>
+<p>How do we <strong>tell</strong> how long it has been since a page has been accessed?</p>
+</li>
+<li>
+<p>How do we <strong>store</strong> how long it has been since a page has been accessed?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_lru_collecting_statistics"></a><h2>LRU: Collecting Statistics</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">At what point does the operating system <strong>know</strong> that a process has accessed a virtual page?</div>
+<ul>
+<li>
+<p>When we load the entry into the TLB!</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Does this reflect every virtual page access?</div>
+<ul>
+<li>
+<p><strong>No!</strong> Only the first. A page that is accessed once and one that is
+accessed 1,000 times are <em>indistinguishable</em>.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Why not record every page access?</div>
+<ul>
+<li>
+<p><strong>Too slow!</strong></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_lru_storing_statistics"></a><h2>LRU: Storing Statistics</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">How much access time information can we store?</div>
+<ul>
+<li>
+<p>32 bits = 2<sup>32</sup> &quot;ticks&quot;, but <strong>doubles</strong> the page table entry size!</p>
+</li>
+<li>
+<p>8 bits = 256 &quot;ticks&quot;.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">How do we find the least recently used page?</div>
+<ul>
+<li>
+<p>Need some kind of <strong>efficient data structure</strong> holding all physical
+pages on the system that is searched on every page eviction.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_clock_lru"></a><h2>Clock LRU</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Simple</strong> and <strong>efficient</strong> LRU-<em>like</em> algorithm.</p>
+</li>
+<li>
+<p><strong>One bit</strong> of accessed information, set when loading a virtual address
+into the TLB.</p>
+</li>
+</ul>
+</div>
+<div class="olist arabic">
+<div class="title">To locate a page to evict:</div>
+<ol class="arabic">
+<li>
+<p>Cycle through all pages in memory in a fixed order.</p>
+</li>
+<li>
+<p>If a page accessed bit is <strong>clear</strong>, evict that page.</p>
+</li>
+<li>
+<p>If a page accessed bit is <strong>set</strong>, clear the bit.</p>
+</li>
+</ol>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/clock-1.svg" alt="clock 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/clock-2.svg" alt="clock 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/clock-3.svg" alt="clock 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/clock-4.svg" alt="clock 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/clock-5.svg" alt="clock 5" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/clock-6.svg" alt="clock 6" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/clock-7.svg" alt="clock 7" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/clock-8.svg" alt="clock 8" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/clock-9.svg" alt="clock 9" style="width: 80%;">
+</div>
+</div>
+</div>
+</div><div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/clock-10.svg" alt="clock 10" style="width: 80%;">
+</div>
+</div>
+</div>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_clock_speed"></a><h2>Clock Speed</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What does it mean when the clock hand is turning <strong>slowly?</strong></div>
+<ul>
+<li>
+<p>Little memory pressure, or</p>
+</li>
+<li>
+<p>We are making good decisions about what to evict.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">What does it mean when the clock hand is turning <strong>rapidly?</strong></div>
+<ul>
+<li>
+<p>Lots of memory pressure, or</p>
+</li>
+<li>
+<p>We are making bad decisions about what to evict.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_memory_management_design_exercise_copy_on_write"></a><h2>Memory Management Design Exercise: Copy-on-Write</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Remember the problem with <code>fork</code>?</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Have to copy the entire address space of the parent!</p>
+</li>
+<li>
+<p>If the parent has N pages allocated, we have to find <strong>N more free
+pages!</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>&#x2026;&#x200B;and then the child calls exec anyway.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Can we avoid this?</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_copy_on_write"></a><h2>Copy-on-Write</h2>
+<div class="sectionbody">
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Goal: don&#x2019;t allocate <strong>any</strong> additional memory during fork, but preserve
+private address spaces.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Here&#x2019;s what to do:</div>
+<ol class="arabic">
+<li>
+<p>During fork, point all child&#x2019;s PTEs to the <strong>same</strong> physical memory as
+the parent.</p>
+</li>
+<li>
+<p>As long as the child and parent are both just reading from any
+shared page, we are OK.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Large parts of the address space may be read-only or
+read-mostly anyway&#x2026;&#x200B;</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>As soon as either the child or the parent modifies the contents of
+any shared virtual page, <strong class="slide">we have to make a private copy.</strong></p>
+</li>
+<li>
+<p>How do we trap writes? <span class="slide">Mark the page as <strong>read only</strong> in the TLB!</span></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2016-03-25-swapping/" title="Previous: Swapping" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2016-03-30-disks/" title="Next: Disks">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">Page Eviction</a>
+					</li>
+					<li class="h5"><a href="#_page_eviction_fail_thrashing">Page Eviction FAIL: Thrashing</a>
+					</li>
+					<li class="h5"><a href="#_maximizing_benefit">Maximizing Benefit</a>
+					</li>
+					<li class="h5"><a href="#_the_best_bet">The Best Bet</a>
+					</li>
+					<li class="h5"><a href="#_break_out_the_ball">Break Out the Ball</a>
+					</li>
+					<li class="h5"><a href="#_what_now">What Now?</a>
+					</li>
+					<li class="h5"><a href="#_the_past_didnt_go_anywhere">The Past Didn&#x2019;t Go Anywhere</a>
+					</li>
+					<li class="h5"><a href="#_there_be_tradeoffs">There Be Tradeoffs</a>
+					</li>
+					<li class="h5"><a href="#_simplest">Simplest</a>
+					</li>
+					<li class="h5"><a href="#_use_the_past_luke">Use The Past, Luke</a>
+					</li>
+					<li class="h5"><a href="#_lru_collecting_statistics">LRU: Collecting Statistics</a>
+					</li>
+					<li class="h5"><a href="#_lru_storing_statistics">LRU: Storing Statistics</a>
+					</li>
+					<li class="h5"><a href="#_clock_lru">Clock LRU</a>
+					</li>
+					<li class="h5"><a href="#_clock_speed">Clock Speed</a>
+					</li>
+					<li class="h5"><a href="#_memory_management_design_exercise_copy_on_write">Memory Management Design Exercise: Copy-on-Write</a>
+					</li>
+					<li class="h5"><a href="#_copy_on_write">Copy-on-Write</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/2016/pagereplacement.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/2016/pagereplacement.adoc" target="_blank">View</a>
+			<br>
+			Built 3/27/2016 @ 20:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

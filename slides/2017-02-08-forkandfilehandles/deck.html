@@ -1,0 +1,549 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Processes and File Handles</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Introduction to file handles and file descriptors and the process life cycle.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="https://en.wikipedia.org/wiki/Jean_Bartik" target="_blank"><img src="/img/slides/women/001.jpg" alt="001" style="width: 100%;"></a>
+</div>
+<div class="title">Figure 1. Jean Bartik</div>
+</div>
+<div class="paragraph center h2">
+<p><span class="fa fa-music"></span> <a href="http://www.theraveonettes.com/" target="_blank" class="external">Killer in the Street by The Raveonettes</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/V93GmEBL3YY?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+
+</div>
+<div class="nooutline slide" id="_today">
+<h2>Today</h2>
+
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>File handles.</p>
+</li>
+<li>
+<p>Process life cycle:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Birth:</strong> <code>fork()</code></p>
+</li>
+<li>
+<p><strong>Change:</strong> <code>exec()</code></p>
+</li>
+<li>
+<p><strong>Death:</strong> <code>exit()</code></p>
+</li>
+<li>
+<p><strong>The Afterlife:</strong> <code>wait()</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="nooutline slide" id="_asst1_checkpoint">
+<h2><a href="/asst/1/">ASST1</a> Checkpoint</h2>
+
+<div class="ulist">
+<div class="title slide">At this point:</div>
+<ul>
+<li class="slide">
+<p>If you have not started, <strong>you are behind.</strong></p>
+</li>
+<li class="slide">
+<p>If you don&#x2019;t understand semaphores, <strong>you are behind.</strong></p>
+</li>
+<li class="slide">
+<p>If you have working locks, you&#x2019;re a bit behind.</p>
+</li>
+<li class="slide">
+<p>If you have working CVs, you&#x2019;re OK.</p>
+</li>
+<li class="slide">
+<p>Keep in mind: <strong>you need working locks and CVs for future assignments.</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>(The rest of the assignment is for points and won&#x2019;t hurt you as much in the
+future.)</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_announcement_questions">
+<h2>Announcement Questions?</h2>
+
+
+
+</div>
+<div class="slide" id="_pmap_memory_mappings">
+<h2>$ pmap # memory mappings</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/pmap.svg" alt="pmap" style="width: 100%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_bash">
+<h2>bash</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/process-bash-1.svg" alt="process bash 1" style="width: 100%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_lsof_open_files">
+<h2>$ lsof # open files</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/lsof.svg" alt="lsof" style="width: 100%;">
+</div>
+</div>
+<div class="ulist">
+<div class="title slide">True confessions: I cheated here.</div>
+<ul>
+<li class="slide">
+<p><code>/home/challen/.bashrc</code> was not actually open when I ran this command.</p>
+</li>
+<li class="slide">
+<p><code>bash</code> didn&#x2019;t have any interesting files open and I was embarrassed.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" style="background-image: url(&quot;https://i.ytimg.com/vi/7erl9k01C2M/hqdefault.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>bashrc not open</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>Professor resorts to lying</p>
+</div>
+
+</div>
+<div class="slide" id="_lsof_open_files_2">
+<h2>$ lsof # open files</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/lsof.svg" alt="lsof" style="width: 100%;">
+</div>
+</div>
+<div class="ulist">
+<div class="title">True confessions: I cheated here.</div>
+<ul>
+<li>
+<p><code>/home/challen/.bashrc</code> was not actually open when I ran this command.</p>
+</li>
+<li>
+<p><code>bash</code> didn&#x2019;t have any interesting files open and I was embarrassed.</p>
+</li>
+</ul>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Let&#x2019;s imagine we caught bash during startup when it is reading its
+configuration parameters.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_bash_2">
+<h2>bash</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/process-bash.svg" alt="process bash" style="width: 100%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_aside_the_proc_file_system">
+<h2>Aside: the /proc/ file system</h2>
+
+<div class="ulist small">
+<ul>
+<li class="slide">
+<p>How do <code>top</code>, <code>ps</code>, <code>pmap</code>, <code>lsof</code>, and other process examination utilities
+gather information?</p>
+</li>
+<li class="slide">
+<p>Linux reuses the <strong>file</strong> abstraction for this purpose.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock slide">
+<div class="content">
+<img src="/img/slides/figures/procfilesystem.svg" alt="procfilesystem" style="width: 100%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_ok_lets_review">
+<h2>OK&#x2026;&#x200B; Let&#x2019;s Review</h2>
+
+
+
+</div>
+<div class="slide" id="_os_abstraction_cheat_sheet">
+<h2>OS Abstraction Cheat Sheet</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Threads</strong> save processor state.</p>
+</li>
+<li class="slide">
+<p><strong>Address spaces</strong> map the addresses used by processes (virtual
+addresses) to real memory addresses (physical addresses).</p>
+</li>
+<li class="slide">
+<p><strong>Files</strong> map offsets into a file to blocks on disk.</p>
+</li>
+<li class="slide">
+<p><strong>File-like objects</strong> look like files to a process but are not actually
+stored on disk and may not completely obey file semantics.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>You can&#x2019;t seek on a network socket or open certain network-mounted
+files.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p><strong>Processes</strong> organize these other operating system abstractions.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_abstractions">
+<h2>Review: Abstractions</h2>
+
+<div class="ulist">
+<div class="title slide">Abstractions <strong>simplify application design</strong> by:</div>
+<ul>
+<li class="slide">
+<p><strong>hiding undesirable properties</strong>,</p>
+</li>
+<li class="slide">
+<p><strong>adding new capabilities</strong>, and</p>
+</li>
+<li class="slide">
+<p><strong>organizing information</strong>.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_processes">
+<h2>Review: Processes</h2>
+
+<div class="paragraph">
+<p>Processes <strong class="slide">organize information</strong> about other abstractions and represent
+a single thing that <strong class="slide">the computer is &quot;doing.&quot;</strong></p>
+</div>
+<div class="ulist">
+<div class="title slide">Processes contain:</div>
+<ul>
+<li class="slide">
+<p>one or more <strong>threads</strong>,</p>
+</li>
+<li class="slide">
+<p>an <strong>address space</strong>, and</p>
+</li>
+<li class="slide">
+<p>zero or more open <strong>file handles</strong>.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_processes_2">
+<h2>Review: Processes</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Processes organize information about other abstractions and represent
+a single thing that the computer is &quot;doing.&quot;</p>
+</li>
+<li class="slide">
+<p>Processes contain:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>one or more <strong>threads</strong>,</p>
+</li>
+<li>
+<p>an <strong>address space</strong>, and</p>
+</li>
+<li>
+<p>zero or more open <strong>file handles</strong>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_protection">
+<h2>Review: Protection</h2>
+
+<div class="paragraph">
+<p>One major operating system goal is to protect processes from <strong class="slide">each
+other</strong>.</p>
+</div>
+
+</div>
+<div class="nooutline slide" id="_so_now_questions_about_processes">
+<h2>So Now: Questions About Processes?</h2>
+
+
+
+</div>
+<div class="slide" id="_updated_process_model">
+<h2>Updated Process Model</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>For today&#x2019;s material being precise about how processes use files
+becomes important.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>So let&#x2019;s update our model. Here&#x2019;s what we had last time:</p>
+</li>
+</ul>
+</div>
+<div class="imageblock vbottom expand">
+<div class="content">
+<img src="/img/slides/figures/process.svg" alt="process" style="width: 50%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>So let&#x2019;s update our model. Here&#x2019;s what we had last time:</p>
+</li>
+<li>
+<p>And here&#x2019;s today&#x2019;s change:</p>
+</li>
+</ul>
+</div>
+<div class="imageblock expand vbottom">
+<div class="content">
+<img src="/img/slides/figures/process-updated.svg" alt="process updated" style="width: 50%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_file_handles">
+<h2>File Handles</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>The <strong>file descriptor</strong> that processes receive from <code>open()</code> and pass to
+other file system system calls is just an int, an index into the process
+file table.</p>
+</li>
+<li class="slide">
+<p>That int refers to a <strong>file handle</strong> object maintained by the kernel.</p>
+</li>
+<li class="slide">
+<p>That file handle object contains a reference a separate <strong>file object</strong>
+also maintained by the kernel.</p>
+</li>
+<li class="slide">
+<p>Which then is mapped by the file system to blocks on disk.</p>
+</li>
+<li class="slide">
+<p>So <strong>three</strong> levels of indirection:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>file descriptor &#x2192; file handle.</p>
+</li>
+<li>
+<p>file handle &#x2192; file object.</p>
+</li>
+<li>
+<p>file object &#x2192; blocks on disk.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p><strong>Why?</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_2" style="background-image: url(&quot;http://geeklypress.com/wp-content/uploads/2013/08/confused-cat.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Are you just trying</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>to confuse me?</p>
+</div>
+
+</div>
+<div class="slide" id="_sharing_file_state">
+<h2>Sharing File State</h2>
+
+<div class="ulist">
+<div class="title slide">The additional level of indirection allows certain pieces of state to be shared separately.</div>
+<ul>
+<li class="slide">
+<p><strong>File descriptors</strong> are private to each process.</p>
+</li>
+<li class="slide">
+<p><strong>File handles</strong> are private to each process but shared after process
+creation.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>File handles</strong> store the current file <strong>offset</strong>, or the position in
+the file that the next read will come from or write will go to. File
+handles can be <strong>deliberately</strong> shared between two processes.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p><strong>File objects</strong> hold other file state and can be shared <strong>transparently</strong>
+between many processes.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_operating_system_design_principles">
+<h2>Operating System Design Principles</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Separate <strong class="slide">policy</strong> from <strong class="slide">mechanism</strong>.</p>
+</li>
+<li class="slide">
+<p>Facilitate control or sharing by adding a <strong class="slide">level of indirection</strong>.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Continue with <code>fork()</code></p>
+</li>
+<li>
+<p>Begin talking about synchronization</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2017-02-08-forkandfilehandles">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

@@ -1,0 +1,436 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Scaling Linux to Many Cores</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Discussion of &quot;An Analysis of Linux Scalability to Many Cores&quot; by Silas Boyd-Wickizer et al.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="https://en.wikipedia.org/wiki/Ada_Lovelace" target="_blank"><img src="/img/slides/women/011.jpg" alt="011" style="width: 100%;"></a>
+</div>
+<div class="title">Figure 1. Ada Lovelace King</div>
+</div>
+<div class="paragraph h4 center">
+<p><span class="fa fa-music"></span> <a href="http://www.thegoteam.co.uk/" target="_blank" class="external">The Scene Between by the Go! Team</a></p>
+</div>
+<div class="paragraph h4 center">
+<p><span class="fa fa-music"></span> <a href="http://muse.mu/" target="_blank" class="external">Time Is Running Out by Muse</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/iw_F3tzI3NM?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/O2IuJPh6h_A?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_1"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_1"></div><div class="anim-pause slide" data-what="iframe#_iframe_1"></div></div>
+
+</div>
+<div class="spelling_exception slide" id="_an_analysis_of_linux_scalability_to_many_cores">
+<h2>An Analysis of Linux Scalability to Many Cores</h2>
+
+<div class="paragraph">
+<p><a href="http://pdos.csail.mit.edu/papers/linux:osdi10.pdf" target="_blank" class="external">&quot;An Analysis of Linux
+Scalability to Many Cores&quot; (PDF)</a>, by:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Silas Boyd-Wickizer</p>
+</li>
+<li>
+<p>Austin T. Clemens</p>
+</li>
+<li>
+<p>Yandong Mao</p>
+</li>
+<li>
+<p>Aleksey Pesterev</p>
+</li>
+<li>
+<p>M. Frans Kaashoek</p>
+</li>
+<li>
+<p>Robert Morris</p>
+</li>
+<li>
+<p>Nickolai Zeldovich</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_cat_announce_txt">
+<h2>$ cat announce.txt</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Course evaluation is currently&#x2026;&#x200B; <span class="slide"><strong>45%</strong>.</span></p>
+</li>
+<li class="slide">
+<p>Please do the evaluation! Time is running out&#x2026;&#x200B;</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_discussion_of_the_hints">
+<h2>Discussion of the Hints</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/papers/hints_table.jpg" alt="hints table" style="width: 100%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_paper_overview">
+<h2>Paper Overview</h2>
+
+<div class="ulist">
+<div class="title slide">What kind of paper is this?</div>
+<ul>
+<li class="slide">
+<p>Benchmarking and analysis paper. (A kind we did not previously discuss&#x2026;&#x200B;)</p>
+</li>
+<li class="slide">
+<p>But also kind of a <em>big idea</em> paper.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">What&#x2019;s the big idea?</div>
+<ul>
+<li class="slide">
+<p>People (including the authors) have been proposing that traditional OS designs would not scale to
+many-core machines.</p>
+</li>
+<li class="slide">
+<p>Is this true?</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock small spelling_exception">
+<blockquote>
+<div class="paragraph">
+<p>There is a sense in the community that traditional kernel
+designs won&#x2019;t scale well on multicore processors: that
+applications will spend an increasing fraction of their time
+in the kernel as the number of cores increases. Prominent
+researchers have advocated rethinking operating systems and new kernel designs intended to allow
+scalability have been proposed (e.g., Barrelfish,
+Corey, and fos). <strong>This paper asks whether traditional
+kernel designs can be used and implemented in a
+way that allows applications to scale.</strong></p>
+</div>
+</blockquote>
+</div>
+<div class="quoteblock small slide">
+<blockquote>
+<div class="paragraph">
+<p>This question is difficult to answer conclusively, but we attempt to shed a
+small amount of light on it.</p>
+</div>
+</blockquote>
+</div>
+
+</div>
+<div class="slide" id="_whats_the_approach">
+<h2>What&#x2019;s The Approach?</h2>
+
+<div class="ulist">
+<div class="title slide">What is the approach taken in the paper?</div>
+<ul>
+<li class="slide">
+<p>Benchmark Linux using applications that should scale well.</p>
+</li>
+<li class="slide">
+<p>Identify and fix scalability bottlenecks.</p>
+</li>
+<li class="slide">
+<p>Repeat.</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock small spelling_exception">
+<blockquote>
+<div class="paragraph">
+<p><strong>First</strong> we measure scalability of the MOSBENCH applications on a recent Linux
+kernel (2.6.35-rc5, released July 12, 2010) with 48 cores, using the
+in-memory tmpfs file system to avoid disk bottlenecks. gmake scales well, but
+the other applications scale poorly, performing much less work per core with
+48 cores than with one core.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock small">
+<blockquote>
+<div class="paragraph">
+<p>We attempt to understand and fix the scalability problems, by modifying
+either the applications or the Linux kernel.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock small">
+<blockquote>
+<div class="paragraph">
+<p>We then iterate, since fixing one scalability problem usually exposes further
+ones.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock small">
+<blockquote>
+<div class="paragraph">
+<p>The end result for each application is either good scalability on 48 cores,
+or attribution of non-scalability to a hard-to-fix problem with the
+application, the Linux kernel, or the underlying hardware.</p>
+</div>
+</blockquote>
+</div>
+<div class="quoteblock small">
+<blockquote>
+<div class="paragraph">
+<p>The analysis of whether the kernel design is compatible with scaling rests on
+the extent to which our changes to the Linux kernel turn out to be modest,
+and the extent to which hard-to-fix problems with the Linux kernel ultimately
+limit application scalability.</p>
+</div>
+</blockquote>
+</div>
+
+</div>
+<div class="slide" id="_whats_the_result">
+<h2>What&#x2019;s The Result?</h2>
+
+<div class="quoteblock small slide">
+<blockquote>
+<div class="paragraph">
+<p>Our final contribution is an analysis using MOSBENCH that suggests that there
+is <strong>no immediate scalability reason to give up on traditional kernel designs</strong>.</p>
+</div>
+</blockquote>
+</div>
+
+</div>
+<div class="small slide" id="_what_is_mosbench">
+<h2>What is MOSBENCH?</h2>
+
+<div class="ulist spelling_exception">
+<div class="title slide">What applications are included in MOSBENCH?</div>
+<ul>
+<li class="slide">
+<p>A mail server (<code>exim</code>), using multiple processes to process incoming mail
+concurrently.</p>
+</li>
+<li class="slide">
+<p>An in-memory key-value store object cache (<code>memcached</code>), using multiple
+servers to handle multiple connections in parallel. (Already working around
+an internal bottleneck.)</p>
+</li>
+<li class="slide">
+<p>A web server (<code>apache</code>) using one process per core.</p>
+</li>
+<li class="slide">
+<p>A database server (<code>postgres</code>), which starts one process per connection.</p>
+</li>
+<li class="slide">
+<p>A parallel build (<code>gmake</code>) building Linux using multiple cores.</p>
+</li>
+<li class="slide">
+<p>A file indexer (`psearchy&apos;).</p>
+</li>
+<li class="slide">
+<p>A map-reduce library (<code>metis</code>).</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Are these good benchmarks?</div>
+<ul>
+<li class="slide">
+<p>The goal is to identify <em>kernel</em> bottlenecks.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">What&#x2019;s a sign of bad kernel scalability?</div>
+<ul>
+<li class="slide">
+<p>Spending more time in the kernel as the number of cores rises.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_aside_why_does_gmake_scale_well">
+<h2>(Aside) Why Does <code>gmake</code> Scale Well?</h2>
+
+<div class="paragraph">
+<p>All the benchmarks scale poorly to multiple cores&#x2026;&#x200B;except <code>gmake</code>.</p>
+</div>
+<div class="ulist">
+<div class="title slide">Why?</div>
+<ul>
+<li class="slide">
+<p>Because kernel developers use it all the time!</p>
+</li>
+</ul>
+</div>
+<div class="quoteblock slide small">
+<blockquote>
+<div class="paragraph">
+<p><code>gmake</code> is the unofficial default benchmark in the Linux community since all
+developers use it to build the Linux kernel. Indeed, many Linux patches
+include comments like &quot;This speeds up compiling the kernel.&quot;</p>
+</div>
+</blockquote>
+</div>
+
+</div>
+<div class="slide" id="_the_problems">
+<h2>The Problems</h2>
+
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Here are a few types of serializing interactions that the MOSBENCH
+applications encountered. These are all classic considerations in parallel
+programming&#x2026;&#x200B;</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>1) The tasks may <strong>lock a shared data structure</strong>, so that increasing the
+number of cores increases the lock wait time.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>2) The tasks may <strong>write a shared memory location</strong>, so that increasing the
+number of cores increases the time spent waiting for the cache coherence
+protocol to fetch the cache line in exclusive mode. This problem can occur
+even in lock-free shared data structures.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The tasks may <strong>compete for space in a limited-size shared hardware cache</strong>, so
+that increasing the number of cores increases the cache miss rate. This
+problem can occur even if tasks never share memory.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The tasks may <strong>compete for other shared hardware resources</strong> such as
+inter-core interconnect or DRAM interfaces, so that additional cores spend
+their time waiting for those resources rather than computing.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>There may be <strong>too few tasks to keep all cores busy</strong>, so that increasing the
+number of cores leads to more idle cores.</p>
+</div>
+</blockquote>
+</div>
+
+</div>
+<div class="slide" id="_to_the_paper">
+<h2>To The Paper</h2>
+
+<div class="responsive-embed embed-responsive-4by3" style="height:440px;">
+<iframe style="width:100%" height="400" class="embed-responsive-item" src="//pdos.csail.mit.edu/papers/linux:osdi10.pdf" id="_iframe_2"></iframe>
+<div class="anim-play slide" data-what="iframe#_iframe_2"></div><div class="anim-pause slide" data-what="iframe#_iframe_2"></div></div>
+
+</div>
+<div class="nooutline slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Bonus class!</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-04-29-scaling">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

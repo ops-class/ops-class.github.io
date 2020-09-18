@@ -1,0 +1,1427 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | System Calls</title>
+		<meta name="description" lang="en-us" content="In ASST2 you will add process and system call support to your OS/161 kernel.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle active" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7 col-md-offset-2">
+				<a class="anchor" id="top"></a>
+				<h1>ASST2: System Calls</h1>
+				<div class="openblock visible-print">
+<div class="content">
+<div class="admonitionblock warning alert alert-warning" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span></td>
+<td class="content">
+This assignment is available online at
+<a href="https://www.ops-class.org/asst/2/" class="hidden_print external" target="_blank"><code>https://www.ops-class.org/asst/2/</code></a>.
+The online version is easier to read and includes helpful links, embedded video
+walkthroughs, and other useful resources.
+</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_introduction"></a><h2>1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>In this assignment you will add process and system call support to your
+<a href="http://os161.eecs.harvard.edu" class="hidden-print external" target="_blank">OS/161</a> kernel.</p>
+</div>
+<div class="paragraph">
+<p>Currently no support exists for running user processes&#x2014;&#x200B;the tests you have
+run up to this point have run in the kernel as kernel threads. By the time
+you finish ASST2 you will have the ability to launch a simple shell and enter
+a somewhat-familiar UNIX environment. Indeed, future tests will be run as
+user processes, not from the kernel menu.</p>
+</div>
+<div class="paragraph">
+<p>In contrast to <a href="/asst/1/" class="hidden-print">ASST1</a>, ASST2 requires a great deal more thought and
+planning. You will be writing a lot more code&#x2014;&#x200B;while our <a href="/asst/1/" class="hidden-print">ASST1</a> solution
+adds 624 non-commenting lines of C code <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Many of which are for the synchronization problem solutions&amp;#x2026;&amp;#x200B;&lt;/body&gt;&lt;/html&gt;">1</span>, the ASST2 solution adds an additional
+<em>2274</em>. We are not giving you many examples. We have not designed your data
+structures for you. You will need to determine what needs to be implemented,
+where to put the code required, how the data structures are designed and
+implemented, and how everything fits together. We just care that your system
+calls meet the interface specification.</p>
+</div>
+<div class="paragraph">
+<p>As a final piece of advice, ASST2 and <a href="/asst/3/" class="hidden-print">ASST3</a> begin to produce code bases that
+are large, complex, and potentially <em>very</em> difficult to debug. <strong>You do not
+want to introduce bugs into your kernel</strong> because they will be very hard to
+remove. Our advice&#x2014;&#x200B;slow down, design, think, design again, discuss with your
+partner, and slow down again. Then write some code.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_objectives"></a><h3>1.1. Objectives</h3>
+<div class="paragraph">
+<p>After completing ASST2 you should:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Be able to write code that meets a specified interface definition.</p>
+</li>
+<li>
+<p>Understand how to represent processes in an operating system.</p>
+</li>
+<li>
+<p>Have designed and implemented data structures to manage processes in an
+operating system.</p>
+</li>
+<li>
+<p>Understand how to implement system calls.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_collaboration_guidelines"></a><h3>1.2. Collaboration Guidelines</h3>
+<div class="paragraph">
+<p>ASST2 is the first large <a href="/" class="hidden-print"><code>ops-class.org</code></a> assignment. Here are the guidelines
+for how to work with other students and with your partner (if you have one):</p>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Pair programming to complete the implementation tasks is <strong>strongly
+encouraged</strong>.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Writing a design document with your partner is <strong>strongly encouraged.</strong>
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Having one partner work on the file system system calls while the other
+partner works on process support is a good division of labor. The partner
+working on the file system system calls may finish first, at which point they
+can help and continue testing.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Answering the code reading questions side-by-side with your
+partner is <strong>strongly encouraged</strong>.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Discussing the code reading questions and browsing the source tree with
+other students is encouraged.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock warning alert alert-warning" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span></td>
+<td class="content">
+Dividing the code reading questions and development tasks between
+partners is discouraged.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+Any arrangement that results in one partner writing the entire
+design document is cheating.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+Any arrangement that results in one partner writing all or almost
+all of the code is cheating.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+Copying any answers from anyone who is not your partner or anywhere
+else and submitting them as your own is cheating.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+You may not refer to or incorporate any external sources without
+explicit permission <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Which you are extremely unlikely to get.&lt;/body&gt;&lt;/html&gt;">2</span>.
+</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_assignment_organization"></a><h2>2. Assignment Organization</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>Your current OS/161 system has minimal support for running user
+binaries&#x2014;&#x200B;nothing that could be considered a true process. ASST2 starts the
+transformation of OS/161 into a true multi-tasking operating system.</p>
+</div>
+<div class="paragraph">
+<p>After the next assignment, it will be capable of running multiple processes
+at once from actual compiled programs stored in your account. These programs
+will be loaded into OS/161 and executed in user mode by System/161. This will
+occur under the control of your kernel and the command shell in <code>bin/sh</code>.</p>
+</div>
+<div class="paragraph">
+<p>The first step is to read and understand the parts of the system that we have
+written for you. Our code can run one user-level C program at a time as long
+as it doesn&#x2019;t want to do anything but shut the system down. We have provided
+sample user programs that do this (<code>sbin/{reboot,halt,poweroff</code>), as well as
+others that make use of features you will be adding in this and future
+assignments.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_system_call_interface"></a><h3>2.1. System Call Interface</h3>
+<div class="paragraph">
+<p>First, however, you must implement the interface between user-mode
+programs&#x2014;&#x200B;or user land&#x2014;&#x200B;and the kernel. As usual, we provide part of the code
+you will need. Your job is to identify, design and build the missing pieces.</p>
+</div>
+<div class="paragraph">
+<p>So far, all the code you have written for OS/161 has only been run within,
+and only been used by, the operating system kernel. In a real operating
+system, the kernel&#x2019;s main function is to provide support for user-level
+programs. Most such support is accessed via system calls.</p>
+</div>
+<div class="paragraph">
+<p>However, before looking at how to implement system calls, we first walk you
+through how the kernel gets to run. Remember, that the kernel is just like most
+programs except that it is the first program that gets to run.</p>
+</div>
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="ftnrkvBAasI"><img class="youtube-thumb" src="//i.ytimg.com/vi/ftnrkvBAasI/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph">
+<p>Now that you have some idea on how the kernel boots up, take a look at the
+comments inside the <code>__start</code> function to get an idea of what it is doing.  Try
+to find the lines where the Interrupt Service Routines (ISRs) are loaded into
+memory.</p>
+</div>
+<div class="paragraph">
+<p>Because a system call allows flow of information across the user-kernel
+boundary, there needs to be relevant code on both sides to handle a system
+call. We give you one system call, <code>reboot</code>, which is implemented in the
+function <code>sys_reboot()</code> in <code>main.c</code>. In GDB, if you put a breakpoint on
+<code>sys_reboot</code> and run the <code>reboot</code> program, you can print a backtrace in GDB to
+see how it got there.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_how_a_system_call_occurs_in_userspace"></a><h3>2.2. How a system call occurs in userspace</h3>
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="ruF0DN0LT6Q"><img class="youtube-thumb" src="//i.ytimg.com/vi/ruF0DN0LT6Q/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph">
+<p>A system call is invoked from userspace by using the <code>syscall</code> instruction
+which can be seen by disassembling any of the binaries.</p>
+</div>
+<div class="paragraph">
+<p>The system call numbering has to be agreed upon between userspace and the
+kernel.
+This is taken care of <code>libc</code> that is present in your sources. It does this by
+using the kernel header file <code>kern/include/kern/syscall.h</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_what_happens_in_the_kernel_on_a_system_call"></a><h3>2.3. What happens in the kernel on a system call</h3>
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="ULwkafH8gCo"><img class="youtube-thumb" src="//i.ytimg.com/vi/ULwkafH8gCo/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph">
+<p>Once the system call enters the kernel the system call handler retrieves the
+arguments and passes them to the appropriate kernel function.
+When it completes, any arguments are passed back to userspace and the code
+that invoked the system call continues.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_process_support"></a><h3>2.4. Process Support</h3>
+<div class="paragraph">
+<p>You will also be implementing the subsystem that keeps track of the multiple
+processes you will have in the future. You must decide what data structures
+you will need to hold the data pertinent to a process. OS/161 contains some
+code that should get you started here in <code>kern/include/proc.h</code>.</p>
+</div>
+<div class="paragraph">
+<p>It may be helpful to look at kernel include files of your favorite operating
+system for suggestions, specifically the <code>proc</code> structure. That said, these
+structures are likely to include <em>much more</em> process (or task) state than you
+need to correctly complete this assignment.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_user_programs"></a><h3>2.5. User Programs</h3>
+<div class="paragraph">
+<p>Our System/161 simulator can run normal programs compiled from C. The
+programs are compiled with a cross-compiler, <code>os161-gcc</code>. This compiler runs
+on the host machine and produces MIPS binaries and is the same compiler used
+to compile the OS/161 kernel. To create new user programs, you will need to
+edit the <code>Makefile</code> in <code>bin</code>, <code>sbin</code>, or <code>testbin</code> (depending on where you
+put your programs) and then create a directory similar to those that already
+exist. Use an existing program and its <code>Makefile</code> as a template. <strong>You are
+strongly encouraged to run the tests that already exist and write your own as
+needed.</strong></p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_design"></a><h2>3. Design</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>Beginning with ASST2 your <em>design documents</em> become an important part of
+approaching each assignment.</p>
+</div>
+<div class="paragraph">
+<p>A design document should clearly reflect the development of your solution,
+not merely explain what you programmed. If you try to code first and design
+later, or even if you design hastily and rush into coding, you will most
+certainly end up confused and frustrated. <strong>Don&#x2019;t do it!</strong> Work with your
+partner to plan everything you will do. Don&#x2019;t even think about coding until
+you can precisely explain to each other what problems you need to solve and
+how the pieces relate to each other.</p>
+</div>
+<div class="paragraph">
+<p>Note that it can often be hard to write (or talk) about new software
+design&#x2014;&#x200B;you are facing problems that you have not seen before, and therefore
+even finding terminology to describe your ideas can be difficult. There is no
+magic solution to this problem, but it gets easier with practice. The
+important thing is to go ahead and try. Always try to describe your ideas and
+designs to your partner. In order to reach an understanding, you may have to
+invent terminology and notation&#x2014;&#x200B;this is fine, just be sure to document it in
+your design. If you do this, by the time you have completed your design, you
+will find that you have the ability to efficiently discuss problems that you
+have never seen before.</p>
+</div>
+<div class="paragraph">
+<p>Your design document can be as long as you like. It should include both
+English definitions and explanations of core functions and interfaces as well
+as pseudocode and function definitions where appropriate. We suggest that you
+use a markup language to format your design nicely. Both
+<a href="https://daringfireball.net/projects/markdown/" target="_blank" class="external">Markdown</a> and
+<a href="http://asciidoctor.org/" target="_blank" class="external">AsciiDoc</a> are supported by many Git hosting sites.</p>
+</div>
+<div class="paragraph">
+<p>The contents of your design document should include (but not be limited to):</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>A description of each new piece of functionality you need to add for ASST2.</p>
+</li>
+<li>
+<p>A list and brief description of any new data structures you will have to
+add to the system.</p>
+</li>
+<li>
+<p>Indications of what, if any, existing code you may model your solution off
+of.</p>
+</li>
+<li>
+<p>A description of how accesses to shared state will be synchronized, if
+necessary.</p>
+</li>
+<li>
+<p>A breakdown of who will do what between the partners, and a timeline
+indicating when assignment tasks will be finished and when testing will take
+place.</p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<a class="anchor" id="_design_considerations"></a><h3>3.1. Design Considerations</h3>
+<div class="paragraph">
+<p>Here are some additional questions and thoughts to aid in writing your design
+document. They are not, by any means, meant to be a comprehensive list of all
+the issues you will want to consider. You do not need to explicitly answer or
+discuss these questions in your executive summary, but you should at least
+think about them.</p>
+</div>
+<div class="paragraph">
+<p>Your system must allow user programs to receive arguments from the command
+line. For example, you should be able to run the following program:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">char</span>  *filename = <span class="hljs-string">&quot;/bin/cp&quot;</span>;
+<span class="hljs-keyword">char</span>  *args[<span class="hljs-number">4</span>];
+<span class="hljs-keyword">pid_t</span>  pid;
+
+args[<span class="hljs-number">0</span>] = <span class="hljs-string">&quot;cp&quot;</span>;
+args[<span class="hljs-number">1</span>] = <span class="hljs-string">&quot;file1&quot;</span>;
+args[<span class="hljs-number">2</span>] = <span class="hljs-string">&quot;file2&quot;</span>;
+args[<span class="hljs-number">3</span>] = <span class="hljs-literal">NULL</span>;
+
+pid = fork();
+
+<span class="hljs-keyword">if</span> (pid == <span class="hljs-number">0</span>) {
+	execv(filename, args);
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The code snippet above loads the executable file <code>/bin/cp</code>, installs it as a
+new process, and executes it. The new process will then find <code>file1</code> on the
+disk and copy it to <code>file2</code>.</p>
+</div>
+<div class="paragraph">
+<p>Passing arguments from one user program, through the kernel, into another
+user program, is a bit of a chore. What form does this take in C? This is
+rather tricky, and there are many ways to be led astray. You will probably
+find that very detailed pictures and several walkthroughs will be most
+helpful. This piece of code, in particular, is <em>impossible</em> to write
+correctly without being carefully designed beforehand <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Go on&amp;#x2026;&amp;#x200B; try to prove us wrong!&lt;/body&gt;&lt;/html&gt;">3</span>.</p>
+</div>
+<div class="paragraph">
+<p>Some other questions to consider:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What primitive operations exist to support the transfer of data to and from
+kernel space?  Do you want to implement more on top of these?</p>
+</li>
+<li>
+<p>When implementing <code>exec</code>, how will you determine:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>the stack pointer initial value</p>
+</li>
+<li>
+<p>the initial register contents</p>
+</li>
+<li>
+<p>the return value</p>
+</li>
+<li>
+<p>whether you can execute the program at all?</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>You will need to <em>bullet-proof</em> the OS/161 kernel from user program errors.
+There should be nothing a user program can do&#x2014;&#x200B;and we will try <em>almost
+everything</em>&#x2014;to crash the operating system, with the exception of
+explicitly asking the system to halt.</p>
+</li>
+<li>
+<p>What new data structures will you need to manage multiple processes?</p>
+</li>
+<li>
+<p>What relationships do these new structures have with the rest of the system?</p>
+</li>
+<li>
+<p>How will you manage file accesses? When the shell invokes the <code>cat</code>
+command, and the <code>cat</code> command starts to read <code>file1</code>, what will happen if
+another program also tries to read <code>file1</code>? What would you like to happen?</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_code_reading"></a><h2>4. Code Reading</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>To help you get started designing, we have provided the following questions
+as a guide for reading through the code.</p>
+</div>
+<div class="paragraph">
+<p>We recommend that you and your partner look over and answer the code reading
+questions <em>together</em>. You may want to start by reviewing the questions
+separately, but then meet to talk over your answers and look at the code
+together. Once you have done this, you should be ready to discuss strategy
+for designing your code for this assignment. <strong>A big part of ASST2 is figuring
+out what to do, not just how to do it.</strong></p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_existing_process_support"></a><h3>4.1. Existing Process Support</h3>
+<div class="paragraph">
+<p>The key files that are responsible for the loading and running of user-level
+programs are <code>loadelf.c</code>, <code>runprogram.c</code>, and <code>uio.c</code>, although you may want
+to add more of your own during this assignment. Understanding these files is
+the key to getting started with the implementation of multiprogramming. Note
+that to answer some of the questions, you will have to look in other files.</p>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernsyscallloadelf_c"></a><h4>4.1.1. <code>kern/syscall/loadelf.c</code></h4>
+<div class="paragraph">
+<p>This file contains the functions responsible for loading an ELF <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;ELF is the name of the executable format produced by &lt;code&gt;os161-gcc&lt;/code&gt;.&lt;/body&gt;&lt;/html&gt;">4</span> executable
+from the file system and into virtual memory space. Of course, at this point
+this virtual memory space does not provide what is normally meant by virtual
+memory&#x2014;&#x200B;although there is translation between virtual and physical addresses,
+there is no mechanism for providing more memory than exists physically. You
+will fix this during <a href="/asst/3/" class="hidden-print">ASST3</a>. For now, don&#x2019;t worry about it.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernsyscallrunprogram_c"></a><h4>4.1.2. <code>kern/syscall/runprogram.c</code></h4>
+<div class="paragraph">
+<p>This file contains only one function, <code>runprogram</code>, which is responsible for
+running a program from the kernel menu. It is a good base for writing the
+<code>execv</code> system call, but only a base&#x2014;&#x200B;when writing your design doc, you
+should determine what more is required for <code>execv</code> that <code>runprogram()</code> does
+not concern itself with. Additionally, once you have designed your process
+system, <code>runprogram</code> should be altered to start processes properly within
+this framework. For example, a program started by <code>runprogram</code> should have
+the standard file descriptors available while it&#x2019;s running.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernlibuio_c"></a><h4>4.1.3. <code>kern/lib/uio.c</code></h4>
+<div class="paragraph">
+<p>This file contains functions for moving data between kernel and user space.
+Knowing when and how to cross this boundary is critical to properly
+implementing user programs, so this is a good file to read very carefully.
+You should also examine the code in <code>kern/vm/copyinout.c</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_questions_to_consider"></a><h4>4.1.4. Questions to consider</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What are the ELF magic numbers?</p>
+</li>
+<li>
+<p>What is the difference between <code>UIO_USERISPACE</code> and <code>UIO_USERSPACE</code>? When should one use
+<code>UIO_SYSSPACE</code> instead?</p>
+</li>
+<li>
+<p>Why can the <code>struct uio</code> that is used to read in a segment be allocated on
+the stack in <code>load_segment</code>? Or, put another way, where does the memory read
+actually go?</p>
+</li>
+<li>
+<p>In <code>runprogram</code> why is it important to call <code>vfs_close</code> before going to user mode?</p>
+</li>
+<li>
+<p>What function forces the processor to switch into user mode? Is this function machine dependent?</p>
+</li>
+<li>
+<p>In what files are <code>copyin</code>, <code>copyout</code>, and <code>memmove</code> defined? Why are
+<code>copyin</code> and <code>copyout</code> necessary? (As opposed to just using <code>memmove</code>.)</p>
+</li>
+<li>
+<p>What is the purpose of <code>userptr_t</code>?</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_kernarchmips_traps_and_system_calls"></a><h3>4.2. <code>kern/arch/mips</code>: Traps and System Calls</h3>
+<div class="paragraph">
+<p>Exceptions are the key to operating systems. They are the mechanism that
+enables the operating system to regain control of execution and therefore do
+its job. You can think of exceptions as the interface between the processor
+and the operating system. When the OS boots, it installs an <em>exception
+handler</em>, usually carefully crafted assembly code, at a specific address in
+memory. When the processor raises an exception, it invokes this, which sets
+up a <em>trap frame&lt;S and calls into the operating system.  Since _exception</em> is
+such an overloaded term in computer science, operating system lingo for an
+exception is a <strong>trap</strong>&#x2014;when the OS traps execution. Interrupts are
+exceptions, and more significantly for this assignment, so are system calls.
+Specifically, <code>kern/arch/mips/syscall/syscall.c</code> handles traps that happen to
+be system calls. Understanding this code is key to being a real operating
+systems junkie, so we highly recommend reading through it carefully.</p>
+</div>
+<div class="sect3">
+<a class="anchor" id="_locoretrap_c"></a><h4>4.2.1. <code>locore/trap.c</code></h4>
+<div class="paragraph">
+<p><code>mips_trap</code> is the key function for returning control to the operating
+system. This is the C function that gets called by the assembly exception
+handler. <code>enter_new_process</code> is the key function for returning control to
+user programs. <code>kill_curthread</code> is the function for handling broken user
+programs. When the processor is in user mode and hits something it can&#x2019;t
+handle&#x2014;&#x200B;a bad instruction or our favorite divide-by-zero&#x2014;&#x200B;it raises an
+exception. There&#x2019;s no way to recover from this, so the OS needs to kill off
+the process. Part of this assignment is writing a useful version of this
+function.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_syscallsyscall_c"></a><h4>4.2.2. <code>syscall/syscall.c</code></h4>
+<div class="paragraph">
+<p><code>syscall</code> is the function that delegates the actual work of a system call to
+the kernel function that implements it. Notice that <code>reboot</code> is the only case
+currently handled. You will also find a function, <code>enter_forked_process</code>,
+which is a stub where you will place your code to implement the <code>fork</code> system
+call. It should get called from <code>sys_fork</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_questions_to_consider_2"></a><h4>4.2.3. Questions to consider</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What is the numerical value of the exception code for a MIPS system call?</p>
+</li>
+<li>
+<p>How many bytes is an instruction in MIPS? Try to answer this by reading
+<code>syscall</code> carefully, not by looking somewhere else.</p>
+</li>
+<li>
+<p>Why do you probably want to change the implementation of <code>kill_curthread</code>?</p>
+</li>
+<li>
+<p>What would be required to implement a system call that took more than 4 arguments?</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_support_code_for_user_programs"></a><h3>4.3. Support Code for User Programs</h3>
+<div class="paragraph">
+<p>As important as the kernel implementation of system calls is the user space
+code that allows C programs to use them. This code can be found under the
+<code>userland/</code> directory at the top of your OS/161 source tree. Note that you
+can complete this assignment without modifying user-level code, and you
+<strong>should not break any interface conventions already present</strong>&#x2014;don&#x2019;t swap
+the order of the <code>argc</code> and <code>argv *</code> arguments to <code>main</code>, for example.
+However, it is useful to understand how this code works and how it implements
+the other side of the system call interface.</p>
+</div>
+<div class="sect3">
+<a class="anchor" id="_userlandlibcrt0mips"></a><h4>4.3.1. <code>userland/lib/crt0/mips/</code></h4>
+<div class="paragraph">
+<p>This is the user program startup code. There&#x2019;s only one file in here,
+<code>mips-crt0.S</code>, which contains the MIPS assembly code that receives control
+first when a user-level program is started. It calls the user program&#x2019;s
+<code>main</code>. This is the code that your <code>execv</code> implementation will be interfacing
+to, so be sure to check what values it expects to appear in what registers
+and so forth.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_userlandliblibc"></a><h4>4.3.2. <code>userland/lib/libc/</code></h4>
+<div class="paragraph">
+<p>This is the user-level C library. There&#x2019;s obviously a lot of code here. We
+don&#x2019;t expect you to read it all, although it may be instructive in the long
+run to do so. For present purposes you need only look at the code that
+implements the user-level side of system calls, which we detail below.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_userlandliblibcunixerrno_c"></a><h4>4.3.3. <code>userland/lib/libc/unix/errno.c</code></h4>
+<div class="paragraph">
+<p>This is where the global variable <code>errno</code> is defined.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_userlandliblibcarchmipssyscalls_mips_s"></a><h4>4.3.4. <code class="small">userland/lib/libc/arch/mips/syscalls-mips.S</code></h4>
+<div class="paragraph">
+<p>This file contains the machine-dependent code necessary for implementing
+the user-level side of MIPS system calls.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_builduserlandliblibcsyscalls_s"></a><h4>4.3.5. <code class="small">build/userland/lib/libc/syscalls.S</code></h4>
+<div class="paragraph">
+<p>This file is created from <code>syscalls-mips.S</code> at compile time and is the actual
+file assembled into the C library.  The actual names of the system calls are
+placed in this file using a script called <code>syscalls/gensyscalls.sh</code> that
+reads them from the kernel&#x2019;s header files. This avoids having to make a
+second list of the system calls. In a real system, typically each system call
+stub is placed in its own source file, to allow selectively linking them in.
+OS/161 puts them all together to simplify the build.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_questions_to_consider_3"></a><h4>4.3.6. Questions to consider</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What is the purpose of the <code>SYSCALL</code> macro?</p>
+</li>
+<li>
+<p>What is the MIPS instruction that actually triggers a system call? (Answer
+this by reading the source in this directory, not looking somewhere else.)</p>
+</li>
+<li>
+<p>Now that OS/161 supports 64 bit values, <code>lseek</code> takes and returns a 64 bit
+offset value. Thus, <code>lseek</code> takes a 32 bit file handle (<code>arg0</code>), a 64 bit
+offset (<code>arg1</code>), a 32 bit whence (<code>arg3</code>), and needs to return a 64 bit
+offset. In <code>void syscall(struct trapframe *tf)</code> where will you find each of
+the three arguments (in which registers) and how will you return the 64 bit
+offset?</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_implementation"></a><h2>5. Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>Implement system calls and exception handling.</p>
+</div>
+<div class="paragraph">
+<p>The full range of system calls that we think you might want over the course
+of the semester is listed in <code>kern/include/kern/syscall.h</code>. For this
+assignment you should implement:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>File system support: <code>open</code>, <code>read</code>, <code>write</code>, <code>lseek</code>, <code>close</code>, <code>dup2</code>,
+<code>chdir</code>, and <code>__getcwd</code>.</p>
+</li>
+<li>
+<p>Process support: <code>getpid</code>, <code>fork</code>, <code>execv</code>, <code>waitpid</code>, and <code>_exit</code>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>It&#x2019;s crucial that your system calls handle all error conditions gracefully
+without crashing your kernel. <strong>You should consult the OS/161 man pages</strong>
+included in the distribution under <code>man/syscall</code> and understand fully the
+system calls that you must implement. You must return the error codes as
+described in the man pages.</p>
+</div>
+<div class="paragraph">
+<p>Additionally, your system calls must return the correct value (in case of
+success) or error code (in case of failure) as specified in the man pages.
+The grading scripts rely on the return of appropriate error codes and so
+adherence to the guidelines is as important as the correctness of your
+implementation.</p>
+</div>
+<div class="paragraph">
+<p>The file <code>userland/include/unistd.h</code> contains the user-level interface
+definition of the system calls that you will be writing for OS/161.  This
+interface is different from that of the kernel functions that you will define
+to implement these calls. You need to design this interface and put it in
+<code>kern/include/syscall.h</code>. As you discovered in <a href="/asst/0/" class="hidden-print">ASST0</a>, the integer codes for
+the calls are defined in <code>kern/include/kern/syscall.h</code>.</p>
+</div>
+<div class="paragraph">
+<p>You need to think about a variety of issues associated with implementing
+system calls. Perhaps the most obvious one: can two different user-level
+processes (or user-level threads, if you choose to implement them) find
+themselves running a system call at the same time? Be sure to argue for or
+against this, and explain your final decision in your design document.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_kernel_menu_changes"></a><h3>5.1. Kernel Menu Changes</h3>
+<div class="paragraph">
+<p>A small but important part of ASST2 is improving the relationship between the
+kernel menu thread and the thread that it creates that will run your shell
+(via <code>s</code>) or user programs (via <code>p</code>). Currently the menu thread does not
+coordinate with that it forks to go to user space. This means that the kernel
+menu will immediately return to the top of its loop, redraw the prompt, and
+begin trying to read terminal input.</p>
+</div>
+<div class="paragraph">
+<p>If the user program that was launched is also trying to read from the
+terminal (like <code>/bin/shell</code>), it will compete with the kernel menu thread for
+input. If you find yourself having to type <code>//bbiinn//ttrruuee</code> to run
+<code>/bin/true</code>, this what is happening <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Because of the default round-robin scheduling algorithm, input characters will frequently be alternately delivired to the kernel menu and shell threads.&lt;/body&gt;&lt;/html&gt;">5</span>. If the user
+program is just generating output, you will notice that the kernel prompt is
+printed and interleaved with its output.</p>
+</div>
+<div class="paragraph">
+<p>Given that this makes it impossible to correctly interact with the shell or
+capture test output&#x2014;&#x200B;which <a href="https://test161.ops-class.org" class="hidden-print external" target="_blank"><code>test161</code></a> depends on&#x2014;&#x200B;fixing this problem is a
+part of ASST2. There are multiple approaches that will work. If you consider
+this while designing <code>sys_wait</code> and <code>sys_exit</code>, it is possible to reuse that
+approach without duplicating any code. Alternatively, you can fix this
+problem before implementing any of your system calls by using some of the
+synchronization primitives you became familiar with during <a href="/asst/1/" class="hidden-print">ASST1</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_file_system_support"></a><h3>5.2. File System Support</h3>
+<div class="paragraph">
+<p>For any given process, the first file descriptors (0, 1, and 2) are
+considered to be standard input (<code>stdin</code>), standard output (<code>stdout</code>), and
+standard error (<code>stderr</code>). These file descriptors should start out attached
+to the console device (<code>&quot;con:&quot;</code>), but your implementation must allow programs
+to use <code>dup2</code> to change them to point elsewhere.</p>
+</div>
+<div class="paragraph">
+<p>Although these system calls may seem to be tied to the file system, in fact,
+they are really about manipulation of file descriptors, or process-specific
+file system state. A large part of this assignment is designing and
+implementing a system to track this state. Some of this information&#x2014;&#x200B;such as
+the current working directory&#x2014;&#x200B;is specific only to the process, but other
+information&#x2014;&#x200B;such as file offset&#x2014;&#x200B;is specific to the process and file
+descriptor. <strong>Don&#x2019;t rush this design.</strong> Think carefully about the state you
+need to maintain, how to organize it, and when and how it has to change.</p>
+</div>
+<div class="paragraph">
+<p>Note that there is a system call <code>__getcwd</code> and then a library routine
+<code>getcwd</code>. Once you&#x2019;ve written the system call, the library routine should
+function correctly.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_process_support_2"></a><h3>5.3. Process Support</h3>
+<div class="paragraph">
+<p>Process support for ASST2 divides into the easy (<code>getpid</code>) and the
+not-so-easy: <code>fork</code>, <code>execv</code>, <code>waitpid</code> and <code>_exit</code>. These system calls are
+probably the most difficult part of the assignment, but also the most
+rewarding. They enable multiprogramming and make OS/161 a usable system.</p>
+</div>
+<div class="sect3">
+<a class="anchor" id="_getpid"></a><h4>5.3.1. <code>getpid</code></h4>
+<div class="paragraph">
+<p>A PID, or process ID, is a unique number that identifies a process. The
+implementation of <code>getpid</code> is not terribly challenging, but process ID
+allocation and reclamation are the important concepts that you must
+implement. It is not OK for your system to crash because over the lifetime of
+its execution you&#x2019;ve used up all the PIDs. Design your PID system, implement
+all the tasks associated with PID maintenance, and only then implement
+<code>getpid</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_fork"></a><h4>5.3.2. <code>fork</code></h4>
+<div class="paragraph">
+<p><code>fork</code> is the mechanism for creating new processes.  It should make a copy of
+the invoking process and make sure that the parent and child processes each
+observe the correct return value (that is, 0 for the child and the newly
+created PID for the parent). You will want to think carefully through the
+design of <code>fork</code> and consider it together with <code>execv</code> to make sure that each
+system call is performing the correct functionality. <code>fork</code> is also likely to
+be a chance for you to use one of the synchronization primitives you have
+implemented previously.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_execv"></a><h4>5.3.3. <code>execv</code></h4>
+<div class="paragraph">
+<p><code>execv</code>, although merely a system call, is really the heart of this
+assignment. It is responsible for taking newly created processes and make
+them execute something different than what the parent is executing. It must
+replace the existing address space with a brand new one for the new
+executable&#x2014;&#x200B;created by calling <code>as_create</code> in the current <code>dumbvm</code>
+system&#x2014;&#x200B;and then run it. While this is similar to starting a process straight
+out of the kernel, as <code>runprogram</code> does, it&#x2019;s not quite that simple. Remember
+that this call is coming out of user space, into the kernel, and then
+returning back to user space. You must manage the memory that travels across
+these boundaries <em>very</em> carefully. Also, notice that <code>runprogram</code> doesn&#x2019;t
+take an argument vector, but this must of course be handled correctly by
+<code>execv</code>.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_waitpid"></a><h4>5.3.4. <code>waitpid</code></h4>
+<div class="paragraph">
+<p>Although it may seem simple at first, <code>waitpid</code> requires a fair bit of
+design. Read the specification carefully to understand the semantics, and
+consider these semantics from the ground up in your design. You may also wish
+to consult the UNIX man page, though keep in mind that you are not required
+to implement all the things UNIX <code>waitpid</code> supports, nor is the UNIX
+parent/child model of waiting the only valid or viable possibility.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_exit"></a><h4>5.3.5. <code>_exit</code></h4>
+<div class="paragraph">
+<p>The implementation of <code><em>exit</em></code><em> is intimately connected to the implementation
+of <code>waitpid</code>: They are essentially two halves of the same mechanism. Most of
+the time, the code for <code>_exit</code> will be simple and the code for <code>waitpid</code>
+relatively complicated, but it&#x2019;s perfectly viable to design it the other way
+around as well. If you find both are becoming extremely complicated, it may
+be a sign that you should rethink your design. <code>waitpid/_exit</code> is _another</em>
+chance to use your synchronization primitives.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kill_curthread"></a><h4>5.3.6. <code>kill_curthread</code></h4>
+<div class="paragraph">
+<p>Feel free to write <code>kill_curthread</code> in as simple a manner as possible. Just
+keep in mind that essentially nothing about the current thread&#x2019;s user space
+state can be trusted if it has suffered a fatal exception. It must be taken
+off the processor in as judicious a manner as possible, but without returning
+execution to the user level.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_error_handling"></a><h3>5.4. Error Handling</h3>
+<div class="paragraph">
+<p>The man pages in the <a href="http://os161.eecs.harvard.edu" class="hidden-print external" target="_blank">OS/161</a> distribution contain a description of the error
+return values that you must return. If there are conditions that can happen
+that are not listed in the man page, return the most appropriate error code
+from <code>kern/include/kern/errno.h</code>.  If none seem particularly appropriate,
+consider adding a new one. If you&#x2019;re adding an error code for a condition for
+which Unix has a standard error code symbol, use the same symbol if possible.
+If not, feel free to make up your own, but note that error codes should
+always begin with E, should not be EOF, etc. Consult Unix man pages to learn
+about Unix error codes. On Linux systems <code>man errno</code> will do the trick.</p>
+</div>
+<div class="paragraph">
+<p>Note that if you add an error code to <code>kern/include/kern/errno.h</code>, you need
+to add a corresponding error message to the file
+<code>kern/include/kern/errmsg.h</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_kernprocproc_c"></a><h3>5.5. <code>kern/proc/proc.c</code></h3>
+<div class="paragraph">
+<p>This file contains functions that allow process management. Functions
+<code>proc_create</code> and <code>proc_destroy</code> are essentially the entry points into process
+creation and destruction. Keep in mind that you will have to add code to these
+functions to manage any additional fields that you add to the process
+structure.</p>
+</div>
+<div class="paragraph">
+<p>Since a process can contain multiple threads, the functions <code>proc_addthread</code>
+and <code>proc_remthread</code> are provided to enable tracking. Since we are not going to
+implement multi-threading, you will not need to modify these functions, but
+going through the code and understanding how the link between a process and its
+threads is established would be beneficial.</p>
+</div>
+<div class="paragraph">
+<p>The functions <code>proc_getas</code> and <code>proc_setas</code> are essentially the getter and
+setter for the address space that a process has been assigned. You will find
+an example of how to use <code>proc_setas</code> by looking into the <code>runprogram</code>
+function. As a final note, address space management is one of the core
+objectives of <a href="/asst/3/" class="hidden-print">ASST3</a>.</p>
+</div>
+<div class="paragraph">
+<p>Finally, In OS/161, there is also a process created for the kernel which tracks
+all the kernel threads that are created.  This process is created by calling
+<code>proc_bootstrap</code>. Try to track down when and where this happens.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_scheduling"></a><h2>6. Scheduling</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Although implementing a scheduler is not part of the assignment, the scheduler
+is a critical components of most operating system.
+Your OS/161 code already implements a scheduler:</p>
+</div>
+<div class="col-md-12">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-function"><span class="hljs-keyword">void</span>
+<span class="hljs-title">schedule</span><span class="hljs-params">(<span class="hljs-keyword">void</span>)</span>
+</span>{
+        <span class="hljs-comment">/*
+         * You can write this. If we do nothing, threads will run in
+         * round-robin fashion.
+         */</span>
+}</code></pre>
+</div>
+</div>
+</div>
+<div style="clear: both;"></div>
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="NHRFQZ5PZBo"><img class="youtube-thumb" src="//i.ytimg.com/vi/NHRFQZ5PZBo/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph lead">
+<p>A scheduler&#x2019;s primary job is to determine the order in which processes should
+run.  Once the order is determined, the kernel needs to switch between
+processes.  Or in other words, the kernel needs to perform a context-switch.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_writing_your_own_tests"></a><h2>7. Writing Your Own Tests</h2>
+<div class="sectionbody">
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="ACE0BaUcaNI"><img class="youtube-thumb" src="//i.ytimg.com/vi/ACE0BaUcaNI/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph lead">
+<p>Part of ASST2 is learning to test your own code.</p>
+</div>
+<div class="paragraph">
+<p>We provide comprehensive test programs that usually test multiple system calls at once.
+A consequence of this is that if even one of these system calls is
+unimplemented, then the whole test will likely fail.</p>
+</div>
+<div class="paragraph">
+<p>You are encouraged to write your own tests which will help you debug specific system calls.
+You are also encouraged to look at <code>/testbin/badcall</code> and refer to the OS/161 man pages to
+ensure that you are handling all of the exceptions correctly.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_grading"></a><h2>8. Grading</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>ASST2 grading is divided into three parts:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>File-related system calls</strong></p>
+</li>
+<li>
+<p><strong>Process-related system calls</strong></p>
+</li>
+<li>
+<p><strong>Stability</strong></p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<a class="anchor" id="_file_related_system_calls"></a><h3>8.1. File-related System Calls</h3>
+<div class="paragraph">
+<p>We will test the following:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Does your console work?</strong> We will use <code>/testbin/consoletest</code> to determine
+this. Once you have implemented the <code>write</code> system call, you should have a
+working console. Note that you should not need to implement <code>open</code> to write to
+the console.</p>
+</li>
+<li>
+<p><strong>Do your <code>open</code> and <code>close</code> syscalls work?</strong> We will test this using
+<code>/testbin/opentest</code>, <code>/testbin/closetest</code>.</p>
+</li>
+<li>
+<p><strong>Do your <code>read</code> and <code>write</code> syscalls work?</strong> We will test these using
+<code>/testbin/readwritetest</code> and <code>/testbin/fileonlytest</code>.</p>
+</li>
+<li>
+<p><strong>Does your <code>lseek</code> syscall work?</strong> We will test this using
+<code>/testbin/fileonlytest</code> and <code>/testbin/sparsefile</code>.</p>
+</li>
+<li>
+<p><strong>Does your <code>dup2</code> syscall work?</strong> We will test this using
+<code>/testbin/redirect</code>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Many tests use multiple system calls. For example, although only
+<code>/testbin/opentest</code> is listed for testing <code>open</code>, almost all of the
+file-related syscall testing programs use <code>open</code>.</p>
+</div>
+<div class="paragraph">
+<p>Note that you <strong>must</strong> pass <code>/testbin/consoletest</code> before you can run most of
+the other tests. This ensures that your kernel menu is not competing with the
+test output.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_process_related_system_calls"></a><h3>8.2. Process-related System Calls</h3>
+<div class="paragraph">
+<p>We will test the following:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Does your <code>fork</code> syscall work?</strong> We will use <code>/testbin/forktest</code> to test this.</p>
+</li>
+<li>
+<p><strong>Does your <code>execv</code> syscall work?</strong> We will use <code>/testbin/argtest</code>,
+<code>/testbin/add</code>, <code>/testbin/factorial</code> and <code>/testbin/bigexec</code> to test this.</p>
+</li>
+<li>
+<p><strong>Do your <code>waitpid</code>/<code>_exit</code> syscalls work?</strong> We will use <code>/testbin/forktest</code>,
+to test this. A lot of other tests internally use <code>fork</code>, <code>waitpid</code> and
+<code>_exit</code>. You will need to implement <code>waitpid</code> and <code>_exit</code> to pass these.</p>
+</li>
+<li>
+<p><strong>Does your <code>getpid</code> syscall work?</strong> Almost all of the tests described above
+use <code>getpid</code> in some way. You will need <code>getpid</code> to work to pass these.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_stability"></a><h3>8.3. Stability</h3>
+<div class="paragraph">
+<p>We will test the stability of your system by running the following tests:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong><code>/testbin/badcall</code></strong> Tests whether your system call interface can handle
+invalid arguments.</p>
+</li>
+<li>
+<p><strong><code>/testbin/crash</code></strong> Tests whether your system can gracefully recover from user
+programs attempting to perform malicious actions.</p>
+</li>
+<li>
+<p><strong><code>/testbin/forktest</code></strong> Runs multiple iterations of <code>/testbin/forktest</code> to check for
+race conditions.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+
+				<div class="hidden-print">
+					<a class="anchor" id="videos"></a>
+					<h2>Related Videos</h2>
+					<p class="lead">
+					Below are some related videos and slides that may help you
+					complete this assignment.
+					</p>
+					<div class="row">
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="qCC23NnHddY"><img class="youtube-thumb" src="//i.ytimg.com/vi/qCC23NnHddY/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-28-2014</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="SIDXNjjnzQk"><img class="youtube-thumb" src="//i.ytimg.com/vi/SIDXNjjnzQk/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>03-05-2014</li>
+								<li>Guru Prasad</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="rkl99Y_WFtw"><img class="youtube-thumb" src="//i.ytimg.com/vi/rkl99Y_WFtw/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>03-26-2014</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="dmV8IanKdrk"><img class="youtube-thumb" src="//i.ytimg.com/vi/dmV8IanKdrk/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-17-2015</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="0uytdw-2qlc"><img class="youtube-thumb" src="//i.ytimg.com/vi/0uytdw-2qlc/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-24-2015</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="7xCoUGW1KUY"><img class="youtube-thumb" src="//i.ytimg.com/vi/7xCoUGW1KUY/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>03-03-2015</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="1Km71RPweLM"><img class="youtube-thumb" src="//i.ytimg.com/vi/1Km71RPweLM/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-23-2016</li>
+								<li>Ali Ben Ali</li>
+								<li><a href="https://drive.google.com/file/d/0B2KANO6SyBWlSjlvckVVWkVzN28/view" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="l4YXBmWzZoU"><img class="youtube-thumb" src="//i.ytimg.com/vi/l4YXBmWzZoU/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>03-01-2016</li>
+								<li>Ali Ben Ali</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlU3ZEYkpENGJ2OEE" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="1rgqG3vPTn4"><img class="youtube-thumb" src="//i.ytimg.com/vi/1rgqG3vPTn4/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>03-08-2016</li>
+								<li>Ali Ben Ali</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlVVdWM2h3czUxNUU" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="z72m4xPzkIo"><img class="youtube-thumb" src="//i.ytimg.com/vi/z72m4xPzkIo/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-22-2017</li>
+								<li>Ali Ben Ali and Carl Nuessle</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlM1BEbm93TlVOS00" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="e0pMhR_N0Rc"><img class="youtube-thumb" src="//i.ytimg.com/vi/e0pMhR_N0Rc/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>03-01-2017</li>
+								<li>Ali Ben Ali and Carl Nuessle</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWla0dKblBZNFpzVmc" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="g19tiq1h9AA"><img class="youtube-thumb" src="//i.ytimg.com/vi/g19tiq1h9AA/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>03-07-2017</li>
+								<li>Ali Ben Ali and Carl Nuessle</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlOTBVZzB2Z3IzWGM" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="scrollspy" class="col-md-3 spelling_exception">
+				<ul id="side" class="fixed-md-3 nav hidden-xs hidden-sm hidden-print" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">1. Introduction</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_objectives">1.1. Objectives</a></li>
+							<li class="h6"><a href="#_collaboration_guidelines">1.2. Collaboration Guidelines</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_assignment_organization">2. Assignment Organization</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_system_call_interface">2.1. System Call Interface</a></li>
+							<li class="h6"><a href="#_how_a_system_call_occurs_in_userspace">2.2. How a system call occurs in userspace</a></li>
+							<li class="h6"><a href="#_what_happens_in_the_kernel_on_a_system_call">2.3. What happens in the kernel on a system call</a></li>
+							<li class="h6"><a href="#_process_support">2.4. Process Support</a></li>
+							<li class="h6"><a href="#_user_programs">2.5. User Programs</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_design">3. Design</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_design_considerations">3.1. Design Considerations</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_code_reading">4. Code Reading</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_existing_process_support">4.1. Existing Process Support</a></li>
+							<li class="h6"><a href="#_kernarchmips_traps_and_system_calls">4.2. kern/arch/mips: Traps and System Calls</a></li>
+							<li class="h6"><a href="#_support_code_for_user_programs">4.3. Support Code for User Programs</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_implementation">5. Implementation</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_kernel_menu_changes">5.1. Kernel Menu Changes</a></li>
+							<li class="h6"><a href="#_file_system_support">5.2. File System Support</a></li>
+							<li class="h6"><a href="#_process_support_2">5.3. Process Support</a></li>
+							<li class="h6"><a href="#_error_handling">5.4. Error Handling</a></li>
+							<li class="h6"><a href="#_kernprocproc_c">5.5. kern/proc/proc.c</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_scheduling">6. Scheduling</a>
+					</li>
+					<li class="h5"><a href="#_writing_your_own_tests">7. Writing Your Own Tests</a>
+					</li>
+					<li class="h5"><a href="#_grading">8. Grading</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_file_related_system_calls">8.1. File-related System Calls</a></li>
+							<li class="h6"><a href="#_process_related_system_calls">8.2. Process-related System Calls</a></li>
+							<li class="h6"><a href="#_stability">8.3. Stability</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#videos">Related Videos</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/asst/2.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/asst/2.adoc" target="_blank">View</a>
+			<br>
+			Built 9/18/2020 @ 10:49 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

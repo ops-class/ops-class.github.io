@@ -1,0 +1,507 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Software Interrupts and Exceptions</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Discussion of ways that applications can get the kernel&apos;s attention.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="//en.wikipedia.org/wiki/Barbara_Liskov" target="_blank"><img src="/img/slides/women/037.jpg" alt="037" style="width: 100%;"></a>
+</div>
+<div class="title">Figure 1. Barbara Liskov</div>
+</div>
+<div class="paragraph center">
+<p><span class="fa fa-music"></span> <a href="https://myspace.com/ladytron" target="_blank" class="external">Destroy Everything You Touch by Ladytron</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/JTTwlAT_AwU?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+
+</div>
+<div class="nooutline slide" id="_today">
+<h2>Today</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Finish hardware interrupts.</p>
+</li>
+<li>
+<p>Software interrupts and exceptions.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_cat_announce_txt">
+<h2>$ cat announce.txt</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>I have good news and bad news&#x2026;&#x200B;</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_good_news_test161">
+<h2>Good News: <code>test161</code>!</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><code>test161</code> has been released. Please follow the installation instructions on
+Discourse.</p>
+</li>
+<li class="slide">
+<p>&#x2026;&#x200B;And it&#x2019;s awesome. Thanks to Scott and Yihong!</p>
+</li>
+<li class="slide">
+<p><code>test161</code> submit should be done shortly. If needed, we&#x2019;ll push the
+<a href="/asst/1/">ASST1</a> due date. (But don&#x2019;t plan on it.)</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_bad_news">
+<h2>Bad News</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>It was brought to my attention that there was inappropriate material
+presented in yesterday&#x2019;s recitation.</p>
+</li>
+<li class="slide">
+<p>As a result, if you would like partial credit on the assignment for the
+parts that were revealed please contact the course staff.</p>
+</li>
+<li class="slide">
+<p>(Note that the &quot;solutions&quot; that were revealed were <em>not entirely correct</em>, so
+please beware. We are preparing an update to the test cases to catch these
+errors.)</p>
+</li>
+<li class="slide">
+<p>Note also that you need working locks and CVs for <a href="/asst/2/">ASST2</a> and
+ASST3, so receiving credit will not solve that problem.</p>
+</li>
+<li class="slide">
+<p>Note that the video for yesterday&#x2019;s recitation will not be posted.</p>
+</li>
+<li class="slide">
+<p>Any questions?</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_questions_privileges_interrupts_exceptions">
+<h2><span class="smaller">Questions: Privileges, Interrupts, Exceptions?</span></h2>
+
+
+
+</div>
+<div class="nooutline slide" id="_review_operating_system_privilege">
+<h2>Review: Operating System Privilege</h2>
+
+<div class="ulist">
+<div class="title slide">Why does the operating system need special privileges?</div>
+<ul>
+<li class="slide">
+<p><strong>To divide resources</strong> between multiple application and <strong>enforce these
+divisions</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">True or false: implementing common operating system abstractions requires special privileges?</div>
+<ul>
+<li class="slide">
+<p><strong>False.</strong> <span class="spelling_exception">Exokernels</span> provide a design point indicating that
+implementing most of operating system abstractions in unprivileged
+libraries is possible.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_operating_modes">
+<h2>Review: Operating Modes</h2>
+
+<div class="ulist">
+<div class="title slide">How does the processor provide the operating system with special privileges?</div>
+<ul>
+<li class="slide">
+<p>Through <strong>privileged</strong> or <strong>kernel</strong> mode which allows the kernel to use
+special instructions.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_interrupt_handling">
+<h2>Review: Interrupt Handling</h2>
+
+<div class="olist arabic">
+<div class="title">When an interrupt happens the CPU:</div>
+<ol class="arabic">
+<li class="slide">
+<p>Enters privileged mode,</p>
+</li>
+<li class="slide">
+<p>records state necessary to allow the operating system to process the
+interrupt</p>
+</li>
+<li class="slide">
+<p>jumps to a fixed memory location and begins executing instructions.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_hardware_interrupts">
+<h2>Review: Hardware Interrupts</h2>
+
+<div class="paragraph">
+<p>Hardware interrupts occur when <strong class="slide">a device needs attention</strong>.</p>
+</div>
+<div class="olist arabic">
+<div class="title">What are examples of hardware interrupts?</div>
+<ol class="arabic">
+<li class="slide">
+<p>A disk read completed.</p>
+</li>
+<li class="slide">
+<p>A network card received a packet.</p>
+</li>
+<li class="slide">
+<p>A timer fired.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="nooutline slide" id="_questions_privileges_interrupts_exceptions_2">
+<h2><span class="smaller">Questions: Privileges, Interrupts, Exceptions?</span></h2>
+
+
+
+</div>
+<div class="slide" id="_masking_interrupts">
+<h2>Masking Interrupts</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Hardware interrupts can be either <strong>asynchronous</strong> or <strong>synchronous</strong>.</p>
+</li>
+<li class="slide">
+<p>Asynchronous interrupts can be <strong>ignored</strong> or masked.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The processor provides an interrupt mask allowing the operating
+system to choose which interrupts will trigger the ISR.</p>
+</li>
+<li>
+<p>If an interrupt is masked, it will not trigger the ISR.</p>
+</li>
+<li>
+<p>If an interrupt is still asserted when it is unmasked, it will
+trigger the ISR at that point.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Some interrupts are <strong>synchronous</strong> or not maskable: these typically
+indicate very serious conditions which must be handled immediately.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Example: processor reset.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_why_mask_interrupts">
+<h2>Why Mask Interrupts?</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Choosing to ignore interrupts allows the system to <strong>prioritize</strong>
+certain interrupts over others.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>&quot;<em>The DVD write buffer is empty</em>&quot; is more important than &quot;<em>There is a
+network packet waiting to be processed.</em>&quot;</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>In some cases handling certain interrupts generates other interrupts
+which would prevent the system from handling the original interrupt!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_protecting_interrupt_handlers">
+<h2>Protecting Interrupt Handlers</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>What would happen if applications were allowed to modify the interrupt
+service routines?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Applications could take control of devices by preventing the kernel
+from communicating with them. <strong>Disaster!</strong></p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Interrupt handlers allow the operating system to <strong>control access</strong> to
+hardware devices and <strong>protect them</strong> from direct control by untrusted
+applications.</p>
+</li>
+<li class="slide">
+<p>The memory that contains interrupt handlers is protected from access
+by user applications.</p>
+</li>
+<li class="slide">
+<p>One of the <strong>first things</strong> that the kernel does on boot is install its
+interrupt handlers!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_software_interrupts">
+<h2>Software Interrupts</h2>
+
+<div class="paragraph">
+<p>Given that the operating system prevents unprivileged code from
+directly accessing system resources, <strong>how do applications gain access to
+these protected resources?</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>&quot;Hey, over here, I need to read some data from disk!&quot;</p>
+</li>
+<li class="slide">
+<p>&quot;I could really use some more memory. Please?&quot;</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_syscall">
+<h2><code>syscall</code></h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>CPUs provide a <strong>special instruction</strong> (<code>syscall</code> on the MIPS) that
+generates a software (or synthetic) interrupt.</p>
+</li>
+<li class="slide">
+<p>Software interrupts provide a mechanism for user code to indicate that
+it needs help from the kernel.</p>
+</li>
+<li class="slide">
+<p>Rest of the interrupt handling path is unchanged. The CPU:</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p><strong>enters privileged mode</strong>,</p>
+</li>
+<li class="slide">
+<p><strong>records state</strong> necessary to process the interrupt,</p>
+</li>
+<li class="slide">
+<p><strong>jumps to a pre-determined memory location</strong> and begins executing
+instructions.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_making_system_calls">
+<h2>Making System Calls</h2>
+
+<div class="paragraph">
+<p>To access the kernel system call interface an application:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p>arranges arguments to the system call in an agreed-on place where the
+kernel can find them, typically in registers or on its stack,</p>
+</li>
+<li class="slide">
+<p>loads a number identifying the system call it wants the kernel to
+perform into a pre-determined register, and</p>
+</li>
+<li class="slide">
+<p>executes the <code>syscall</code> instruction.</p>
+</li>
+</ol>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p><code>libc</code> provides the wrappers around the <code>syscall</code> instruction that
+programmers are familiar with.</p>
+</div>
+<div class="paragraph">
+<p><strong>You can find this code in your OS/161 source tree. Look around!</strong></p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_software_exceptions">
+<h2>Software Exceptions</h2>
+
+<div class="paragraph">
+<p>An <strong>software exception</strong> indicates that code running on the CPU has
+created a situation that the processor needs help to address.</p>
+</div>
+<div class="ulist">
+<div class="title slide">Can you think of examples of software exceptions?</div>
+<ul>
+<li class="slide">
+<p>Divide by zero&#x2014;&#x200B;probably kills the process.</p>
+</li>
+<li class="slide">
+<p>Attempt to use a privileged instruction&#x2014;&#x200B;also probably kills the
+process.</p>
+</li>
+<li class="slide">
+<p>Attempt to use a virtual address that the CPU does not know how to
+translate&#x2014;&#x200B;a common exception handled transparently as part of virtual
+memory management.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_software_exceptions_v_software_interrupts">
+<h2><span class="small">Software Exceptions v. Software Interrupts</span></h2>
+
+<div class="ulist">
+<div class="title slide"><strong>Interrupts</strong> are <strong>voluntary</strong>.</div>
+<ul>
+<li class="slide">
+<p>Think of the CPU as saying to the kernel: &quot;The <code>/bin/true</code> process
+would like your assistance.&quot;</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide"><strong>Exceptions</strong> are <strong>non-voluntary</strong>.</div>
+<ul>
+<li class="slide">
+<p>Think of the CPU as saying to the kernel: &quot;I need some help with this
+<code>/bin/false</code> process. It just tried to divide by zero and I think it needs
+to be terminated.&quot;</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_questions">
+<h2>Questions?</h2>
+
+
+
+</div>
+<div class="nooutline slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Multiplexing: a historical perspective.</p>
+</li>
+<li>
+<p>Preemption and context switching.</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-02-17-multiprocessing">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

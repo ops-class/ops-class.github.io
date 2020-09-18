@@ -1,0 +1,888 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | exec, wait and exit</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Completion of the process interface including a discussion of exec, wait, and exit.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="https://en.wikipedia.org/wiki/Hessa_Al_Jaber" target="_blank"><img src="/img/slides/women/035.jpg" alt="035" style="width: 100%;"></a>
+</div>
+<div class="title">Figure 1. Hessa Sulta Al Jaber</div>
+</div>
+<div class="paragraph h3 center">
+<p><span class="fa fa-music"></span> <a href="http://florenceandthemachine.net/" target="_blank" class="external">Queen of Peace by Florence and the Machine</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/8crbgYBrgNU?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+
+</div>
+<div class="nooutline slide" id="_today">
+<h2>Today</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Producer-consumer buffer problem.</p>
+</li>
+<li>
+<p><code>exec()</code></p>
+</li>
+<li>
+<p><code>wait()</code>/<code>exit()</code></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_cat_announce_txt">
+<h2>$ cat announce.txt</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Do ASST1!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_producer_consumer">
+<h2>Producer-Consumer</h2>
+
+<div class="ulist">
+<div class="title"><strong>Problem description</strong>:</div>
+<ul>
+<li>
+<p>Producer and consumer share a fixed-size buffer.</p>
+</li>
+<li>
+<p>Producer can add items to the buffer <strong>if it is not full</strong>.</p>
+</li>
+<li>
+<p>Consumer can withdraw items from the buffer <strong>if it is not empty</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">What do we want to ensure?</div>
+<ul>
+<li class="slide">
+<p>Producer <strong>must wait</strong> if the buffer is full.</p>
+</li>
+<li class="slide">
+<p>Consumer <strong>must wait</strong> if the buffer is empty.</p>
+</li>
+<li class="slide">
+<p>Producers should not be sleeping if there is room in the buffer.</p>
+</li>
+<li class="slide">
+<p>Consumers should not be sleeping if there are items in the buffer.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_producer_consumer_2">
+<h2>Producer-Consumer</h2>
+
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock smaller">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">int</span> count = <span class="hljs-number">0</span>;
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">produce</span><span class="hljs-params">(item)</span> </span>{
+  <span class="hljs-keyword">while</span> (count == FULL) {
+    <span class="hljs-comment">// do something</span>
+  }
+  <span class="hljs-built_in">put</span>(<span class="hljs-built_in">buffer</span>, item);
+  count++;
+}
+
+<span class="hljs-function">item <span class="hljs-title">consume</span><span class="hljs-params">()</span> </span>{
+  <span class="hljs-keyword">while</span> (count == <span class="hljs-number">0</span>) {
+    <span class="hljs-comment">// do something</span>
+  }
+  item = <span class="hljs-built_in">get</span>(<span class="hljs-built_in">buffer</span>, item);
+  count--;
+  <span class="hljs-keyword">return</span> item;
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="ulist">
+<div class="title slide">What synchronization primitive is a good fit for this problem?</div>
+<ul>
+<li class="slide">
+<p><strong>Condition variables</strong>: I have a variable (<code>count</code>) and conditions that
+require waiting (full, empty).</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="slide" id="_producer_consumer_3">
+<h2>Producer-Consumer</h2>
+
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock smaller">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">int</span> count = <span class="hljs-number">0</span>;
+<span class="hljs-class"><span class="hljs-keyword">struct</span> * <span class="hljs-title">cv</span> <span class="hljs-title">countCV</span>;</span>
+<span class="hljs-class"><span class="hljs-keyword">struct</span> * <span class="hljs-title">lock</span> <span class="hljs-title">countLock</span>;</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">produce</span><span class="hljs-params">(item)</span> </span>{
+  lock_acquire(countLock);
+  <span class="hljs-keyword">while</span> (count == FULL) {
+    cv_wait(countCV, countLock);
+  }
+  <span class="hljs-built_in">put</span>(<span class="hljs-built_in">buffer</span>, item);
+  count++;
+  lock_release(countLock);
+}
+
+<span class="hljs-function">item <span class="hljs-title">consume</span><span class="hljs-params">()</span> </span>{
+  lock_acquire(countLock);
+  <span class="hljs-keyword">while</span> (count == <span class="hljs-number">0</span>) {
+    cv_wait(countCV, countLock);
+  }
+  item = <span class="hljs-built_in">get</span>(<span class="hljs-built_in">buffer</span>, item);
+  count--;
+  lock_release(countLock);
+  <span class="hljs-keyword">return</span> item;
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Looks good, right?</p>
+</div>
+</div>
+</div>
+<div class="ulist">
+<div class="title slide">Any time you call <code>cv_wait</code> <strong>you must</strong> call <code>cv_signal</code> or <code>cv_broadcast</code>!</div>
+<ul>
+<li class="slide">
+<p><strong>But where?</strong> Where does the condition change?</p>
+</li>
+</ul>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="slide" id="_producer_consumer_4">
+<h2>Producer-Consumer</h2>
+
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock smaller">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">int</span> count = <span class="hljs-number">0</span>;
+<span class="hljs-class"><span class="hljs-keyword">struct</span> * <span class="hljs-title">cv</span> <span class="hljs-title">countCV</span>;</span>
+<span class="hljs-class"><span class="hljs-keyword">struct</span> * <span class="hljs-title">lock</span> <span class="hljs-title">countLock</span>;</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">produce</span><span class="hljs-params">(item)</span> </span>{
+  lock_acquire(countLock);
+  <span class="hljs-keyword">while</span> (count == FULL) {
+    cv_wait(countCV, countLock);
+  }
+  <span class="hljs-built_in">put</span>(<span class="hljs-built_in">buffer</span>, item);
+  count++;
+  cv_broadcast(countCV, countLock);
+  lock_release(countLock);
+}
+
+<span class="hljs-function">item <span class="hljs-title">consume</span><span class="hljs-params">()</span> </span>{
+  lock_acquire(countLock);
+  <span class="hljs-keyword">while</span> (count == <span class="hljs-number">0</span>) {
+    cv_wait(countCV, countLock);
+  }
+  item = <span class="hljs-built_in">get</span>(<span class="hljs-built_in">buffer</span>, item);
+  count--;
+  cv_broadcast(countCV, countLock);
+  lock_release(countLock);
+  <span class="hljs-keyword">return</span> item;
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>This works. But does it work well?</p>
+</div>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="slide" id="_producer_consumer_5">
+<h2>Producer-Consumer</h2>
+
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="listingblock smallest">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">int</span> count = <span class="hljs-number">0</span>;
+<span class="hljs-class"><span class="hljs-keyword">struct</span> * <span class="hljs-title">cv</span> <span class="hljs-title">countCV</span>;</span>
+<span class="hljs-class"><span class="hljs-keyword">struct</span> * <span class="hljs-title">lock</span> <span class="hljs-title">countLock</span>;</span>
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">produce</span><span class="hljs-params">(item)</span> </span>{
+  lock_acquire(countLock);
+  <span class="hljs-keyword">while</span> (count == FULL) {
+    cv_wait(countCV, countLock);
+  }
+  <span class="hljs-built_in">put</span>(<span class="hljs-built_in">buffer</span>, item);
+  count++;
+  <span class="hljs-keyword">if</span> (count == <span class="hljs-number">1</span>) {
+    cv_broadcast(countCV, countLock);
+  }
+  lock_release(countLock);
+}
+
+<span class="hljs-function">item <span class="hljs-title">consume</span><span class="hljs-params">()</span> </span>{
+  lock_acquire(countLock);
+  <span class="hljs-keyword">while</span> (count == <span class="hljs-number">0</span>) {
+    cv_wait(countCV, countLock);
+  }
+  item = <span class="hljs-built_in">get</span>(<span class="hljs-built_in">buffer</span>, item);
+  count--;
+  <span class="hljs-keyword">if</span> (count == FULL - <span class="hljs-number">1</span>) {
+    cv_broadcast(countCV, countLock);
+  }
+  lock_release(countLock);
+  <span class="hljs-keyword">return</span> item;
+}</code></pre>
+</div>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div class="content"><div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Approaching full victory. But why not use <code>cv_signal</code>?</p>
+</div>
+</div>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="slide" id="_using_the_right_tool">
+<h2>Using the Right Tool</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Most problems can be solved with a <strong>variety</strong> of synchronization
+primitives.</p>
+</li>
+<li class="slide">
+<p>However, there is usually <strong>one primitive</strong> that is more appropriate
+than the others.</p>
+</li>
+<li class="slide">
+<p>You will have a chance to practice picking synchronization primitives
+for ASST1, and throughout the class.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_approaching_synchronization_problems">
+<h2>Approaching Synchronization Problems</h2>
+
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p>Identify the constraints.</p>
+</li>
+<li class="slide">
+<p>Identify shared state.</p>
+</li>
+<li class="slide">
+<p>Choose a primitive.</p>
+</li>
+<li class="slide">
+<p>Pair waking and sleeping.</p>
+</li>
+<li class="slide">
+<p>Look out for multiple resource allocations: can lead to deadlock.</p>
+</li>
+<li class="slide">
+<p>Walk through simple examples and corner cases <strong>before</strong> beginning to code.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="nooutline slide" id="_questions_about_synchronization">
+<h2>Questions about Synchronization?</h2>
+
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Now back to the process-related system calls!</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_after_fork">
+<h2>Review: After <code>fork()</code></h2>
+
+<div class="listingblock small">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c">returnCode = fork();
+<span class="hljs-keyword">if</span> (returnCode == <span class="hljs-number">0</span>) {
+  # I am the child.
+} <span class="hljs-keyword">else</span> {
+  # I am the parent.
+}</code></pre>
+</div>
+</div>
+<div class="ulist small">
+<ul>
+<li class="slide">
+<p>The child thread returns executing at the exact same point that its
+parent called <code>fork()</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>With one exception: <code>fork()</code> returns <strong>twice</strong>, the PID to the parent and
+0 to the child.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>All contents of memory in the parent and child are identical.</p>
+</li>
+<li class="slide">
+<p>Both child and parent have the same files open at the same position.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>But, since they are sharing file handles changes to the file
+offset made by the parent/child will be reflected in the child/parent!</strong></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_issues_with_fork">
+<h2>Review: Issues with <code>fork()</code></h2>
+
+<div class="ulist">
+<div class="title slide">Copying all that state is expensive!</div>
+<ul>
+<li class="slide">
+<p>Especially when the next thing that a process frequently does is
+start load a new binary which destroys most of the state <code>fork()</code> has
+carefully copied!</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Several solutions to this problem:</div>
+<ul>
+<li class="slide">
+<p><strong>Optimize existing semantics</strong>: through copy-on-write, a clever
+memory-management optimization we will discuss in several weeks.</p>
+</li>
+<li class="slide">
+<p><strong>Change the semantics</strong>: <code>vfork()</code>, which will fail if the child does anything other than
+immediately load a new executable.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Does not copy the address space!</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_review_the_tree_of_life">
+<h2>Review: The Tree of Life</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><code>fork()</code> establishes a parent-child relationship between two process at
+the point when each one is created.</p>
+</li>
+<li class="slide">
+<p>The <code>pstree</code> utility allows you to visualize these relationships.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock slide expand">
+<div class="content">
+<img src="/img/slides/figures/pstree.svg" alt="pstree" style="width: 80%;">
+</div>
+</div>
+
+</div>
+<div class="nooutline slide" id="_lets_go_on">
+<h2>Let&#x2019;s Go On&#x2026;&#x200B;</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Questions about <code>fork()</code>?</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_wait_1_process_lifecycle">
+<h2>$ wait %1 # Process lifecycle</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Change:</strong> <code>exec()</code></p>
+</li>
+<li class="slide">
+<p><strong>Death:</strong> <code>exit()</code></p>
+</li>
+<li class="slide">
+<p><strong>The Afterlife:</strong> <code>wait()</code></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_groundhog_day">
+<h2>Groundhog Day</h2>
+
+<div class="paragraph">
+<p>Is <code>fork()</code> enough?</p>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/initfork-1.svg" alt="initfork 1" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/initfork-2.svg" alt="initfork 2" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/initfork-3.svg" alt="initfork 3" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/initfork-4.svg" alt="initfork 4" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_change_exec">
+<h2>Change: <code>exec()</code></h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>The <code>exec()</code> family of system calls replaces the calling process with a
+new process loaded from a file.</p>
+</li>
+<li class="slide">
+<p>The executable file must contain a complete <strong>blueprint</strong> indicating how
+the address space should look when <code>exec()</code> completes.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>What should the contents of memory be?</p>
+</li>
+<li>
+<p>Where should the first thread start executing?</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Linux and other UNIX-like systems use <strong>ELF</strong> (Executable and Linkable
+Format) as the standard describing the information in the executable
+file is structured.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_readelf_display_elf_information">
+<h2><span class="spelling_exception">$ readelf # display ELF information</span></h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/readelf.svg" alt="readelf" style="width: 100%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_libld_linux_so_2">
+<h2><span class="spelling_exception">$ /lib/ld-linux.so.2</span></h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/ldlinux.svg" alt="ldlinux" style="width: 100%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_exec_argument_passing">
+<h2><code>exec()</code> Argument Passing</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>The process calling <code>exec()</code> passes arguments to the process that will
+replace it <strong>through the kernel.</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>The kernel retrieves the arguments from the process after the call to
+<code>exec()</code> is made.</p>
+</li>
+<li>
+<p>It then pushes them in to the memory of the process where the
+replacement process can find them when it starts executing.</p>
+</li>
+<li>
+<p>This is where main gets <code>argc</code> and <code>argv</code>!</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p><code>exec()</code> also has an interesting return, almost the dual of <code>fork()</code>:
+<code>exec()</code> <strong>never</strong> returns!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_exec">
+<h2>$ <code>exec()</code></h2>
+
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vcenter">
+<div class="content">
+<img src="/img/slides/figures/exec-1.svg" alt="exec 1" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vcenter">
+<div class="content">
+<img src="/img/slides/figures/exec-2.svg" alt="exec 2" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vcenter">
+<div class="content">
+<img src="/img/slides/figures/exec-3.svg" alt="exec 3" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vcenter">
+<div class="content">
+<img src="/img/slides/figures/exec-4.svg" alt="exec 4" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vcenter">
+<div class="content">
+<img src="/img/slides/figures/exec-5.svg" alt="exec 5" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vcenter">
+<div class="content">
+<img src="/img/slides/figures/exec-6.svg" alt="exec 6" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vcenter">
+<div class="content">
+<img src="/img/slides/figures/exec-7.svg" alt="exec 7" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_exec_file_handle_semantics">
+<h2><code>exec()</code> File Handle Semantics</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>By convention exec does <strong>not</strong> modify the file table of the calling
+process! Why not?</p>
+</li>
+<li class="slide">
+<p>Remember <strong>pipes</strong>?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Don&#x2019;t undo all the hard work that <code>fork()</code> put in to duplicating the
+file table!</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/pipes-example-3.svg" alt="pipes example 3" style="width: 100%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_our_simple_shell">
+<h2>Our Simple Shell</h2>
+
+<div class="paragraph">
+<p>Disclaimer: this is C-like pseudo-code. It will not compile or run!
+(But it&#x2019;s not far off.)</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>) {
+  input = readLine();
+  returnCode = fork();
+  <span class="hljs-keyword">if</span> (returnCode == <span class="hljs-number">0</span>) {
+    exec(input);
+  }
+}</code></pre>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_exec_challenges">
+<h2><code>exec()</code> Challenges</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>The most challenging part of <code>exec()</code> is making sure that, on failure,
+<code>exec()</code> can return to the calling process!</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Can&#x2019;t make destructive changes to the parent&#x2019;s address space until we
+are <em>sure</em> that things will success.</p>
+</li>
+<li>
+<p>Of course, the process is just an abstraction anyway and that
+provides a lot of flexibility: can prepare a separate address space and
+just swap it in when we&#x2019;re done.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_exit_end_of_life_issues">
+<h2><code>exit()</code> # End of Life Issues</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>What&#x2019;s missing here? <strong>Death!</strong></p>
+</li>
+<li class="slide">
+<p>Processes choose the moment of their own end by calling <code>exit()</code>.</p>
+</li>
+<li class="slide">
+<p>As we discussed earlier a processes passes an <strong>exit code</strong> to the
+<code>exit()</code> function.</p>
+</li>
+<li class="slide">
+<p>What happens to this exit code?</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_wait_the_afterlife">
+<h2><code>wait()</code> # The Afterlife</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>When a process calls <code>exit()</code> the kernel holds the <strong>exit code</strong>, which
+can be retrieved by the exiting child&#x2019;s <strong>parent</strong>.</p>
+</li>
+<li class="slide">
+<p>The parent retrieves this exit code by calling <code>wait()</code>, the last of the
+primary process-related system calls.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>And the one that stubbornly refuses to fit into my lifecycle
+metaphor.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>At this point we will head from outside looking in&#x2014;or at the top of
+the world looking down&#x2014;and get deep inside the trenches to examine the
+<strong>thread</strong> abstraction.</p>
+</li>
+<li class="slide">
+<p>Tentatively:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>One week on interrupts, kernel privileges, context switching and
+threading.</p>
+</li>
+<li>
+<p>One week on scheduling.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-02-10-execwait">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

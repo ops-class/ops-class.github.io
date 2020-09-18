@@ -1,0 +1,2169 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Lecture Slides and Videos</title>
+		<meta name="description" lang="en-us" content="Lecture slides and videos covering operating systems concepts.
+">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+  <div class="container">
+    <div class="row">
+	<div class="col-md-offset-2 col-md-7">
+		<h1>Lecture Slides and Videos</h1>
+		<a class="anchor" id="_top"></a>
+
+		<p class="lead">
+		Below find lecture slides and videos for 2017 and 2016 along with videos for
+		previous years.
+		</p>
+
+		<p>
+		<a href="https://blue.cse.buffalo.edu/people/gwa/" target="_blank" class="external">Geoffrey Challen</a>
+		has been taping his OS lectures since 2012, resulting
+		in hundreds of hours of freely available online content.
+		Browse the lectures below or subscribe to the
+		<a target="_blank" class="external" href="/slides/feed.xml">lecture feed</a> or
+		<a href="https://www.youtube.com/channel/UCzntthQN6ZF01rRRWikcmmQ?sub_confirmation=1" target="_blank" class="external">
+			YouTube channel</a>.
+		</p>
+
+		<h2>2017</h2>
+		<ul class="list-inline dash-list h5">
+			<li>
+			<a href="/courses/buffalo/CSE421_Spring2017/">
+				Course Page
+			</a>
+			</li>
+			<li>
+			<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp_z8pkiuvHo7Vz-eQEKsk-I" target="_blank" class="external">
+				Lecture Playlist
+			</a>
+			</li>
+			<li>
+			<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp9fbHf9b1kl8TiVYIg9uq-Y" target="_blank" class="external">
+				Recitation Playlist
+			</a>
+			</li>
+			<li>
+			<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp9hMbxGwJketoIzKNLGxaOw" target="_blank" class="external">
+				Pre-Lecture Music Playlist
+			</a>
+			</li>
+		</ul>
+		<hr>
+		<a class="anchor" id="_2017-05-10-exam"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-05-10-exam/" title="Exam review ask me anything session.">
+					<img style="width:100%" src="//i.ytimg.com/vi/ZnQZ75j4X_8/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-05-10-exam/">5/10/2017. Exam Review</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-05-10-exam/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-05-10-exam/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=ZnQZ75j4X_8" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Exam review ask me anything session.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-05-08-hints"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-05-08-hints/" title="Discussion of introduction to Hints for Computer System Design by Butler Lampson.">
+					<img style="width:100%" src="//i.ytimg.com/vi/JrQVcwv4OfU/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-05-08-hints/">5/8/2017. Hints for Computer System Design</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-05-08-hints/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-05-08-hints/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=JrQVcwv4OfU" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of introduction to Hints for Computer System Design by Butler Lampson.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-05-03-amdahls"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-05-03-amdahls/" title="Continuation of a discussion of performance and benchmarking, and introduction to Amdahl&apos;s Law.">
+					<img style="width:100%" src="//i.ytimg.com/vi/oJmXir-9hsk/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-05-03-amdahls/">5/3/2017. Amdahl&apos;s Law</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-05-03-amdahls/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-05-03-amdahls/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=oJmXir-9hsk" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Continuation of a discussion of performance and benchmarking, and introduction to Amdahl&apos;s Law.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-05-01-performance"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-05-01-performance/" title="Discussion of the process of benchmarking and performance improvement.">
+					<img style="width:100%" src="//i.ytimg.com/vi/dyjPDzRl7lw/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-05-01-performance/">5/1/2017. Performance and Benchmarking</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-05-01-performance/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-05-01-performance/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=dyjPDzRl7lw" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of the process of benchmarking and performance improvement.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-04-28-containers"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-04-28-containers/" title="Discussion of container or operating-system virtualization.">
+					<img style="width:100%" src="//i.ytimg.com/vi/nanHh0t4ssE/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-04-28-containers/">4/28/2017. Container Virtualization</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-04-28-containers/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-04-28-containers/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=nanHh0t4ssE" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of container or operating-system virtualization.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-04-26-xen"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-04-26-xen/" title="Discussion of the Xen approach to paravirtualization.">
+					<img style="width:100%" src="//i.ytimg.com/vi/2moUsgMOie4/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-04-26-xen/">4/26/2017. Xen and the Art of Virtualization</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-04-26-xen/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-04-26-xen/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=2moUsgMOie4" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of the Xen approach to paravirtualization.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-04-24-virtualization"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-04-24-virtualization/" title="Introduction to virtualization.">
+					<img style="width:100%" src="//i.ytimg.com/vi/fYH8A3RjPwY/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-04-24-virtualization/">4/24/2017. Full Virtualization</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-04-24-virtualization/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-04-24-virtualization/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=fYH8A3RjPwY" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to virtualization.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-04-19-raid"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-04-19-raid/" title="Overview of Redundant Arrays of Inexpensive Disks (RAID).">
+					<img style="width:100%" src="//i.ytimg.com/vi/x5OtmM9p0IA/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-04-19-raid/">4/19/2017. RAID</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-04-19-raid/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-04-19-raid/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=x5OtmM9p0IA" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Overview of Redundant Arrays of Inexpensive Disks (RAID).</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-04-17-lfs"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-04-17-lfs/" title="Discussion of log-structured file systems.">
+					<img style="width:100%" src="//i.ytimg.com/vi/zCMi65f4cmM/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-04-17-lfs/">4/17/2017. Log-Structured File Systems</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-04-17-lfs/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-04-17-lfs/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=zCMi65f4cmM" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of log-structured file systems.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-04-14-ffs"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-04-14-ffs/" title="The UNIX Fast File System (FFS).">
+					<img style="width:100%" src="//i.ytimg.com/vi/4aKBzAcgZNM/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-04-14-ffs/">4/14/2017. Journaling and FFS</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-04-14-ffs/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-04-14-ffs/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=4aKBzAcgZNM" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">The UNIX Fast File System (FFS).</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-04-12-filesystemcaching"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-04-12-filesystemcaching/" title="Discussion of file system caching and its impacts on consistency.">
+					<img style="width:100%" src="//i.ytimg.com/vi/3P6wSKJHa5w/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-04-12-filesystemcaching/">4/12/2017. File System Caching and Consistency</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-04-12-filesystemcaching/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-04-12-filesystemcaching/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=3P6wSKJHa5w" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of file system caching and its impacts on consistency.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-04-10-filesystemstructures"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-04-10-filesystemstructures/" title="Continuation of a discussion of file system data structures.">
+					<img style="width:100%" src="//i.ytimg.com/vi/6Dc5liBzwqw/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-04-10-filesystemstructures/">4/10/2017. File System Data Structures</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-04-10-filesystemstructures/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-04-10-filesystemstructures/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=6Dc5liBzwqw" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Continuation of a discussion of file system data structures.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-04-07-filesystems"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-04-07-filesystems/" title="Introduction to file system data structures and challenges.">
+					<img style="width:100%" src="//i.ytimg.com/vi/lC_xpM0tU4M/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-04-07-filesystems/">4/7/2017. Introduction to File Systems</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-04-07-filesystems/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-04-07-filesystems/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=lC_xpM0tU4M" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to file system data structures and challenges.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-04-05-files"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-04-05-files/" title="Introduction to files, file metadata and UNIX file system semantics.">
+					<img style="width:100%" src="//i.ytimg.com/vi/Fl9Q4DZQ_yI/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-04-05-files/">4/5/2017. Files</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-04-05-files/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-04-05-files/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=Fl9Q4DZQ_yI" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to files, file metadata and UNIX file system semantics.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-04-03-disks"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-04-03-disks/" title="Introduction to disks and the basics of stable storage.">
+					<img style="width:100%" src="//i.ytimg.com/vi/6BgzS6QzzJs/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-04-03-disks/">4/3/2017. Disks</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-04-03-disks/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-04-03-disks/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=6BgzS6QzzJs" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to disks and the basics of stable storage.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-03-29-pagereplacement"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-03-29-pagereplacement/" title="Discussion of page replacement policies.">
+					<img style="width:100%" src="//i.ytimg.com/vi/E3Ln7dGt_Y4/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-03-29-pagereplacement/">3/29/2017. Page Replacement</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-03-29-pagereplacement/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-03-29-pagereplacement/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=E3Ln7dGt_Y4" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of page replacement policies.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-03-27-swapping"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-03-27-swapping/" title="A discussion of how to swap in and out pages.">
+					<img style="width:100%" src="//i.ytimg.com/vi/zWOu20yM2yg/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-03-27-swapping/">3/27/2017. Swapping</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-03-27-swapping/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-03-27-swapping/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=zWOu20yM2yg" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">A discussion of how to swap in and out pages.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-03-15-paging"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-03-15-paging/" title="Page table design and implementation.">
+					<img style="width:100%" src="//i.ytimg.com/vi/31NdBdjpOTA/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-03-15-paging/">3/15/2017. Paging</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-03-15-paging/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-03-15-paging/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=31NdBdjpOTA" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Page table design and implementation.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-03-13-pagetranslation"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-03-13-pagetranslation/" title="Discussion of page translation.">
+					<img style="width:100%" src="//i.ytimg.com/vi/pxqcRCWzlzs/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-03-13-pagetranslation/">3/13/2017. Page Translation</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-03-13-pagetranslation/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-03-13-pagetranslation/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=pxqcRCWzlzs" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of page translation.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-03-10-addresstranslation"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-03-10-addresstranslation/" title="Discussion of efficiently translating virtual addresses to physical addresses.">
+					<img style="width:100%" src="//i.ytimg.com/vi/XiwSmgXsGKI/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-03-10-addresstranslation/">3/10/2017. Address Translation</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-03-10-addresstranslation/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-03-10-addresstranslation/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=XiwSmgXsGKI" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of efficiently translating virtual addresses to physical addresses.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-03-08-virtualaddresses"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-03-08-virtualaddresses/" title="Discussion of creating and translating virtual addresses.">
+					<img style="width:100%" src="//i.ytimg.com/vi/NDP_Ti_rnj8/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-03-08-virtualaddresses/">3/8/2017. Virtual Addresses</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-03-08-virtualaddresses/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-03-08-virtualaddresses/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=NDP_Ti_rnj8" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of creating and translating virtual addresses.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-03-06-addressspaces"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-03-06-addressspaces/" title="Introduction to the challenge of OS energy management and the address space abstraction.">
+					<img style="width:100%" src="//i.ytimg.com/vi/zVe58hORk2U/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-03-06-addressspaces/">3/6/2017. Introduction to Memory Management</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-03-06-addressspaces/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-03-06-addressspaces/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=zVe58hORk2U" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to the challenge of OS energy management and the address space abstraction.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-03-03-schedulingstory"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-03-03-schedulingstory/" title="Introduction to MLFQ, Con Kolivas, Linux development, and the Rotating Staircase Deadline Scheduler.">
+					<img style="width:100%" src="//i.ytimg.com/vi/cZ0Alxl5KaE/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-03-03-schedulingstory/">3/3/2017. A Scheduling Story</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-03-03-schedulingstory/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-03-03-schedulingstory/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=cZ0Alxl5KaE" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to MLFQ, Con Kolivas, Linux development, and the Rotating Staircase Deadline Scheduler.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-03-01-simpleschedulers"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-03-01-simpleschedulers/" title="An overview of simple schedulers including the know-nothings (random, round-robin) and oracle schedulers.">
+					<img style="width:100%" src="//i.ytimg.com/vi/R65MX-D3GVA/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-03-01-simpleschedulers/">3/1/2017. Simple Schedulers</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-03-01-simpleschedulers/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-03-01-simpleschedulers/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=R65MX-D3GVA" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">An overview of simple schedulers including the know-nothings (random, round-robin) and oracle schedulers.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-27-schedulingintro"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-27-schedulingintro/" title="Completion of a discussion of thread states followed by a motivation of the what, when and how of thread scheduling.">
+					<img style="width:100%" src="//i.ytimg.com/vi/3AtAGHkARCk/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-27-schedulingintro/">2/27/2017. Introduction to Scheduling</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-27-schedulingintro/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-27-schedulingintro/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=3AtAGHkARCk" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Completion of a discussion of thread states followed by a motivation of the what, when and how of thread scheduling.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-24-threading"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-24-threading/" title="Introduction to the thread abstraction and discussion of different threading implementations.">
+					<img style="width:100%" src="//i.ytimg.com/vi/Aspi0Sz2nyA/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-24-threading/">2/24/2017. Threads and Thread Implementations</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-24-threading/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-24-threading/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=Aspi0Sz2nyA" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to the thread abstraction and discussion of different threading implementations.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-22-contextswitching"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-22-contextswitching/" title="The how and why of context switching.">
+					<img style="width:100%" src="//i.ytimg.com/vi/qYrUg4aXL6Q/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-22-contextswitching/">2/22/2017. Context Switching</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-22-contextswitching/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-22-contextswitching/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=qYrUg4aXL6Q" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">The how and why of context switching.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-20-interrupts"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-20-interrupts/" title="Introduction to the root of kernel privilege, interrupts and exception handling. Completion of wait and exit.">
+					<img style="width:100%" src="//i.ytimg.com/vi/VfSNAVwg484/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-20-interrupts/">2/20/2017. Interrupt and Exception Handling</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-20-interrupts/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-20-interrupts/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=VfSNAVwg484" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to the root of kernel privilege, interrupts and exception handling. Completion of wait and exit.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-17-execwait"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-17-execwait/" title="Discussion of deadlock and completion of the process interface including a discussion of exec.">
+					<img style="width:100%" src="//i.ytimg.com/vi/1lPU8Tw928Q/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-17-execwait/">2/17/2017. Deadlock and exec</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-17-execwait/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-17-execwait/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=1lPU8Tw928Q" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of deadlock and completion of the process interface including a discussion of exec.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-15-synchproblems"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-15-synchproblems/" title="Spinlocks, locks, and condition variables.">
+					<img style="width:100%" src="//i.ytimg.com/vi/DKxbK7_QDZ4/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-15-synchproblems/">2/15/2017. Synchronization Primitives</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-15-synchproblems/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-15-synchproblems/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=DKxbK7_QDZ4" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Spinlocks, locks, and condition variables.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-13-synchprimitives"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-13-synchprimitives/" title="Introduction to synchronization and critical sections.">
+					<img style="width:100%" src="//i.ytimg.com/vi/wAerP2Gbuf0/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-13-synchprimitives/">2/13/2017. Introduction to Synchronization</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-13-synchprimitives/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-13-synchprimitives/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=wAerP2Gbuf0" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to synchronization and critical sections.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-10-forksynch"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-10-forksynch/" title="Completion of a discussion of fork including the use of pipes.">
+					<img style="width:100%" src="//i.ytimg.com/vi/pnPsKKGbsO0/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-10-forksynch/">2/10/2017. fork() and pipe()</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-10-forksynch/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-10-forksynch/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=pnPsKKGbsO0" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Completion of a discussion of fork including the use of pipes.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-08-forkandfilehandles"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-08-forkandfilehandles/" title="Introduction to file handles and file descriptors and the process life cycle.">
+					<img style="width:100%" src="//i.ytimg.com/vi/A1BSEVBLg6M/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-08-forkandfilehandles/">2/8/2017. Processes and File Handles</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-08-forkandfilehandles/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-08-forkandfilehandles/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=A1BSEVBLg6M" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to file handles and file descriptors and the process life cycle.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-06-moreprocesses"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-06-moreprocesses/" title="Continuation of a discussion of the process abstraction.">
+					<img style="width:100%" src="//i.ytimg.com/vi/uMLf2hVkeFg/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-06-moreprocesses/">2/6/2017. More About Processes</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-06-moreprocesses/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-06-moreprocesses/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=uMLf2hVkeFg" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Continuation of a discussion of the process abstraction.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-03-processes"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-03-processes/" title="Introduction to the process abstraction and standard UNIX utilities.">
+					<img style="width:100%" src="//i.ytimg.com/vi/Z0obNjaVpXg/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-03-processes/">2/3/2017. The Process Abstraction</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-03-processes/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-03-processes/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=Z0obNjaVpXg" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to the process abstraction and standard UNIX utilities.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-02-01-setup"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-02-01-setup/" title="Getting starting with ASST0 and setting up the toolchain.">
+					<img style="width:100%" src="//i.ytimg.com/vi/TdYWlQUmLEY/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-02-01-setup/">2/1/2017. ASST0 Setup</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-02-01-setup/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-02-01-setup/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=TdYWlQUmLEY" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Getting starting with ASST0 and setting up the toolchain.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2017-01-30-intro"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2017-01-30-intro/" title="Introduction to an introduction to operating systems, the course staff, and course policies.">
+					<img style="width:100%" src="//i.ytimg.com/vi/s5juP-2G42I/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2017-01-30-intro/">1/30/2017. Introduction to CSE 421/521</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2017-01-30-intro/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2017-01-30-intro/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=s5juP-2G42I" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to an introduction to operating systems, the course staff, and course policies.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+
+		<a class="anchor" id="_2016"></a>
+		<h2>2016</h2>
+		<ul class="list-inline dash-list h5">
+			<li>
+			<a href="/courses/buffalo/CSE421_Spring2016/">
+				Course Page
+			</a>
+			</li>
+			<li>
+			<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp-kbEcVR2W3vfx0Pdca0BD3" target="_blank" class="external">
+				Lecture Playlist
+			</a>
+			</li>
+			<li>
+			<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp_YJn8wu9aJTPOgeWqiaJDF" target="_blank" class="external">
+				Recitation Playlist
+			</a>
+			</li>
+			<li>
+			<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp_hjJpG9tqicpEgI6C3aaAE" target="_blank" class="external">
+				Pre-Lecture Music Playlist
+			</a>
+			</li>
+		</ul>
+		<hr>
+		<a class="anchor" id="_2016-05-06-exam"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-05-06-exam/" title="Exam review ask me anything session.">
+					<img style="width:100%" src="//i.ytimg.com/vi/8AgW_yHuHLk/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-05-06-exam/">5/6/2016. Exam Review</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-05-06-exam/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-05-06-exam/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=8AgW_yHuHLk" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Exam review ask me anything session.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-05-02-cells"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-05-02-cells/" title="Discussion of Cells: A Virtual Mobile Smartphone Architecture by Jeremy Andrus et al.">
+					<img style="width:100%" src="//i.ytimg.com/vi/8y4G04cMGwM/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-05-02-cells/">5/2/2016. Cells: A Virtual Mobile Smartphone Architecture</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-05-02-cells/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-05-02-cells/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=8y4G04cMGwM" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of Cells: A Virtual Mobile Smartphone Architecture by Jeremy Andrus et al.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-29-scaling"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-29-scaling/" title="Discussion of &quot;An Analysis of Linux Scalability to Many Cores&quot; by Silas Boyd-Wickizer et al.">
+					<img style="width:100%" src="//i.ytimg.com/vi/F9z7zuezpzI/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-29-scaling/">4/29/2016. Scaling Linux to Many Cores</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-29-scaling/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-29-scaling/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=F9z7zuezpzI" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of &quot;An Analysis of Linux Scalability to Many Cores&quot; by Silas Boyd-Wickizer et al.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-27-hints"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-27-hints/" title="Continuation of a discussion of performance and benchmarking, followed by an introduction to Hints for Computer System Design by Butler Lampson.">
+					<img style="width:100%" src="//i.ytimg.com/vi/VSqdBOWoyqk/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-27-hints/">4/27/2016. Hints for Computer System Design</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-27-hints/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-27-hints/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=VSqdBOWoyqk" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Continuation of a discussion of performance and benchmarking, followed by an introduction to Hints for Computer System Design by Butler Lampson.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-25-performance"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-25-performance/" title="Discussion of the process of benchmarking and performance improvement.">
+					<img style="width:100%" src="//i.ytimg.com/vi/bJtHveUF7oA/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-25-performance/">4/25/2016. Performance and Benchmarking</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-25-performance/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-25-performance/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=bJtHveUF7oA" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of the process of benchmarking and performance improvement.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-22-atlantis"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-22-atlantis/" title="Discussion of the Atlantis paper by James Mickens and collaborators.">
+					<img style="width:100%" src="//i.ytimg.com/vi/NieWBs6qRuM/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-22-atlantis/">4/22/2016. Atlantis: Robust, Extensible Execution Environments for Web Applications</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-22-atlantis/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-22-atlantis/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=NieWBs6qRuM" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of the Atlantis paper by James Mickens and collaborators.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-20-xen"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-20-xen/" title="Discussion of the Xen approach to paravirtualization.">
+					<img style="width:100%" src="//i.ytimg.com/vi/oJ53G70A0YM/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-20-xen/">4/20/2016. Xen and the Art of Virtualization</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-20-xen/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-20-xen/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=oJ53G70A0YM" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of the Xen approach to paravirtualization.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-18-virtualization"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-18-virtualization/" title="Introduction to virtualization.">
+					<img style="width:100%" src="//i.ytimg.com/vi/X0wEsOwAp8Q/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-18-virtualization/">4/18/2016. Full Virtualization</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-18-virtualization/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-18-virtualization/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=X0wEsOwAp8Q" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to virtualization.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-15-raid"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-15-raid/" title="Overview of Redundant Arrays of Inexpensive Disks (RAID).">
+					<img style="width:100%" src="//i.ytimg.com/vi/96PJhAKMA3w/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-15-raid/">4/15/2016. RAID</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-15-raid/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-15-raid/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=96PJhAKMA3w" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Overview of Redundant Arrays of Inexpensive Disks (RAID).</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-13-lfs"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-13-lfs/" title="Discussion of log-structured file systems.">
+					<img style="width:100%" src="//i.ytimg.com/vi/8Ayz-5A4eJM/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-13-lfs/">4/13/2016. Log-Structured File Systems</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-13-lfs/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-13-lfs/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=8Ayz-5A4eJM" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of log-structured file systems.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-11-ffs"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-11-ffs/" title="Introduction to journaling and the UNIX Fast File System (FFS).">
+					<img style="width:100%" src="//i.ytimg.com/vi/YerLRBpD4e0/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-11-ffs/">4/11/2016. Journaling and FFS</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-11-ffs/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-11-ffs/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=YerLRBpD4e0" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to journaling and the UNIX Fast File System (FFS).</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-08-filesystemcaching"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-08-filesystemcaching/" title="Discussion of file system caching and its impacts on consistency.">
+					<img style="width:100%" src="//i.ytimg.com/vi/e1C4TD_HG-I/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-08-filesystemcaching/">4/8/2016. File System Caching and Consistency</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-08-filesystemcaching/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-08-filesystemcaching/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=e1C4TD_HG-I" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of file system caching and its impacts on consistency.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-06-filesystemstructures"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-06-filesystemstructures/" title="Continuation of a discussion of file system data structures.">
+					<img style="width:100%" src="//i.ytimg.com/vi/GnNgu9IAWIg/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-06-filesystemstructures/">4/6/2016. File System Data Structures</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-06-filesystemstructures/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-06-filesystemstructures/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=GnNgu9IAWIg" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Continuation of a discussion of file system data structures.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-04-filesystems"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-04-filesystems/" title="Introduction to file system data structures and challenges.">
+					<img style="width:100%" src="//i.ytimg.com/vi/UFR_t0cFwg4/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-04-filesystems/">4/4/2016. Introduction to File Systems</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-04-filesystems/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-04-filesystems/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=UFR_t0cFwg4" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to file system data structures and challenges.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-04-01-files"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-04-01-files/" title="Introduction to files, file metadata and UNIX file system semantics.">
+					<img style="width:100%" src="//i.ytimg.com/vi/TYn5_Jg26A0/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-04-01-files/">4/1/2016. Files</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-04-01-files/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-04-01-files/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=TYn5_Jg26A0" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to files, file metadata and UNIX file system semantics.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-03-30-disks"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-03-30-disks/" title="Introduction to disks and the basics of stable storage.">
+					<img style="width:100%" src="//i.ytimg.com/vi/5RK0wZlHpg4/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-03-30-disks/">3/30/2016. Disks</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-03-30-disks/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-03-30-disks/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=5RK0wZlHpg4" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to disks and the basics of stable storage.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-03-28-pagereplacement"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-03-28-pagereplacement/" title="Discussion of page replacement policies.">
+					<img style="width:100%" src="//i.ytimg.com/vi/kdlIQT7HEQw/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-03-28-pagereplacement/">3/28/2016. Page Replacement</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-03-28-pagereplacement/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-03-28-pagereplacement/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=kdlIQT7HEQw" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of page replacement policies.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-03-25-swapping"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-03-25-swapping/" title="A discussion of how to swap in and out pages.">
+					<img style="width:100%" src="//i.ytimg.com/vi/HZ0cQlXPuqY/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-03-25-swapping/">3/25/2016. Swapping</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-03-25-swapping/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-03-25-swapping/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=HZ0cQlXPuqY" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">A discussion of how to swap in and out pages.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-03-21-paging"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-03-21-paging/" title="Page table design and implementation.">
+					<img style="width:100%" src="//i.ytimg.com/vi/pW3g_yWMMYk/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-03-21-paging/">3/21/2016. Paging</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-03-21-paging/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-03-21-paging/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=pW3g_yWMMYk" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Page table design and implementation.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-03-09-pagetranslation"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-03-09-pagetranslation/" title="Discussion of page translation.">
+					<img style="width:100%" src="//i.ytimg.com/vi/A72mPh__ZFM/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-03-09-pagetranslation/">3/9/2016. Page Translation</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-03-09-pagetranslation/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-03-09-pagetranslation/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=A72mPh__ZFM" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of page translation.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-03-07-addresstranslation"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-03-07-addresstranslation/" title="Discussion of efficiently translating virtual addresses to physical addresses.">
+					<img style="width:100%" src="//i.ytimg.com/vi/K_e1c5myYVg/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-03-07-addresstranslation/">3/7/2016. Address Translation</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-03-07-addresstranslation/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-03-07-addresstranslation/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=K_e1c5myYVg" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of efficiently translating virtual addresses to physical addresses.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-03-04-virtualaddresses"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-03-04-virtualaddresses/" title="Discussion of creating and translating virtual addresses.">
+					<img style="width:100%" src="//i.ytimg.com/vi/lM0w8CBhJmw/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-03-04-virtualaddresses/">3/4/2016. Virtual Addresses</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-03-04-virtualaddresses/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-03-04-virtualaddresses/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=lM0w8CBhJmw" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of creating and translating virtual addresses.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-03-02-addressspaces"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-03-02-addressspaces/" title="Introduction to the challenge of OS energy management and the address space abstraction.">
+					<img style="width:100%" src="//i.ytimg.com/vi/SGeDjFoYAis/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-03-02-addressspaces/">3/2/2016. Introduction to Memory Management</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-03-02-addressspaces/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-03-02-addressspaces/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=SGeDjFoYAis" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to the challenge of OS energy management and the address space abstraction.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-29-schedulingstory"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-29-schedulingstory/" title="Introduction to MLFQ, Con Kolivas, Linux development, and the Rotating Staircase Deadline Scheduler.">
+					<img style="width:100%" src="//i.ytimg.com/vi/_jSHfO3gdgQ/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-29-schedulingstory/">2/29/2016. A Scheduling Story</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-29-schedulingstory/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-29-schedulingstory/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=_jSHfO3gdgQ" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to MLFQ, Con Kolivas, Linux development, and the Rotating Staircase Deadline Scheduler.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-26-simpleschedulers"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-26-simpleschedulers/" title="An overview of simple schedulers including the know-nothings (random, round-robin) and oracle schedulers.">
+					<img style="width:100%" src="//i.ytimg.com/vi/ZoYzxoLwplg/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-26-simpleschedulers/">2/26/2016. Simple Schedulers</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-26-simpleschedulers/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-26-simpleschedulers/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=ZoYzxoLwplg" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">An overview of simple schedulers including the know-nothings (random, round-robin) and oracle schedulers.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-24-schedulingintro"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-24-schedulingintro/" title="Completion of a discussion of thread states followed by a motivation of the what, when and how of thread scheduling.">
+					<img style="width:100%" src="//i.ytimg.com/vi/fnwcLKcbZxI/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-24-schedulingintro/">2/24/2016. Introduction to Scheduling</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-24-schedulingintro/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-24-schedulingintro/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=fnwcLKcbZxI" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Completion of a discussion of thread states followed by a motivation of the what, when and how of thread scheduling.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-22-threading"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-22-threading/" title="Introduction to the thread abstraction and discussion of different threading implementations.">
+					<img style="width:100%" src="//i.ytimg.com/vi/vpypMh0ZLAM/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-22-threading/">2/22/2016. Threads and Thread Implementations</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-22-threading/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-22-threading/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=vpypMh0ZLAM" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to the thread abstraction and discussion of different threading implementations.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-19-contextswitching"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-19-contextswitching/" title="The how and why of context switching.">
+					<img style="width:100%" src="//i.ytimg.com/vi/obYdW9w0lPg/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-19-contextswitching/">2/19/2016. Context Switching</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-19-contextswitching/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-19-contextswitching/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=obYdW9w0lPg" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">The how and why of context switching.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-17-multiprocessing"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-17-multiprocessing/" title="Discussion of ways that applications can get the kernel&apos;s attention.">
+					<img style="width:100%" src="//i.ytimg.com/vi/8mE6ZO0q0Fs/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-17-multiprocessing/">2/17/2016. Software Interrupts and Exceptions</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-17-multiprocessing/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-17-multiprocessing/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=8mE6ZO0q0Fs" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Discussion of ways that applications can get the kernel&apos;s attention.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-15-interrupts"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-15-interrupts/" title="Introduction to the root of kernel privilege, interrupts and exception handling.">
+					<img style="width:100%" src="//i.ytimg.com/vi/7AptzJBUONk/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-15-interrupts/">2/15/2016. Interrupt and Exception Handling</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-15-interrupts/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-15-interrupts/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=7AptzJBUONk" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to the root of kernel privilege, interrupts and exception handling.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-10-execwait"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-10-execwait/" title="Completion of the process interface including a discussion of exec, wait, and exit.">
+					<img style="width:100%" src="//i.ytimg.com/vi/a7l2Zj8pQ90/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-10-execwait/">2/10/2016. exec, wait and exit</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-10-execwait/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-10-execwait/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=a7l2Zj8pQ90" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Completion of the process interface including a discussion of exec, wait, and exit.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-08-synchproblems"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-08-synchproblems/" title="Continuation of an introduction to synchronization primitives and a discussion of several classic synchronization problems.">
+					<img style="width:100%" src="//i.ytimg.com/vi/auy4owiTc_4/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-08-synchproblems/">2/8/2016. Synchronization Primitives and Problems</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-08-synchproblems/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-08-synchproblems/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=auy4owiTc_4" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Continuation of an introduction to synchronization primitives and a discussion of several classic synchronization problems.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-05-synchprimitives"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-05-synchprimitives/" title="Completion of a discussion of critical sections, and an overview of locks and condition variables.">
+					<img style="width:100%" src="//i.ytimg.com/vi/QyWPDVqqIt8/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-05-synchprimitives/">2/5/2016. Synchronization Primitives</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-05-synchprimitives/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-05-synchprimitives/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=QyWPDVqqIt8" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Completion of a discussion of critical sections, and an overview of locks and condition variables.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-03-forksynch"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-03-forksynch/" title="Completion of a discussion of fork including the use of pipes, and the beginning of a unit on synchronization.">
+					<img style="width:100%" src="//i.ytimg.com/vi/JONU7QCcCuY/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-03-forksynch/">2/3/2016. fork() and Synchronization</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-03-forksynch/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-03-forksynch/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=JONU7QCcCuY" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Completion of a discussion of fork including the use of pipes, and the beginning of a unit on synchronization.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-02-01-forkandfilehandles"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-02-01-forkandfilehandles/" title="Continuation of a discussion of the process abstraction and introduction to file handles and file descriptors.">
+					<img style="width:100%" src="//i.ytimg.com/vi/3ZctdAiEZAE/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-02-01-forkandfilehandles/">2/1/2016. Processes and File Handles</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-02-01-forkandfilehandles/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-02-01-forkandfilehandles/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=3ZctdAiEZAE" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Continuation of a discussion of the process abstraction and introduction to file handles and file descriptors.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-01-30-processes"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-01-30-processes/" title="Introduction to the process abstraction and standard UNIX utilities.">
+					<img style="width:100%" src="//i.ytimg.com/vi/o91pWKnr0Mk/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-01-30-processes/">1/30/2016. The Process Abstraction</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-01-30-processes/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-01-30-processes/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=o91pWKnr0Mk" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to the process abstraction and standard UNIX utilities.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<a class="anchor" id="_2016-01-25-intro"></a>
+		<div class="row" style="margin-bottom:10px;">
+			<div class="col-xs-12 hidden-xs hidden-sm col-md-2">
+				<a href="/slides/2016-01-25-intro/" title="Introduction to an introduction to operating systems, the course staff, and course policies.">
+					<img style="width:100%" src="//i.ytimg.com/vi/rEmxpc9C198/mqdefault.jpg" alt="YouTube thumbnail">
+				</a>
+			</div>
+			<div class="col-xs-12 col-md-10">
+				<span class="h3">
+					<a href="/slides/2016-01-25-intro/">1/25/2016. Introduction to CSE 421/521</a>
+				</span>
+				<br>
+				<ul class="list-inline dash-list">
+					<li><a href="/slides/2016-01-25-intro/">Notes</a></li>
+					<li><a class="external" target="_blank" href="/slides/2016-01-25-intro/deck.html">Slides</a></li>
+					<li><a href="https://www.youtube.com/watch?v=rEmxpc9C198" target="_blank" class="external">YouTube</a></li>
+				</ul>
+				<p class="lead">Introduction to an introduction to operating systems, the course staff, and course policies.</p>
+			</div>
+		</div>
+		
+		<!--
+		  vim: ts=2:sw=2:et:ft=html
+		-->
+		<div class="row hidden-md hidden-lg" style="margin-bottom:10px;">
+			<div class="col-xs-12 text-center h3">
+				<a target="_blank" href="/slides/feed.xml">
+					<img src="/img/icons/rss-28x28.png" alt="Subscribe to lectures">
+					Subscribe
+				</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12">
+				<a class="anchor" id="_2015"></a>
+				<h2>2015</h2>
+				<ul class="list-inline dash-list h5">
+					<li>
+					<a href="/courses/buffalo/CSE421_Spring2015.pdf" target="_blank">
+						Course Syllabus
+					 (PDF)</a>
+					</li>
+					<li>
+					<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp-Xv0MVlCHugU_xchof5N0a" target="_blank" class="external">
+						Pre-Lecture Music Playlist
+					</a>
+					</li>
+				</ul>
+				<hr>
+				<h3>Lectures</h3>
+				<div class="embed-responsive embed-responsive-16by9 hidden-print">
+					<div class="lazy-iframe" data-src="https://www.youtube.com/embed/videoseries?list=PLE6LEE8y2Jp8U4xVODdQtgJ945HeMwosQ&amp;showinfo=1" id="_lazy_iframe_0"></div>
+				</div>
+				<h3>Recitations</h3>
+				<div class="embed-responsive embed-responsive-16by9 hidden-print">
+					<div class="lazy-iframe" data-src="https://www.youtube.com/embed/videoseries?list=PLE6LEE8y2Jp9DnLcZFyX2f_JnUsmeS7vL&amp;showinfo=1" id="_lazy_iframe_1"></div>
+				</div>
+				<a class="anchor" id="_2014"></a>
+				<h2>2014</h2>
+				<ul class="list-inline dash-list h5">
+					<li>
+					<a href="/courses/buffalo/CSE421_Spring2014.pdf" target="_blank">
+						Course Syllabus
+					 (PDF)</a>
+					</li>
+					<li>
+					<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp8Mu0pQX_wS8sZpY8Wy6Ay-" target="_blank" class="external">
+						Pre-Lecture Music Playlist
+					</a>
+					</li>
+				</ul>
+				<hr>
+				<h3>Lectures</h3>
+				<div class="embed-responsive embed-responsive-16by9 hidden-print">
+					<div class="lazy-iframe" data-src="https://www.youtube.com/embed/videoseries?list=PLE6LEE8y2Jp_Dugcm7mBsEahZS5Xr-zWe&amp;showinfo=1" id="_lazy_iframe_2"></div>
+				</div>
+				<h3>Recitations</h3>
+				<div class="embed-responsive embed-responsive-16by9 hidden-print">
+					<div class="lazy-iframe" data-src="https://www.youtube.com/embed/videoseries?list=PLE6LEE8y2Jp9POq3yWUBM3XLsW2il8U32&amp;showinfo=1" id="_lazy_iframe_3"></div>
+				</div>
+				<a class="anchor" id="_2013"></a>
+				<h2>2013</h2>
+				<ul class="list-inline dash-list h5">
+					<li>
+					<a href="/courses/buffalo/CSE421_Spring2013.pdf" target="_blank">
+						Course Syllabus
+					 (PDF)</a>
+					</li>
+				</ul>
+				<hr>
+				<h3>Lectures</h3>
+				<div class="embed-responsive embed-responsive-16by9 hidden-print">
+					<div class="lazy-iframe" data-src="https://www.youtube.com/embed/videoseries?list=PLE6LEE8y2Jp-qxcxaYtTf5zQXdcfzrW_r&amp;showinfo=1" id="_lazy_iframe_4"></div>
+				</div>
+				<a class="anchor" id="_2012"></a>
+				<h2>2012</h2>
+				<ul class="list-inline dash-list h5">
+					<li>
+					<a href="/courses/buffalo/CSE421_Spring2012.pdf" target="_blank">
+						Course Syllabus
+					 (PDF)</a>
+					</li>
+				</ul>
+				<hr>
+				<h3>Lectures</h3>
+				<div class="embed-responsive embed-responsive-16by9 hidden-print">
+					<div class="lazy-iframe" data-src="https://www.youtube.com/embed/videoseries?list=PLE6LEE8y2Jp8tllE40n3tHfWXqxFeyFuY&amp;showinfo=1" id="_lazy_iframe_5"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div id="scrollspy" class="col-md-3 spelling_exception">
+		<ul id="side" class="nav fixed-md-3 hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+			<li class="h5">
+				<a href="/slides/feed.xml" target="_blank">
+					<img src="/img/icons/rss-14x14.png" alt="Subscribe to lectures">
+					Subscribe
+				</a>
+			</li>
+			<li class="h5"><a href="#_top">2017</a>
+			<ul class="nav">
+				<li class="h5"><a href="#_2017-05-10-exam">Exam Review</a></li>
+				<li class="h5"><a href="#_2017-05-08-hints">Hints for Computer System Design</a></li>
+				<li class="h5"><a href="#_2017-05-03-amdahls">Amdahl&apos;s Law</a></li>
+				<li class="h5"><a href="#_2017-05-01-performance">Performance and Benchmarking</a></li>
+				<li class="h5"><a href="#_2017-04-28-containers">Container Virtualization</a></li>
+				<li class="h5"><a href="#_2017-04-26-xen">Xen and the Art of Virtualization</a></li>
+				<li class="h5"><a href="#_2017-04-24-virtualization">Full Virtualization</a></li>
+				<li class="h5"><a href="#_2017-04-19-raid">RAID</a></li>
+				<li class="h5"><a href="#_2017-04-17-lfs">Log-Structured File Systems</a></li>
+				<li class="h5"><a href="#_2017-04-14-ffs">Journaling and FFS</a></li>
+				<li class="h5"><a href="#_2017-04-12-filesystemcaching">File System Caching and Consistency</a></li>
+				<li class="h5"><a href="#_2017-04-10-filesystemstructures">File System Data Structures</a></li>
+				<li class="h5"><a href="#_2017-04-07-filesystems">Introduction to File Systems</a></li>
+				<li class="h5"><a href="#_2017-04-05-files">Files</a></li>
+				<li class="h5"><a href="#_2017-04-03-disks">Disks</a></li>
+				<li class="h5"><a href="#_2017-03-29-pagereplacement">Page Replacement</a></li>
+				<li class="h5"><a href="#_2017-03-27-swapping">Swapping</a></li>
+				<li class="h5"><a href="#_2017-03-15-paging">Paging</a></li>
+				<li class="h5"><a href="#_2017-03-13-pagetranslation">Page Translation</a></li>
+				<li class="h5"><a href="#_2017-03-10-addresstranslation">Address Translation</a></li>
+				<li class="h5"><a href="#_2017-03-08-virtualaddresses">Virtual Addresses</a></li>
+				<li class="h5"><a href="#_2017-03-06-addressspaces">Introduction to Memory Management</a></li>
+				<li class="h5"><a href="#_2017-03-03-schedulingstory">A Scheduling Story</a></li>
+				<li class="h5"><a href="#_2017-03-01-simpleschedulers">Simple Schedulers</a></li>
+				<li class="h5"><a href="#_2017-02-27-schedulingintro">Introduction to Scheduling</a></li>
+				<li class="h5"><a href="#_2017-02-24-threading">Threads and Thread Implementations</a></li>
+				<li class="h5"><a href="#_2017-02-22-contextswitching">Context Switching</a></li>
+				<li class="h5"><a href="#_2017-02-20-interrupts">Interrupt and Exception Handling</a></li>
+				<li class="h5"><a href="#_2017-02-17-execwait">Deadlock and exec</a></li>
+				<li class="h5"><a href="#_2017-02-15-synchproblems">Synchronization Primitives</a></li>
+				<li class="h5"><a href="#_2017-02-13-synchprimitives">Introduction to Synchronization</a></li>
+				<li class="h5"><a href="#_2017-02-10-forksynch">fork() and pipe()</a></li>
+				<li class="h5"><a href="#_2017-02-08-forkandfilehandles">Processes and File Handles</a></li>
+				<li class="h5"><a href="#_2017-02-06-moreprocesses">More About Processes</a></li>
+				<li class="h5"><a href="#_2017-02-03-processes">The Process Abstraction</a></li>
+				<li class="h5"><a href="#_2017-02-01-setup">ASST0 Setup</a></li>
+				<li class="h5"><a href="#_2017-01-30-intro">Introduction to CSE 421/521</a></li>
+			</ul>
+			</li>
+			<li class="h5"><a href="#_2016">2016</a>
+			<ul class="nav">
+				<li class="h5"><a href="#_2016-05-06-exam">Exam Review</a></li>
+				<li class="h5"><a href="#_2016-05-02-cells">Cells: A Virtual Mobile Smartphone Architecture</a></li>
+				<li class="h5"><a href="#_2016-04-29-scaling">Scaling Linux to Many Cores</a></li>
+				<li class="h5"><a href="#_2016-04-27-hints">Hints for Computer System Design</a></li>
+				<li class="h5"><a href="#_2016-04-25-performance">Performance and Benchmarking</a></li>
+				<li class="h5"><a href="#_2016-04-22-atlantis">Atlantis: Robust, Extensible Execution Environments for Web Applications</a></li>
+				<li class="h5"><a href="#_2016-04-20-xen">Xen and the Art of Virtualization</a></li>
+				<li class="h5"><a href="#_2016-04-18-virtualization">Full Virtualization</a></li>
+				<li class="h5"><a href="#_2016-04-15-raid">RAID</a></li>
+				<li class="h5"><a href="#_2016-04-13-lfs">Log-Structured File Systems</a></li>
+				<li class="h5"><a href="#_2016-04-11-ffs">Journaling and FFS</a></li>
+				<li class="h5"><a href="#_2016-04-08-filesystemcaching">File System Caching and Consistency</a></li>
+				<li class="h5"><a href="#_2016-04-06-filesystemstructures">File System Data Structures</a></li>
+				<li class="h5"><a href="#_2016-04-04-filesystems">Introduction to File Systems</a></li>
+				<li class="h5"><a href="#_2016-04-01-files">Files</a></li>
+				<li class="h5"><a href="#_2016-03-30-disks">Disks</a></li>
+				<li class="h5"><a href="#_2016-03-28-pagereplacement">Page Replacement</a></li>
+				<li class="h5"><a href="#_2016-03-25-swapping">Swapping</a></li>
+				<li class="h5"><a href="#_2016-03-21-paging">Paging</a></li>
+				<li class="h5"><a href="#_2016-03-09-pagetranslation">Page Translation</a></li>
+				<li class="h5"><a href="#_2016-03-07-addresstranslation">Address Translation</a></li>
+				<li class="h5"><a href="#_2016-03-04-virtualaddresses">Virtual Addresses</a></li>
+				<li class="h5"><a href="#_2016-03-02-addressspaces">Introduction to Memory Management</a></li>
+				<li class="h5"><a href="#_2016-02-29-schedulingstory">A Scheduling Story</a></li>
+				<li class="h5"><a href="#_2016-02-26-simpleschedulers">Simple Schedulers</a></li>
+				<li class="h5"><a href="#_2016-02-24-schedulingintro">Introduction to Scheduling</a></li>
+				<li class="h5"><a href="#_2016-02-22-threading">Threads and Thread Implementations</a></li>
+				<li class="h5"><a href="#_2016-02-19-contextswitching">Context Switching</a></li>
+				<li class="h5"><a href="#_2016-02-17-multiprocessing">Software Interrupts and Exceptions</a></li>
+				<li class="h5"><a href="#_2016-02-15-interrupts">Interrupt and Exception Handling</a></li>
+				<li class="h5"><a href="#_2016-02-10-execwait">exec, wait and exit</a></li>
+				<li class="h5"><a href="#_2016-02-08-synchproblems">Synchronization Primitives and Problems</a></li>
+				<li class="h5"><a href="#_2016-02-05-synchprimitives">Synchronization Primitives</a></li>
+				<li class="h5"><a href="#_2016-02-03-forksynch">fork() and Synchronization</a></li>
+				<li class="h5"><a href="#_2016-02-01-forkandfilehandles">Processes and File Handles</a></li>
+				<li class="h5"><a href="#_2016-01-30-processes">The Process Abstraction</a></li>
+				<li class="h5"><a href="#_2016-01-25-intro">Introduction to CSE 421/521</a></li>
+			</ul>
+			</li>
+			<li class="h5"><a href="#_2015">2015</a>
+			</li><li class="h5"><a href="#_2014">2014</a>
+			</li><li class="h5"><a href="#_2013">2013</a>
+			</li><li class="h5"><a href="#_2012">2012</a>
+		</li></ul>
+	</div>
+</div>
+
+<!--
+  vim: ts=2:sw=2:tw=0:et
+-->
+
+  </div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 9/18/2020 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception" href>Commit <code></code></a>
+			<br>
+			Built 9/18/2020 @ 10:49 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

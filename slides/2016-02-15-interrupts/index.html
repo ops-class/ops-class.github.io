@@ -1,0 +1,804 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Interrupt and Exception Handling</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Introduction to the root of kernel privilege, interrupts and exception handling.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2016-02-10-execwait/" title="Previous: exec, wait and exit" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2016-02-17-multiprocessing/" title="Next: Software Interrupts and Exceptions">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="7AptzJBUONk"><img class="youtube-thumb" src="//i.ytimg.com/vi/7AptzJBUONk/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Interrupt and Exception Handling</h1>
+				
+
+
+<div class="sect1">
+<a class="anchor" id="_waitexit"></a><h2><code>wait()</code>/<code>exit()</code></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>We often consider <code>wait()</code> and <code>exit()</code> together, since they combine to
+remove any trace of a process from the system.</p>
+</li>
+<li>
+<p>Until a process <em>both</em> calls <code>exit()</code> and has its exit code collected
+via <code>wait()</code> traces of it remain on the system:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Its return code is retained by the kernel.</p>
+</li>
+<li>
+<p>Its process ID (or PID) is also retained. Why?</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Processes that have <code>exit()</code>ed but not had their exit code collected are
+called <strong>zombies</strong>. (Ooh, scary!)</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>wait()</code>/<code>exit()</code> also present an interesting synchronization problem you
+will solve for ASST2.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Calls to <code>wait()</code> (by the parent) and <code>exit()</code> (by the child) may
+interleave in the kernel.</p>
+</li>
+<li>
+<p>You must guarantee that the parent can retrieve the exit code
+successfully.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_waitexit_issues"></a><h2><code>wait()</code>/<code>exit()</code> Issues</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>What happens if a process&#x2019;s parent exits before it does?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The &quot;orphaned&quot; process is assigned the <code>init</code> process as a parent,
+which will collect its exit code when it exits. Referred to as
+<span class="spelling_exception">reparenting</span>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>How do we prevent zombies from taking over the machine?</p>
+<div class="ulist">
+<ul>
+<li>
+<p>A processes parent receives the SIGCHLD signal when a child calls
+<code>exit()</code>, alerting it to the chance to retrieve the child&#x2019;s exit status.</p>
+</li>
+<li>
+<p>On some systems a process can choose to have its children
+automatically reaped by ignoring this signal.</p>
+</li>
+<li>
+<p>On bash the relevant command is the appropriately-named disown. This
+allows children to continue running as daemons even after bash exits.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_what_if_i_dont_want_to_wait"></a><h2>What If I Don&#x2019;t Want to <code>wait()</code>?</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Parent may want to peek at the exit status of its child, just to check
+on it. (Are you dead yet? Are you dead yet?)</p>
+</li>
+<li>
+<p>Systems support a non-blocking <code>wait()</code> for this purpose:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Blocking <code>wait()</code></strong> will block until the child exits, unless it has
+already exited in which case it returns immediately.</p>
+</li>
+<li>
+<p><strong>Non-Blocking <code>wait()</code></strong> will not block. Instead, its return status
+indicates if the child has exited and, if so, what the exit code was.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_our_simple_shell"></a><h2>Our Simple Shell</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Disclaimer: this is C-like pseudo-code. It will not compile or run!
+(But it&#x2019;s not far off.)</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>) {
+  input = readLine();
+  returnCode = fork();
+  <span class="hljs-keyword">if</span> (returnCode == <span class="hljs-number">0</span>) {
+    exec(input);
+  } <span class="hljs-keyword">else</span> {
+    wait(returnCode);
+  }
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_aside_errno"></a><h2>Aside: <code>errno</code></h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Where&#x2019;s <code>exit()</code>?</div>
+<ul>
+<li>
+<p>There is potential confusion between kernel system calls and wrappers
+implemented by <code>libc</code>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>_exit()</code> (system call) v. <code>exit()</code> (C library function call).</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The C library wraps system calls and changes their return codes.</p>
+</li>
+<li>
+<p>The C library is what sets <code>errno</code>, not the kernel.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_multiplexing_and_abstracting_the_cpu"></a><h2><span class>Multiplexing and Abstracting the CPU</span></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For the next several weeks we&#x2019;ll be looking at how the operating
+system manages the processor:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>What are the <strong>limitations or problems</strong> with the hardware resource
+that the operating system is trying to address? <em>There is only one (or
+at least, no that many) processor(s)!</em></p>
+</li>
+<li>
+<p>What are the <strong>mechanisms</strong> necessary to allow the processor to be
+shared? <em>Interrupts and context switching.</em></p>
+</li>
+<li>
+<p><span class="line-through">What are the <strong>consequences</strong> for programmers of processor
+multiplexing? <em>Concurrency and synchronization.</em></span></p>
+</li>
+<li>
+<p>How do we design good <strong>policies</strong> ensuring that processor sharing
+meets the needs of the user? <em>Processor scheduling.</em></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_today_operating_system_privilege"></a><h2>Today: Operating System Privilege</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Earlier we alluded to the fact that the operating system is <em>like</em> a
+normal program with some special privileges.</p>
+</li>
+<li>
+<p>In fact, implementing most of the process-related system calls we
+discussed last week <strong>does not require these special privileges!</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>If you don&#x2019;t believe me, look at user-space threading libraries. They
+provide functionality very similar to the <code>fork()</code>, <code>exec()</code>, <code>exit()</code> and
+<code>wait()</code> system calls we discussed.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>So <strong>why does the operating system need special privileges?</strong></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_multiplexing_requires_privilege"></a><h2>Multiplexing Requires Privilege</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>In many cases implementing abstractions does not require special
+privileges.</p>
+</li>
+<li>
+<p>However, the operating systems other task&#x2014;multiplexing
+resources&#x2014;<strong>does.</strong></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>In order to divide resources between processes the system needs a
+trusted and privileged entity that can:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>divide</strong> the resources, and</p>
+</li>
+<li>
+<p><strong>enforce</strong> the division.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_no_trusto_processo"></a><h2><span class="spelling_exception">No Trusto Processo</span></h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Why can&#x2019;t processes share resources without a privileged arbiter?</p>
+</li>
+<li>
+<p>Some processes are:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>malicious&#x2014;&quot;Hey, I&#x2019;d like some more memory, so I&#x2019;ll use yours!&quot;</p>
+</li>
+<li>
+<p>buggy&#x2014;&quot;Um, is this my memory or your memory? I&#x2019;m not sure but I&#x2019;ll
+just use it and hope things turn out OK&#x2026;&#x200B;&quot;</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_privileged_execution"></a><h2>Privileged Execution</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>CPUs implement a mechanism allowing the operating system to manage
+resources: <strong>kernel</strong> (or privileged) <strong>mode.</strong></p>
+</li>
+<li>
+<p>Being in kernel mode may mean that the executing code</p>
+<div class="ulist">
+<ul>
+<li>
+<p>has access to <strong>special instructions</strong>, and</p>
+</li>
+<li>
+<p>has a different <strong>view of memory</strong>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_special_instructions"></a><h2>Special Instructions</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>When the CPU is in <strong>kernel mode</strong> there are special instructions that
+can be executed.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>These instructions usually modify important global state controlling
+how resources are shared.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>When the CPU is not in kernel mode it does not allow these
+instructions to be executed.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>We will see what happens when an unprivileged process tries to
+execute a privileged instruction in a minute.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_protection_boundaries"></a><h2>Protection Boundaries</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The goal:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>only trusted kernel code</strong> runs in kernel mode;</p>
+</li>
+<li>
+<p>untrusted user code <strong>always runs in user mode</strong>.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>The CPU implements mechanisms to transition between user and kernel
+mode which we will discuss during the rest of today&#x2019;s class.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_aside_fine_grained_protection"></a><h2>Aside: Fine-Grained Protection</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Many modern CPUs implement <strong>more than two</strong> protection modes.</p>
+</li>
+<li>
+<p>x86 processors actually have four protection &quot;rings&quot; from Ring 0 (most
+privileged) to Ring 3 (least privileged).</p>
+</li>
+<li>
+<p>For many years operating systems running on x86 architectures only
+used Ring 0 (kernel mode) and Ring 3 (user mode).</p>
+</li>
+<li>
+<p>Recently this has become more interesting because of operating system
+virtualization, so we will return to this.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>But for now, you can think of processors as having two privilege
+modes: kernel mode and user mode.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_terminology"></a><h2>Terminology</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>When we say <em>&quot;application&quot;</em> we refer to code running without
+privileges or in unprivileged or &quot;user&quot; mode.</p>
+</li>
+<li>
+<p>When we say <em>&quot;kernel&quot;</em> we mean code running in privileged or kernel
+mode.</p>
+</li>
+<li>
+<p>What makes the kernel special? <strong>It is the one application allowed to
+executed code in kernel mode!</strong></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_bootstrapping_privilege"></a><h2>Bootstrapping Privilege</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Why is the operating system allowed to run in kernel mode?</div>
+<ul>
+<li>
+<p><strong>You installed your machine that way!</strong> This is what it means to
+install an operating system: choose a particular application to grant
+special privileges to.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>On boot the CPU starts out executing the kernel code in privileged
+mode, which is how <strong>privilege is bootstrapped</strong>.</p>
+</li>
+<li>
+<p>The kernel is responsible for lowering the privilege level before
+executing user code.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_more_terminology_traps"></a><h2>More Terminology: Traps</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>When a normal application does something that causes the system to
+enter <strong>kernel mode</strong> we sometimes refer to this as <em>trapping</em> into the
+kernel.</p>
+</li>
+<li>
+<p>I frequently think about the thread that trapped into the kernel as
+<strong>running in the kernel</strong> after the trap occurs.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>On some level this is accurate: it is the same stream of
+instructions.</p>
+</li>
+<li>
+<p>On some level this is not accurate: the kernel thread has its own
+stack and has saved the state of the trapping user thread, so in a way
+the user thread has been paused while the kernel performs some task on
+its behalf.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Decide the way to think about this that is the most effective for
+you.</strong></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_privilege_transitions"></a><h2>Privilege Transitions</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The transition into the kernel or into privileged mode typically
+occurs for one of three reasons:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>a hardware device requests attention&#x2014;<strong>hardware interrupt</strong></p>
+</li>
+<li>
+<p>software requests attention&#x2014;<strong>software interrupt</strong> or system call</p>
+</li>
+<li>
+<p>software needs attention&#x2014;<strong>software exception</strong></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>What is the difference between <em>requesting</em> and <em>needing</em> attention?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_hardware_interrupts"></a><h2>Hardware Interrupts</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Hardware interrupts are used to signal that a particular device needs
+attention:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>a disk read completed, or</p>
+</li>
+<li>
+<p>a network packet was received, or</p>
+</li>
+<li>
+<p>a timer fired.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Processors implement multiple <strong>interrupt lines</strong>, input wires on which a
+logic transition (or level) will trigger an interrupt.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_interrupt_handling"></a><h2>Interrupt Handling</h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<div class="title">When an interrupt is triggered (interrupt request, or IRQ), the processor:</div>
+<ol class="arabic">
+<li>
+<p><strong>enters privileged mode</strong>,</p>
+</li>
+<li>
+<p><strong>records state</strong> necessary to process the interrupt,</p>
+</li>
+<li>
+<p><strong>jumps to a pre-determined memory location</strong> and begins executing
+instructions.</p>
+</li>
+</ol>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>The instructions that the processor executes when an interrupt fires
+are called the <strong>interrupt service routine</strong> (ISR).</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2016-02-10-execwait/" title="Previous: exec, wait and exit" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2016-02-17-multiprocessing/" title="Next: Software Interrupts and Exceptions">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">wait()/exit()</a>
+					</li>
+					<li class="h5"><a href="#_waitexit_issues">wait()/exit() Issues</a>
+					</li>
+					<li class="h5"><a href="#_what_if_i_dont_want_to_wait">What If I Don&#x2019;t Want to wait()?</a>
+					</li>
+					<li class="h5"><a href="#_our_simple_shell">Our Simple Shell</a>
+					</li>
+					<li class="h5"><a href="#_aside_errno">Aside: errno</a>
+					</li>
+					<li class="h5"><a href="#_multiplexing_and_abstracting_the_cpu">Multiplexing and Abstracting the CPU</a>
+					</li>
+					<li class="h5"><a href="#_today_operating_system_privilege">Today: Operating System Privilege</a>
+					</li>
+					<li class="h5"><a href="#_multiplexing_requires_privilege">Multiplexing Requires Privilege</a>
+					</li>
+					<li class="h5"><a href="#_no_trusto_processo">No Trusto Processo</a>
+					</li>
+					<li class="h5"><a href="#_privileged_execution">Privileged Execution</a>
+					</li>
+					<li class="h5"><a href="#_special_instructions">Special Instructions</a>
+					</li>
+					<li class="h5"><a href="#_protection_boundaries">Protection Boundaries</a>
+					</li>
+					<li class="h5"><a href="#_aside_fine_grained_protection">Aside: Fine-Grained Protection</a>
+					</li>
+					<li class="h5"><a href="#_terminology">Terminology</a>
+					</li>
+					<li class="h5"><a href="#_bootstrapping_privilege">Bootstrapping Privilege</a>
+					</li>
+					<li class="h5"><a href="#_more_terminology_traps">More Terminology: Traps</a>
+					</li>
+					<li class="h5"><a href="#_privilege_transitions">Privilege Transitions</a>
+					</li>
+					<li class="h5"><a href="#_hardware_interrupts">Hardware Interrupts</a>
+					</li>
+					<li class="h5"><a href="#_interrupt_handling">Interrupt Handling</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/2016/interrupts.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/2016/interrupts.adoc" target="_blank">View</a>
+			<br>
+			Built 2/14/2016 @ 19:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

@@ -1,0 +1,618 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Container Virtualization</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Discussion of container or operating-system virtualization.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="http://www.math.tau.ac.il/~milo/" target="_blank"><img src="/img/slides/women/008.jpg" alt="008" style="width: 100%;"></a>
+</div>
+<div class="title">Figure 1. Tova Milo</div>
+</div>
+<div class="paragraph h4 center">
+<p><span class="fa fa-music"></span> <a href="http://www.ofmonstersandmen.com/" target="_blank" class="external">Hunger by Of Monsters and Men</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/n106Qo0D948?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+
+</div>
+<div class="nooutline slide" id="_today">
+<h2>Today</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>OS virtualization and containers</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_asst3_3_checkpoint">
+<h2><a href="/asst/3/"><code>ASST3.3</code></a> Checkpoint</h2>
+
+<div class="ulist">
+<div class="title">At this point:</div>
+<ul>
+<li>
+<p>If you have not started, you&#x2019;re <strong>way, way</strong> behind.</p>
+</li>
+<li>
+<p>Get started!</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong><a href="/asst/3/"><code>ASST3.3</code></a> is due Friday 5/5. Good luck finishing!</strong></p>
+</div>
+
+</div>
+<div class="nooutline slide" id="_congrats_on_finishing_asst3">
+<h2>Congrats on Finishing ASST3</h2>
+
+<iframe style="width:1024px; height:700px; max-width:1024px; transform: translate(-130px,-240px); transform-origin: 0 0; z-index:-1; position: relative" src="//test161.ops-class.org/leaders#asst3" id="_iframe_1"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_1"></div><div class="anim-pause slide" data-what="iframe#_iframe_1"></div></div>
+<div class="slide" id="_review_hardware_virtualization">
+<h2>Review: Hardware Virtualization</h2>
+
+<div class="ulist">
+<div class="title slide">How did we create a virtual machine (VM)?</div>
+<ul>
+<li class="slide">
+<p>Start with a physical machine</p>
+</li>
+<li class="slide">
+<p>Create software (hypervisor) responsible for isolating the guest OS inside
+the VM</p>
+</li>
+<li class="slide">
+<p>VM resources (memory, disk, networking, etc.) are provided by the
+physical machine but visibility outside of the VM is limited</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="ulist">
+<div class="title slide">What were the implications?</div>
+<ul>
+<li class="slide">
+<p>VM and physical machine <em>share same instruction set</em>, so must the
+host and guest</p>
+</li>
+<li class="slide">
+<p>Guest OS can provide a <em>different application binary interface</em> (ABI) inside
+the VM</p>
+</li>
+<li class="slide">
+<p>Lots of challenges in getting this to work because guest OS expects to have
+privileged hardware access</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_operating_system_virtualization">
+<h2>Operating System Virtualization</h2>
+
+<div class="ulist">
+<div class="title slide">How do we create a virtual operating system (container)?</div>
+<ul>
+<li class="slide">
+<p>Start with a <span class="slide">real operating system</span></p>
+</li>
+<li class="slide">
+<p>Create software responsible for isolating <span class="slide">guest software</span> inside
+the container</p>
+<div class="ulist">
+<ul>
+<li>
+<p>(That software seems to lack a canonical name&#x2014;&#x200B;and today it&#x2019;s actually a
+bunch of different tools.)</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Container resources <span class="slide">(processes, files, network
+sockets, etc.)</span> are provided by the real operating system but visibility
+outside the container is limited</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="ulist">
+<div class="title slide">What are the implications?</div>
+<ul>
+<li class="slide">
+<p>Container and real OS <em class="slide">share same kernel</em></p>
+</li>
+<li class="slide">
+<p>So applications inside and outside the kernel must <em class="slide">share the same
+ABI</em></p>
+</li>
+<li class="slide">
+<p>Challenges is getting this to work are due to <em class="slide">shared OS namespaces</em></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_containers_v_vms">
+<h2>Containers v. VMs</h2>
+
+<div class="ulist">
+<div class="title slide">You can run Windows inside a container provided by Linux.</div>
+<ul>
+<li class="slide">
+<p><strong>False.</strong> Container shares the kernel with the host.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">You can run SUSE Linux inside an Ubuntu container.</div>
+<ul>
+<li class="slide">
+<p><strong>True.</strong> All long as both distributions use the same kernel, differences are
+confined to different binary tools and file locations.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Running <code>ps</code> inside the container will show all processes.</div>
+<ul>
+<li class="slide">
+<p><strong>False.</strong> Container process namespaces is isolated from the host.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_hypervisor_v_container_virtualization">
+<h2>Hypervisor v. Container Virtualization</h2>
+
+<div class="paragraph">
+<p><span class="image"><img src="http://crishantha.com/wp/wp-content/uploads/2015/05/lxc.png" alt="lxc" style="width: 80%;"></span></p>
+</div>
+
+</div>
+<div class="slide" id="_why_virtualize_an_os">
+<h2>Why Virtualize an OS?</h2>
+
+<div class="paragraph">
+<p>Shares many (but not all) of the benefits of hardware virtualization with much
+lower overhead.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Decoupling</div>
+<ol class="arabic">
+<li class="slide">
+<p><span class="line-through">Cannot run multiple operating systems on the same machine.</span></p>
+</li>
+<li class="slide">
+<p>Can transfer software setups to another machine as long as it has
+a identical or nearly identical <span class="line-through">hardware</span> kernel.</p>
+</li>
+<li class="slide">
+<p>Can adjust <span class="line-through">hardware</span> container resources to system needs.</p>
+</li>
+</ol>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="olist arabic">
+<div class="title">Isolation</div>
+<ol class="arabic">
+<li class="slide">
+<p>Container should not leak information inside and outside the container</p>
+</li>
+<li class="slide">
+<p>Can isolate all of the configuration and software packages a particular
+application needs to run</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="slide" id="_os_v_hardware_overhead">
+<h2>OS v. Hardware Overhead</h2>
+
+<div class="ulist">
+<div class="title slide">Hardware virtualization system call path:</div>
+<ul>
+<li class="slide">
+<p>Application inside the VM makes a system call</p>
+</li>
+<li class="slide">
+<p>Trap to the host OS (or hypervisor)</p>
+</li>
+<li class="slide">
+<p>Hand trap back to the guest OS</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">OS virtualization system call path:</div>
+<ul>
+<li class="slide">
+<p>Application inside the container makes a system call</p>
+</li>
+<li class="slide">
+<p>Trap to the OS</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Remember all of the work we had to do to deprivilege the guest OS and deal
+with <em>uncooperative</em> machine architectures like x86?</p>
+</li>
+<li class="slide">
+<p>OS virtualization <strong>does not require any of this</strong>: there is only one OS!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_os_virtualization_is_about_names">
+<h2>OS Virtualization is About Names</h2>
+
+<div class="ulist">
+<div class="title slide">What kind of names must the container virtualize?</div>
+<ul>
+<li class="slide">
+<p><strong>Process IDs</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>top</code> inside the container shows only processes running inside container</p>
+</li>
+<li>
+<p><code>top</code> outside the container may show processes inside the container, but
+with different process IDs</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p><strong>File names</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Processes inside the container may have a limited or different view of the
+mounted file system</p>
+</li>
+<li>
+<p>File names may resolve to different names&#x2014;&#x200B;and some file names outside the
+container may be removed</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>User names</strong>:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Containers may have different users with different roles</p>
+</li>
+<li>
+<p><code>root</code> inside the container should not be root outside the container</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p><strong>Host name and IP address</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Processes inside the container may use a different host name and IP address
+when performing network operations</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_os_virtualization_is_about_control">
+<h2>OS Virtualization is About Control</h2>
+
+<div class="paragraph">
+<p>The OS may want to ensure that the entire container&#x2014;&#x200B;or <em>everything</em> that
+runs inside it&#x2014;&#x200B;cannot consume more than a certain amount of:</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>CPU time</strong></p>
+</li>
+<li class="slide">
+<p><strong>memory</strong></p>
+</li>
+<li class="slide">
+<p><strong>disk or network</strong> bandwidth</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_not_a_new_idea">
+<h2>Not a New Idea</h2>
+
+<div class="paragraph">
+<p>Forms of OS virtualization go back to <code>chroot</code> from 1982:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash lang-bash" data-lang="bash">chroot - run <span class="hljs-built_in">command</span> or interactive shell with special root directory</code></pre>
+</div>
+</div>
+<div class="ulist">
+<div class="title slide">How is this done?</div>
+<ul>
+<li class="slide">
+<p>Instead of starting path resolution at inode #2, start somewhere else.</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="paragraph">
+<p>Modern container management systems like <a href="https://www.docker.com" target="_blank" class="external">Docker</a>
+combine and build upon multiple lower-levels tools and services.</p>
+</div>
+
+</div>
+<div class="slide" id="_linux_namespaces">
+<h2><a href="https://en.wikipedia.org/wiki/Linux_namespaces" target="_blank" class="external">Linux namespaces</a></h2>
+
+<div class="paragraph">
+<p>Since 2002 Linux has provided namespace separation for a variety of resources
+that typically had unified namespaces</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Mount points</strong>: allows different namespaces to see different views of the
+file system</p>
+</li>
+<li class="slide">
+<p><strong>Process IDs</strong>: new processes are allocated IDs in their current namespace
+and all parent namespaces</p>
+</li>
+<li class="slide">
+<p><strong>Network</strong>: namespaces can have private IP addresses and their own routing
+tables, and can communicate with other namespaces through virtual interfaces</p>
+</li>
+<li class="slide">
+<p><strong>Devices</strong>: devices can be present or hidden in different namespaces</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_cgroups">
+<h2><a href="https://en.wikipedia.org/wiki/Cgroups" target="_blank" class="external"><code>cgroups</code></a></h2>
+
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>&#x2026;&#x200B;a Linux kernel feature that limits, accounts for, and isolates the resource
+usage of a collection of processes.</p>
+</div>
+</blockquote>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Processes and their children remain in the same <code>cgroup</code></p>
+</li>
+<li class="slide">
+<p><code>cgroups</code> may it possible to control the resources allocated to a set of
+processes</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_unionfs">
+<h2><a href="http://unionfs.filesystems.org/" target="_blank" class="external">UnionFS</a></h2>
+
+<div class="paragraph">
+<p>A stackable unification file system.</p>
+</div>
+<div class="ulist">
+<div class="title slide">Path name resolution:</div>
+<ul>
+<li class="slide">
+<p>Does <code>/foo/bar</code> exist in the top layer? If yes, return its contents.</p>
+</li>
+<li class="slide">
+<p>Does <code>/foo/bar</code> exist in the next layer? If yes, return its contents.</p>
+</li>
+<li class="slide">
+<p>Etc.</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="ulist">
+<div class="title slide">Can also hide parts of the lower file systems:</div>
+<ul>
+<li class="slide">
+<p>Does <code>/foo/bar</code> exist in the top layer? If yes, return its contents.</p>
+</li>
+<li class="slide">
+<p>Access to <code>/foo</code> in the next layer is prohibited, so stop. (Even if
+<code>/foo/bar</code> exists.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_cow_file_system">
+<h2>COW File System</h2>
+
+<div class="paragraph">
+<p>Previous container libraries made a copy of the parent&#x2019;s entire file system.
+(Containers need a lot of it.)</p>
+</div>
+<div class="ulist">
+<div class="title slide">What could we do instead?</div>
+<ul>
+<li class="slide">
+<p>Copy on write!</p>
+</li>
+<li class="slide">
+<p>Only make modifications to the underlying file system when the container
+modifies files.</p>
+</li>
+<li class="slide">
+<p>Speeds start up and reduces storage usage.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The container mainly needs read-only access to host files.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_what_is_docker">
+<h2>What is Docker?</h2>
+
+<div class="ulist">
+<div class="title">Docker builds on previous technologies</div>
+<ul>
+<li>
+<p>Provides a unified set of tools for container management on a variety of
+systems</p>
+</li>
+<li>
+<p>Layered file system images for easy updates</p>
+</li>
+<li>
+<p>Now involved in development of containerization libraries on Linux</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="imageblock">
+<div class="content">
+<img src="https://upload.wikimedia.org/wikipedia/commons/0/09/Docker-linux-interfaces.svg" alt="Docker linux interfaces" style="width: 60%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_example_dockerfile">
+<h2>Example Dockerfile</h2>
+
+<div class="listingblock smaller">
+<div class="content">
+<pre class="highlight"><code class="spelling_exception">FROM komljen/ubuntu
+MAINTAINER Alen Komljen &lt;alen.komljen@live.com&gt;
+
+ENV MONGO_VERSION 2.6.6
+
+RUN \
+  apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10 &amp;&amp; \
+  echo &quot;deb http://downloads-distro.mongodb.org/repo/ubuntu-upstart dist
+10gen&quot; \
+       &gt; /etc/apt/sources.list.d/mongodb.list &amp;&amp; \
+  apt-get update &amp;&amp; \
+  apt-get -y install \
+          mongodb-org=${MONGO_VERSION} &amp;&amp; \
+  rm -rf /var/lib/apt/lists/*
+
+VOLUME [&quot;/data/db&quot;]
+
+RUN rm /usr/sbin/policy-rc.d
+CMD [&quot;/usr/bin/mongod&quot;]
+
+EXPOSE 27017</code></pre>
+</div>
+</div>
+
+</div>
+<div class="nooutline slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Performance benchmarking and analysis!</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2017-04-28-containers">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

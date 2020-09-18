@@ -1,0 +1,1353 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Introduction to OS/161</title>
+		<meta name="description" lang="en-us" content="ASST0 introduces you to the OS/161 source code and tools that you will use throughout the rest of the assignments.
+">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle active" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7 col-md-offset-2">
+				<a class="anchor" id="top"></a>
+				<h1>ASST0: Introduction to OS/161</h1>
+				<div class="openblock visible-print">
+<div class="content">
+<div class="admonitionblock warning alert alert-warning" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span></td>
+<td class="content">
+This assignment is available online at
+<a href="https://www.ops-class.org/asst/0/" class="hidden_print external" target="_blank"><code>https://www.ops-class.org/asst/0/</code></a>.
+The online version is easier to read and includes helpful links, embedded
+video walkthroughs, and other useful resources.
+</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_introduction"></a><h2>1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>This assignment introduces you to the <a href="http://os161.eecs.harvard.edu" class="hidden-print external" target="_blank">OS/161</a> source code and toolchain that
+you will use throughout the rest of the assignments.</p>
+</div>
+<div class="paragraph">
+<p>It is unlikely that you have used OS/161 before, but some of the
+other tools may be familiar to you:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong><a href="http://os161.eecs.harvard.edu" class="hidden-print external" target="_blank">OS/161</a></strong> includes both</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>the sources of the the operating system you will be designing,
+implementing, running and debugging, and</p>
+</li>
+<li>
+<p>a toolchain for cross compiling and running your kernel, including a
+machine simulator called <code>sys161</code> <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Also known as System/161&lt;/body&gt;&lt;/html&gt;">1</span>.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p><a href="https://git-scm.com/" target="_blank" class="external"><strong>Git</strong></a>: a distributed source control tool that
+tracks your changes to OS/161 and enables effective collaboration.</p>
+</li>
+<li>
+<p><a href="https://www.gnu.org/software/gdb/" target="_blank" class="external"><strong>GDB</strong></a>: the GNU debugger which allows you
+to control and inspect your running system.</p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<a class="anchor" id="_objectives"></a><h3>1.1. Objectives</h3>
+<div class="paragraph">
+<p>After completing ASST0 you should:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Have set up your OS/161 development environment.</p>
+</li>
+<li>
+<p>Understand the source code structure of OS/161.</p>
+</li>
+<li>
+<p>Be comfortable navigating the OS/161 sources to determine where and how
+things are done.</p>
+</li>
+<li>
+<p>Have been introduced to Git and GDB.</p>
+</li>
+<li>
+<p>Be able to, modify, build and run your first OS/161 kernel.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_a_note_on_cut_and_paste"></a><h3>1.2. A Note on Cut-and-Paste</h3>
+<div class="paragraph">
+<p>Another assignment objective is to get you working efficiently in a Linux
+development environment using standard command-line development tools.
+Unlike many of the things you will find online ASST0 is <em>not a tutorial.</em>
+You will go slower, but you will learn a lot more from figuring out how to:
+&quot;Run the first OS/161 thread test and then shut down your kernel&quot; than how
+to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="spelling_exception">trinity@zion:~$ sys161 kernel &quot;tt1;q&quot;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Following these kinds of written instructions will also better prepare you to
+interact with other OS/161 hackers in person and in the online forum.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_a_note_on_learning_git"></a><h3>1.3. A Note on Learning Git</h3>
+<div class="paragraph">
+<p>Another objective of this course is to help you learn to use common
+development tools, particularly Git.
+However, like most programming tools the best way to learn Git is through the
+extensive online documentation and multiple good online tutorials
+(<a href="https://www.atlassian.com/git/tutorials/" target="_blank" class="external">1</a>,
+<a href="https://try.github.io/levels/1/challenges/1" target="_blank" class="external">2</a>,
+<a href="https://www.google.com/search?ie=UTF-8&amp;q=git%20tutorial" target="_blank" class="external">etc.</a>).</p>
+</div>
+<div class="paragraph">
+<p>As a result, we have removed Git coverage from this introduction.
+Any documentation we could provide is unlikely to be complete and up-to-date,
+and this will also provide you with good practice in online learning.
+Feel free to ask your course staff or other students for help, either in
+person or using the forum.
+Chances are many of them use Git on a daily basis.</p>
+</div>
+<div class="paragraph">
+<p>Like anything else, learning Git takes practice, more practice, and patience.
+But here&#x2019;s one tip: <strong>read the output generated by Git commands.</strong>
+Git produces remarkably useful output, particularly when an error occurs or
+when it didn&#x2019;t accomplished what you wanted.
+Frequently the output tells you <em>exactly</em> what to do to fix the problem&#x2014;&#x200B;down
+to the commands that you should type.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_collaboration_guidelines"></a><h3>1.4. Collaboration Guidelines</h3>
+<div class="paragraph">
+<p>ASST0 focuses on getting your environment set up and familiarizing you with
+the source code you will be modifying.
+There is a small amount of coding involved, but not too much.
+Here are guidelines for how to work with your partner&#x2014;&#x200B;if you have one&#x2014;&#x200B;and
+with other students:</p>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Working side-by-side with your partner is <strong>strongly
+encouraged</strong>.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Helping other students set up their <a href="/" class="hidden-print"><code>ops-class.org</code></a> environment is
+encouraged.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Helping each other with Git is encouraged.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Discussing the code reading questions and browsing the source code with
+other students is encouraged.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock warning alert alert-warning" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span></td>
+<td class="content">
+Dividing the code reading questions and development tasks between
+partners is discouraged.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+Copying any answers from anyone who is not your partner or anywhere
+else and submitting them as your own is cheating.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+You may not refer to or incorporate any external sources without
+explicit permission <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Which you are extremely unlikely to get.&lt;/body&gt;&lt;/html&gt;">2</span>.
+</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_choosing_and_initializing_your_development_environment"></a><h2>2. Choosing and Initializing Your Development Environment</h2>
+<div class="sectionbody">
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="taI5t05YKto"><img class="youtube-thumb" src="//i.ytimg.com/vi/taI5t05YKto/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph lead">
+<p>Developing for OS/161 requires specialized tools.
+These comprise the <code>test161</code> testing framework, the <code>sys161</code> system
+simulator, and cross-compilers to create <code>sys161</code> executables.</p>
+</div>
+<div class="paragraph">
+<p>Instructions for obtaining the OS/161 toolchain and source code are available
+on the <a href="/asst/setup">setup page</a>.
+Please follow those instructions carefully and return when have the toolchain
+set up.
+We&#x2019;ll download the sources below.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_configuring_building_and_running_a_kernel"></a><h2>3. Configuring, Building, and Running a Kernel</h2>
+<div class="sectionbody">
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="IxX4uwET3_U"><img class="youtube-thumb" src="//i.ytimg.com/vi/IxX4uwET3_U/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph lead">
+<p>Now that you have your development environment ready, on to the fun stuff:
+building and booting your first OS/161 kernel.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_download_the_os161_source_code"></a><h3>3.1. Download the OS/161 Source Code</h3>
+<div class="paragraph">
+<p>We distribute the <a href="https://github.com/ops-class/os161" target="_blank" class="external"><code>ops-class.org</code> OS/161 source code</a>
+using Git.
+Starting with a clone of our repository makes it easy for us to distribute
+updates, which can be merged easily into your repository.</p>
+</div>
+<div class="paragraph">
+<p>First, choose a directory to work in:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If you are using our Vagrant virtual machine,
+you can run Git either inside or outside of your virtual machine, assuming
+your host machine has Git installed. For simplicity, we suggest cloning the
+sources inside your virtual machine in <code>/home/trinity/src</code>, which should be
+an empty directory.</p>
+</li>
+<li>
+<p>If you have the toolchain installed natively you can create your source
+directory wherever you want.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Let&#x2019;s say you&#x2019;ve chosen a directory called <code>src</code>, which should either not
+exist or (in the case of the Vagrant VM) be empty. Clone
+<a href="https://github.com/ops-class/os161" target="_blank" class="external">our <code>ops-class.org</code> Git repository.</a> into that directory.
+Note that we refer to this directory as your <em>source directory</em>. In contrast,
+your <em>root directory</em> is where your built kernel and other binaries are
+installed and where you run <code>sys161</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_configure_your_os161_source_tree"></a><h3>3.2. Configure Your OS/161 Source Tree</h3>
+<div class="paragraph">
+<p>The next step is to configure the OS/161 sources by running the <code>configure</code>
+command located at the base of your source tree. You need to do this (very
+short) step only when you completely remove your source tree for some reason.
+The only configuration step is to set up where various binaries&#x2014;&#x200B;including
+system executable and your kernel&#x2014;&#x200B;will be created when you run <code>make</code> in
+later steps. Run <code>configure --help</code> to find out more including available
+command line options.</p>
+</div>
+<div class="paragraph">
+<p>Note that by default OS/161 installs things to the root directory
+<code>$HOME/os161/root</code>, which is a fine plan to put things if you are working on
+a shared machine. For our dedicated VM we use <code>$HOME/root</code> to shorten the
+directory paths a bit, but this requires that you use the <code>--ostree</code> argument
+to <code>configure</code>. If you forget this argument either now or when you need to
+rerun <code>configure</code> later, you will install things into <code>$HOME/os161/root</code>.
+<strong>This has caused confusion for some students previously, so please be
+careful.</strong></p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_configure_your_os161_kernel"></a><h3>3.3. Configure Your OS/161 Kernel</h3>
+<div class="paragraph">
+<p>The kernel sources for OS/161 are in the <code>kern</code> subdirectory, which has its
+own configuration script. Change into <code>kern/conf</code> and look around. You should
+notice a configuration script, a base configuration file (<code>conf.kern</code>), and
+four configurations that include <code>conf.kern</code>.</p>
+</div>
+<div class="paragraph">
+<p>You should take a look at <code>conf.kern</code> and one of the configurations to get a
+sense of the format. But for now, the only thing we&#x2019;re concerned about is
+ensuring that we enable <code>dumbvm</code> for this assignment. You&#x2019;re going to write a
+full-fledged virtual memory (VM) system in <a href="/asst/3/" class="hidden-print">ASST3</a>, but for the first few
+assignments <code>dumbvm</code> provides enough of a &quot;dumb&quot; VM to allow you to proceed.
+Configure a kernel now with <code>dumbvm</code> enabled.</p>
+</div>
+<div class="paragraph">
+<p>The OS/161 kernel configuration process sets various options that control how
+your kernel gets built, so unlike the configuration step above you will
+probably need to modify these files at some point during later assignments.
+In particular, <code>conf.kern</code> determines what source files get included in your
+kernel build, so if you add sources to the kernel you&#x2019;ll need to add them to
+<code>conf.kern</code> as well.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_build_your_os161_kernel"></a><h3>3.4. Build Your OS/161 Kernel</h3>
+<div class="paragraph">
+<p>Once you&#x2019;re successfully configured your OS/161 kernel you should have a
+directory to compile in, as well as a reminder about a build step that you
+might forget. Once you change into that directory you are ready to build a
+kernel!</p>
+</div>
+<div class="paragraph">
+<p>One important note before you start. You are probably used to using
+<a href="https://www.gnu.org/software/make/" target="_blank" class="external">GNU <code>make</code></a> to build software on UNIX-like
+systems. However, the OS/161 sources use
+<a href="http://linux.die.net/man/1/bmake" target="_blank" class="external">BSD <code>make</code></a>, which has a different
+<code>Makefile</code> syntax <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Why? Because &lt;a href=&quot;http://www.hcs.harvard.edu/~dholland/&quot; target=&quot;_blank&quot; class=&quot;external&quot;&gt;David Holland&lt;/a&gt; is a big &lt;a href=&quot;http://www.netbsd.org/&quot; target=&quot;_blank&quot; class=&quot;external&quot;&gt;NetBSD&lt;/a&gt; hacker.&lt;/body&gt;&lt;/html&gt;">3</span>. To avoid confusion, BSD <code>make</code> has
+been installed on your system as <code>bmake</code>. So while you might normally run
+<code>make clean</code> to reset your build and remove all of the build targets, when
+working with OS/161 you would run <code>bmake clean</code>.</p>
+</div>
+<div class="paragraph">
+<p>There are three steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Building the dependencies (<code>bmake depend</code>)</strong>. This scans all of the source
+files that you have configured to be part of your kernel and ensures that all
+their header files are also included.</p>
+</li>
+<li>
+<p><strong>Building the kernel (<code>bmake</code>)</strong>. This generates your kernel binary.</p>
+</li>
+<li>
+<p><strong>Installing the kernel (<code>bmake install</code>)</strong>. This installs your kernel into
+the root directory that you configured above.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Run these three commands now and check that they complete successfully. Then
+change into your root directory and look around. You should see a fresh
+kernel. If you don&#x2019;t, review the steps above until your kernel builds
+successfully.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_configuring_sys161"></a><h3>3.5. Configuring <code>sys161</code></h3>
+<div class="paragraph">
+<p>Now that you have a kernel, the next step is to run it.
+But how?
+Given that your kernel doesn&#x2019;t yet have any useful features, it would be
+impossible to run it on real hardware, or even in a fully-featured VM like
+VirtualBox.</p>
+</div>
+<div class="paragraph">
+<p>Instead, OS/161 kernels are built to be run by a special-purpose system
+simulator called <code>sys161</code>, or System/161.
+Compared to other VMs or full-system simulators, <code>sys161</code> is simpler and
+faster but retains enough realism to enable OS/161 kernel development.
+Apart from floating point support and certain issues relating to RAM cache
+management, it provides an accurate emulation of a MIPS processor
+<span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;If you&amp;#x2019;d like to know more about System/161 and OS/161, &lt;a href=&quot;http://dl.acm.org/citation.cfm?id=563383&quot; target=&quot;_blank&quot; class=&quot;external&quot;&gt;this paper&lt;/a&gt; provides an excellent overview.&lt;/body&gt;&lt;/html&gt;">4</span>.</p>
+</div>
+<div class="paragraph">
+<p>Unlike OS/161, we <em>do not</em> expect you to modify <code>sys161</code>. However, you do
+need to <em>configure</em> the simulated machine that <code>sys161</code> provides by choosing
+the number of simulated CPU cores, the amount of simulated memory, and the
+number of simulated disk drives. <a href="/files/sys161.conf">Here is a
+<code>sys161.conf</code> file</a> that you can use to get started. You should read and
+understand the structure of this configuration file so that you can modify it
+as needed in later assignments.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_running_your_first_kernel"></a><h3>3.6. Running Your First Kernel</h3>
+<div class="paragraph">
+<p>Now that you have a kernel and a <code>sys161</code> configuration file you should be
+ready to go. Fire up your kernel and see what happens. Poke around a bit at
+the menu. Run a test or two. And then shut down.</p>
+</div>
+<div class="paragraph">
+<p>What just happened? You ran one computer program (<code>sys161</code>) that loaded your
+kernel (from the <code>kernel</code>) file. Your kernel is itself a program expressed as
+a series of MIPS r3000 instructions, which were interpreted by <code>sys161</code> and
+simulated as if they had executed on real hardware. Of course, this includes
+the ability read from and write to a console device, allowing you to interact
+with your running kernel.</p>
+</div>
+<div class="paragraph">
+<p>Examine the output produced by your kernel as it boots and shuts down. You
+should be able to answer the following questions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Which version of System/161 and OS/161 are you using?</p>
+</li>
+<li>
+<p>Where was OS/161 developed and copyrighted?</p>
+</li>
+<li>
+<p>How much memory and how many CPU cores was System/161 configured to use?</p>
+</li>
+<li>
+<p>What configuration was used by your running kernel?</p>
+</li>
+<li>
+<p>How many times has your kernel been compiled?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Before going on try the following exercises:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Boot your OS/161 kernel with 8 cores.</p>
+</li>
+<li>
+<p>Try booting with 256K of memory. What happens?</p>
+</li>
+<li>
+<p>Configure System/161 to use a fixed value to initialize its random number
+generator. (This can be helpful when debugging non-deterministic kernel
+behavior.)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_kernel_development_workflow"></a><h3>3.7. Kernel Development Workflow</h3>
+<div class="paragraph">
+<p>As you saw above, building an OS/161 kernel from scratch involves five steps:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Configuring the entire OS/161 source tree by running <code>configure</code> in the
+root of the source directory</p>
+</li>
+<li>
+<p>Configuring the kernel by running <code>config</code> in the <code>kern/conf</code> subdirectory</p>
+</li>
+<li>
+<p>Building the dependencies by running <code>bmake depend</code> in the compilation
+subdirectory</p>
+</li>
+<li>
+<p>Building the kernel by running <code>bmake</code></p>
+</li>
+<li>
+<p>Installing the kernel by running <code>bmake install</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The first step only needs to be done when you download a new OS/161 source
+tree. The second step only needs to be done when you start a new assignment
+or add files to your kernel build by editing <code>kern/conf/conf.kern</code>.
+Rebuilding the dependencies in step three is also not usually necessary
+unless you have reconfigured your kernel.</p>
+</div>
+<div class="paragraph">
+<p>So that leaves the last two (<code>bmake ; bmake install</code>) as your normal kernel
+development workflow. Note that <code>bmake</code> is usually smart enough to detect
+what you changed and not recompile things unnecessarily, but if you think
+that it hasn&#x2019;t accomplished that correctly you can always run a <code>bmake clean</code>
+to force it to start over.</p>
+</div>
+<div class="paragraph">
+<p>However, if things aren&#x2019;t building properly you may want to rerun the kernel
+configuration and dependencies steps just to be sure. Step 1 is almost never
+necessary to repeat unless you&#x2019;ve completely started over and removed your
+entire previous OS/161 source tree.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_building_the_user_space_tools"></a><h3>3.8. Building the User Space Tools</h3>
+<div class="paragraph">
+<p>If you change into your root directory you should see only a few files,
+including your compiled kernel, a symbolic link pointing to that kernel, and
+the <code>sys161.conf</code> file that configures <code>sys161</code>. That&#x2019;s fine for now, and all
+your need until <a href="/asst/2/" class="hidden-print">ASST2</a>.</p>
+</div>
+<div class="paragraph">
+<p>But your OS/161 kernel would not be very interesting or useful if it couldn&#x2019;t
+run user programs. So let&#x2019;s build those now. Head over to the base of your
+source directory and run <code>bmake</code> followed by <code>bmake install</code>. This generates
+a lot of output, but when it&#x2019;s done return to your root directory. You should
+see a directory structure including <code>bin</code> and <code>testbin</code> directories
+containing cross-compiled user binaries that your OS/161 kernel will
+eventually be able to run.</p>
+</div>
+<div class="paragraph">
+<p>Note that building the user space tools is <em>not</em> part of the kernel
+development cycle. Unless you modify or add tests in the <code>userland</code>
+subdirectory of your source directory&#x2014;&#x200B;which you are encouraged to do&#x2014;&#x200B;you
+should not need to rebuild or reinstall these binaries. And until you begin
+<a href="/asst/2/" class="hidden-print">ASST2</a> your kernel can&#x2019;t run user binaries anyway, so this part of the build
+process is completely useless. We only point this out because compiling and
+installing the user space tools takes enough time to be annoying, so don&#x2019;t
+let it slow you down unnecessarily. Focus your development loop on your
+kernel.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_exploring_os161"></a><h2>4. Exploring OS/161</h2>
+<div class="sectionbody">
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="Q87oBTajZFk"><img class="youtube-thumb" src="//i.ytimg.com/vi/Q87oBTajZFk/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph lead">
+<p>One of the core challenges of the <code>ops-class.org</code> assignments is working with
+OS/161, a large, complicated, and unfamiliar code base.</p>
+</div>
+<div class="paragraph">
+<p>OS/161 contains roughly 40K non-commenting lines of code and 25K comments
+spread across 570 C, header, and assembly files. Reading and understanding
+all of that code would take much more time than you want to spend. And of
+course you are going to make things worse, since your solutions will add
+considerably to what is already there <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;The ASS3 solution set adds 4K LoC.&lt;/body&gt;&lt;/html&gt;">5</span>.</p>
+</div>
+<div class="paragraph">
+<p>Luckily, OS/161 contains a large amount of code that you never need to
+understand or change, some amount of code that you need to be familiar but
+not intimate with, and a small amount that you must understand in detail.
+Distinguishing between these categories is critical to your success. For
+example, the <code>LAMEbus</code>, <code>semaphore</code>, and <code>loadelf</code> source code each fall into
+one of these three categories. See if you can decide which is which, or
+return to this question after you work on some of the questions below.</p>
+</div>
+<div class="paragraph">
+<p>To become familiar with a code base, there is no substitute for actually
+poking around. Browse through the tree a bit to get a sense of how things are
+structured. Glance through some source code for files that look interesting.
+OS/161 is also very well commented, as befits a pedagogical code base.</p>
+</div>
+<div class="paragraph">
+<p>Most of the OS/161 sources are C source (<code>.c</code>) and header (<code>.h</code>) files. Your
+kernel does also contain a bit of assembly code (<code>.S</code>) files. You will not
+need to understand or modify the assembly code, but it does contain some
+fairly interesting pieces of code executed during boot and during context
+switches. So you may want to take a look at it at some point. The assembly
+code is also <em>extremely</em> well commented <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Thanks David!&lt;/body&gt;&lt;/html&gt;">6</span>.</p>
+</div>
+<div class="paragraph">
+<p>You should use the code reading questions below to guide an initial
+exploration of the OS/161 sources. While the questions won&#x2019;t require you look
+at every line of code or even every file, we <em>strongly recommend</em> that you at
+least glance at all the kernel sources in the <code>kern</code> subdirectory.</p>
+</div>
+<div class="paragraph">
+<p>Some parts of the code may seem confusing since we have not discussed how any
+OS/161 subsystems work. However, it is still useful to review the code now
+and get a high-level idea of what is happening in each subsystem. If you do
+not understand the low-level details now, that is fine.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_the_top_of_the_source_directory"></a><h3>4.1. The Top of the Source Directory</h3>
+<div class="paragraph">
+<p>Your OS/161 source directory contains the following files:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>CHANGES</code>: describes the evolution of OS/161 and changes in previous
+versions.</p>
+</li>
+<li>
+<p><code>configure</code>: the top-level configuration script that you ran previously.</p>
+</li>
+<li>
+<p><code>Makefile</code>: the top-level <code>Makefile</code> used to build the user space binaries.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The source directory contains the following subdirectories:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>common/</code>: code used both by the kernel and user programs, mostly standard C library functions.</p>
+</li>
+<li>
+<p><code>design/</code>: contains design documents describing several OS/161 components.</p>
+</li>
+<li>
+<p><code>kern/</code>: the kernel source code, and the subdirectory where you will spend
+most of your time.</p>
+</li>
+<li>
+<p><code>man/</code>: the OS/161 man pages appear here.  The man pages
+document (or specify) every program, every function in the C library, and
+every system call. You will use the system call man pages for reference in
+the course of <a href="/asst/2/" class="hidden-print">ASST2</a>. The man pages are HTML and can be read with any browser.</p>
+</li>
+<li>
+<p><code>mk/</code>: fragments of <code>Makefiles</code> used to build the system.</p>
+</li>
+<li>
+<p><code>userland/</code>: user space libraries and program code.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you have previously configured and built in this directory there are also
+some additional files and directories that have been created, such as
+<code>defs.mk</code> and <code>build/</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_user_land"></a><h3>4.2. User Land</h3>
+<div class="paragraph">
+<p>In the <code>userland/</code> source subdirectory, you will find:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>bin/</code>: all the utilities that are typically found in
+<code>/bin/</code>&#x2014;`cat`, <code>cp</code>, <code>ls</code>, etc. Programs in <code>/bin/</code> are considered
+fundamental utilities that the system needs to run.</p>
+</li>
+<li>
+<p><code>include/</code>: these are the include files that you would typically find
+in <code>/usr/include</code> (in our case, a subset of them).  These are user include
+files, not kernel include files.</p>
+</li>
+<li>
+<p><code>lib/</code>: library code lives here.  We have only two libraries:
+<code>libc</code>, the C standard library, and <code>hostcompat</code>, which is for recompiling
+OS/161 programs for the host UNIX system.  There is also a <code>crt0</code> directory,
+which contains the startup code for user programs.</p>
+</li>
+<li>
+<p><code>sbin/</code>: this is the source code for the utilities typically found in
+<code>/sbin</code> on a typical UNIX installation. In our case, there are some utilities
+that let you halt the machine, power it off, and reboot it, among other things.</p>
+</li>
+<li>
+<p><code>testbin/</code>: these are pieces of test code that we will use to
+test and grade your assignments.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>You don&#x2019;t need to understand the files in <code>userland/bin/</code>, <code>userland/sbin/</code>,
+and <code>userland/testbin/</code> now, but you certainly will later on. Eventually, you
+will want to modify these or write your own utilities and these are good
+models. Similarly, you need not read and understand everything in
+<code>userland/lib</code> and <code>userland/include</code> but you should know enough about what&#x2019;s
+there to be able to get around the source tree easily.  The rest of our code
+walk-through is going to focus on <code>kern/</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_kernel_sources"></a><h3>4.3. Kernel Sources</h3>
+<div class="paragraph">
+<p>Now let&#x2019;s navigate to the <code>kern/</code> source subdirectory. Once again, there is a
+<code>Makefile</code>.  This <code>Makefile</code> installs header files but does not build
+anything. In addition, we have more subdirectories for each component of the
+kernel as well as some utility directories and configuration files.</p>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernarch"></a><h4>4.3.1. <code>kern/arch</code></h4>
+<div class="paragraph">
+<p>This is where architecture-specific code goes. By architecture-specific, we
+mean the code that differs depending on the hardware platform on which you&#x2019;re
+running. There are two directories here: <code>mips</code> which contains code specific
+to the MIPS processor and <code>sys161</code> which contains code specific to the
+System/161 simulator.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>kern/arch/mips/conf/conf.arch</code>: this file tells the kernel
+configuration script where to find the machine-specific, low-level functions it
+needs (throughout <code>kern/arch/mips/</code>).</p>
+</li>
+<li>
+<p><code>kern/arch/mips/include/</code>: this folder and its subdirectories
+include files for the machine-specific constants and functions.</p>
+</li>
+<li>
+<p><code>kern/arch/mips/</code>: The other directories contain source files for
+the machine-dependent code that the kernel needs to run.  Most of this code
+is quite low-level.</p>
+</li>
+<li>
+<p><code>kern/arch/sys161/conf/conf.arch</code>: Similar to <code>mips/conf/conf.arch</code>.</p>
+</li>
+<li>
+<p><code>kern/arch/sys161/include:</code> These files are include files for the
+System/161-specific hardware, constants, and functions.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kerncompile"></a><h4>4.3.2. <code>kern/compile/</code></h4>
+<div class="paragraph">
+<p>This is where you build kernels. In the compile directory, you will find one
+subdirectory for each kernel configuration target you have used you want to
+build. For example, if you configure your kernel with the <code>DUMBVM</code>
+configuration to turn on <code>dumbvm</code>, a <code>DUMBVM</code> subdirectory will be created in
+<code>kern/compile</code> where you can compile your <code>dumbvm</code> kernel. This directory and
+build organization is typical of UNIX installations and is not universal
+across all operating systems.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>kern/conf/config</code>: is the script that takes a configuration file,
+like <code>GENERIC</code>, and creates the corresponding build directory.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kerntest"></a><h4>4.3.3. <code>kern/test/</code></h4>
+<div class="paragraph">
+<p>This directory contains kernel tests that evaluate multiple parts of your
+system. Some of these will work right away (<code>km1</code>, <code>km2</code>, <code>sy1</code>), others will
+not (<code>sy2</code>, <code>sy3</code>), and others you will have to write (<code>sy5</code>). You are more
+than welcome&#x2014;&#x200B;encouraged even&#x2014;&#x200B;to add your own kernel tests. However, please
+note that during automated tests we will replace the contents of this
+directory to ensure that your kernel runs the right tests.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kerndev"></a><h4>4.3.4. <code>kern/dev/</code></h4>
+<div class="paragraph">
+<p>This is where all the low level device management code is stored. Unless you
+are really interested, you can safely ignore most of this directory.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kerninclude"></a><h4>4.3.5. <code>kern/include/</code></h4>
+<div class="paragraph">
+<p>These are the include files that the kernel needs. The <code>kern</code> subdirectory
+contains include files that are visible not only to the operating system
+itself, but also to user programs. Consider why it&#x2019;s named
+<span class="spelling_exception">&quot;kern&quot;</span> and where the files end up when installed.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernlib"></a><h4>4.3.6. <code>kern/lib/</code></h4>
+<div class="paragraph">
+<p>These contain library code used throughout the kernel: arrays, kernel
+<code>printf</code>, etc.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernmain"></a><h4>4.3.7. <code>kern/main/</code></h4>
+<div class="paragraph">
+<p>This is where the kernel is initialized and where the kernel main function
+and menu are implemented.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernthread"></a><h4>4.3.8. <code>kern/thread/</code></h4>
+<div class="paragraph">
+<p>This directory contains the code implementing the thread abstraction and
+synchronization primitives.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernsynchprobs"></a><h4>4.3.9. <code>kern/synchprobs/</code></h4>
+<div class="paragraph">
+<p>This is the directory that contains the starter code that you will need to
+complete <a href="/asst/1/" class="hidden-print">ASST1</a>.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernsyscall"></a><h4>4.3.10. <code>kern/syscall/</code></h4>
+<div class="paragraph">
+<p>This is where you will add code to create and manage user level processes. As
+it stands now, OS/161 runs only kernel threads&#x2014;&#x200B;there is no support for user
+level code. (Try running the shell from the OS/161 menu and see what
+happens.) In <a href="/asst/2/" class="hidden-print">ASST2</a>, you&#x2019;ll implement this support.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernvm"></a><h4>4.3.11. <code>kern/vm/</code></h4>
+<div class="paragraph">
+<p>This directory is also fairly vacant. In <a href="/asst/3/" class="hidden-print">ASST3</a>, you&#x2019;ll implement virtual
+memory and most of your code will go in here.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernvfs"></a><h4>4.3.12. <code>kern/vfs/</code></h4>
+<div class="paragraph">
+<p>The file system implementation has two directories which we&#x2019;ll present in
+turn. <code>kern/vfs</code> is the file system <em>independent</em> layer&#x2014;`vfs` stands
+for virtual file system. It establishes a framework into which you can add
+new file systems easily. You will want to go look at <code>vfs.h</code> and <code>vnode.h</code>
+before looking at this directory.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_kernfs"></a><h4>4.3.13. <code>kern/fs/</code></h4>
+<div class="paragraph">
+<p>This is where the actual file system implementations go. The subdirectory
+<code>sfs</code> contains the implementation of the simple file system.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_source_exploration_exercises"></a><h3>4.4. Source Exploration Exercises</h3>
+<div class="paragraph">
+<p>Use your new-found knowledge of the OS/161 source code to answer the
+questions that follow. You may also find standard UNIX utilities like <code>find</code>
+and <code>grep</code> useful when searching through your OS/161 source code.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What function initializes the kernel during boot, and what subsystems are
+currently initialized?</p>
+</li>
+<li>
+<p>What VM system does your kernel use by default? What is wrong with it?</p>
+</li>
+<li>
+<p>OS/161 ships with two working synchronization primitives. What are they?</p>
+</li>
+<li>
+<p>How do you create a thread in OS/161? Give some examples of code that
+currently creates multiple threads.</p>
+</li>
+<li>
+<p>OS/161 has a system for printing debugging messages to the console. How
+does it work? How could it be useful?</p>
+</li>
+<li>
+<p>What do <code>copyin</code> and <code>copyout</code> do? What is special about these functions
+compared to other approaches to copying memory in C, like <code>memmove</code>?</p>
+</li>
+<li>
+<p>What is a zombie thread?</p>
+</li>
+<li>
+<p>What is the difference between a thread sleeping and a thread yielding?</p>
+</li>
+<li>
+<p>Explain the difference between machine dependent and machine independent
+code. Where would you put both in the OS/161 source tree?</p>
+</li>
+<li>
+<p>What functions are used to enable and restore interrupts? Would this be
+sufficient to ensure mutual exclusion on an OS/161 kernel?</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_your_os161_toolchain"></a><h2>5. Your OS/161 Toolchain</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>Successfully developing an OS/161 kernel requires more than just building and
+running a kernel. You also need to edit source code, share code with others,
+and debug and test your kernel.</p>
+</div>
+<div class="paragraph">
+<p>To complete ASST0, we&#x2019;ll provide an overview and some exercises using the
+rest of the OS/161 toolchain: in particular,  Git and GDB. But let&#x2019;s start
+with discussing how to edit OS/161 source code.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_editing_os161"></a><h3>5.1. Editing OS/161</h3>
+<div class="paragraph">
+<p>While we don&#x2019;t specifically support any particular editing or code browsing
+software, we suggest that you use an editor that is designed for working with
+source code. Command line tools like <code>vim</code> work well and, when combined with
+<code>ctags</code> and <code>tmux</code>, produce a very powerful command-line development
+environment. Graphical editors like Eclipse or Visual Studio are also fine
+but more of a hassle to set up. Decide what works best for you.</p>
+</div>
+<div class="paragraph">
+<p>When you read and begin to modify source code, you will also want to absorb
+it&#x2019;s stylistic conventions. Like any other hacker, David Holland has his
+preferences about indentation, line width, function signatures, where to put
+braces, and tabs versus spaces. Adopting these will make it much easier to
+work on OS/161 and ensure that your changes fit in. This is also a critical
+skill to learn as you begin to contribute to other shared code bases. At
+minimum, you and your partner should agree on style so that you don&#x2019;t drive
+each other crazy or spend hours reformatting each others&apos; code.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_collaborating_with_git"></a><h3>5.2. Collaborating with Git</h3>
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="p0BQHgl3m0k"><img class="youtube-thumb" src="//i.ytimg.com/vi/p0BQHgl3m0k/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph">
+<p>As described previously, we are not going to go into the use of Git in
+detail. <strong>But we will point out that using Git is not optional for completing
+the <code>ops-class.org</code> assignments.</strong> We distribute our base sources using Git
+and will use Git to push updates to you. Our testing tool, <code>test161</code>, submits
+assignments for testing using Git.</p>
+</div>
+<div class="paragraph">
+<p>One additional requirement is that you have a <em>private</em> Git repository so
+that you do not inadvertently share your solutions with others. The <code>test161</code>
+submission system will refuse to grade your assignments if it detects that
+your Git repository is public. Getting your hands on a private Git repository
+is not hard. If you are a student,
+<a href="https://www.github.com" target="_blank" class="external">GitHub</a> will allow you to set
+up a limited number of private repositories for instructional use.
+<a href="https://www.gitlab.com" target="_blank" class="external"><code>GitLab.com</code></a> provides private Git repositories for
+free, as do other sites such as
+<span class="spelling_exception"><a href="https://www.bitbucket.org" target="_blank" class="external">BitBucket</a></span>. And your course
+staff may also set up private Git repositories for you to use.</p>
+</div>
+<div class="paragraph">
+<p>If you are completing the <code>ops-class.org</code> assignments alone, you may wonder
+whether you need Git. The short answer is <strong>yes</strong>. Every programmer, including
+you, should get in the habit of setting up version control every time you
+start a project. It&#x2019;s the first thing that you should do. Always. Every time.
+No exceptions. Why? There are a lot of reasons.
+<a href="http://lmgtfy.com/?q=why+should+i+use+version+control#" target="_blank" class="external">Google them</a>.</p>
+</div>
+<div class="sect3">
+<a class="anchor" id="_git_exercises"></a><h4>5.2.1. Git exercises</h4>
+<div class="paragraph">
+<p>If you are just getting started with Git, here are some exercises specific to
+OS/161 that you may want to try:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Modify your kernel so that it prints out your email address at the right
+spot during boot. Use Git to show what files have changed. Commit your
+changes, and confirm that your work tree is now clean. Use Git to show the
+history of your repository, and to generate a line-by-line breakdown of who
+is responsible for each of the current lines in the file that prints the
+menu.</p>
+</li>
+<li>
+<p>Modify your kernel so that it prints a bad word during boot. Use Git to
+show what files have changed. Decide that this is bad idea and use Git to
+back out your change.</p>
+</li>
+<li>
+<p>Modify your kernel so that it builds but does not boot. (Try adding a null
+pointer exception somewhere during the boot sequence or in the menu.) Check
+in your changes and build a kernel. Run your kernel and realize your mistake.
+Use Git to revert your previous commit containing the mistake. Confirm that
+your kernel now builds and boots properly.</p>
+</li>
+<li>
+<p>Repeat the previous exercise but make your changes in a new branch. When
+you realize your mistake, return to your master branch and show that you can
+still build and boot. At that point abandon and delete the new branch you
+created.</p>
+</li>
+<li>
+<p>Set up a private remote repository so that you and your partner can share
+changes. Configure your repository so that it pushes and pulls your master
+branch to your new repository by default. Pick a file to edit jointly,
+something long enough so that you both can add changes. Add a comment to the
+top of the file. Have your partner add a comment to the bottom of the file.
+Use Git to merge your changes through the remote repository.</p>
+</li>
+<li>
+<p>Pick another file to edit jointly, but this time create a conflict by both
+adding different comments to the same line of the file. Using Git, confirm
+that the edits create a merge conflict. Use Git to handle the conflict and
+complete the merge. Try doing this twice and see if you can force each
+partner to handle the merge conflict.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_debugging_using_gdb"></a><h3>5.3. Debugging Using GDB</h3>
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="BcbqC74DEy0"><img class="youtube-thumb" src="//i.ytimg.com/vi/BcbqC74DEy0/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph">
+<p>GDB&#x2014;&#x200B;or the GNU debugger&#x2014;&#x200B;is another extremely well-documented tool which we
+will let you learn on your own. Unlike Git, GDB is not required to complete
+the <code>ops-class.org</code> assignments. But that&#x2019;s like saying that shoes aren&#x2019;t
+required to climb Mt. Everest. You can make it without GDB, through good old
+<code>printf</code> debugging and pure deductive reasoning. But it will be very, very
+painful. You will be much happier if you learn to use GDB.</p>
+</div>
+<div class="paragraph">
+<p>The only complication to using GDB to debug your OS/161 kernel is that the
+machine simulator <code>sys161</code> gets in the way. As a result, the way that you
+hook up the debugger to your running kernel is a bit different than you might
+be used to if you have used GDB previously. For example, if you try this in
+your root directory:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash lang-bash" data-lang="bash">os161-gdb sys161 kernel</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>you will end up debugging <code>sys161</code>, not your kernel, which is not what you
+want. And if you run</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash lang-bash" data-lang="bash">os161-gdb kernel</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>nothing will happen at all because you haven&#x2019;t started the <code>sys161</code> simulator
+required to run your kernel.</p>
+</div>
+<div class="paragraph">
+<p>Instead, you need to start the simulator and the debugger separately.
+However, it is critical that they run in the same directory. A terminal
+multiplexer like <code>tmux</code> comes in handy here. Here&#x2019;s what to do:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In one terminal, change to your root directory and start your kernel. There
+is a special option to <code>sys161</code> that will cause it to wait for a connection
+from the debugger before booting. Use that to make sure that you can
+establish the connection before boot.</p>
+</li>
+<li>
+<p>In a second terminal, change to your root directory and start the debugger
+by running <code>os161-gdb kernel</code>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Unfortunately, you are not quite done. You may have noticed that the kernel
+is still waiting for a debugger connection. To establish that connection,
+type the following at the GDB prompt:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash lang-bash" data-lang="bash">target remote unix:.sockets/gdb</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>At this point GDB should confirm that it is connected to the <code>sys161</code>
+simulator and you can proceed. Note that the kernel is stopped at this point
+as if you have set up a breakpoint, so you need to instruct it to continue.</p>
+</div>
+<div class="paragraph">
+<p>Happily, new versions of <code>sys161</code> will wait explicitly at shutdown for a
+debugger connection if something goes wrong. Try booting your kernel and
+running the <code>panic</code> command to observe this behavior. This gives you a chance
+to connect a debugger and poke around in cases where your kernel panics and
+you weren&#x2019;t expecting it. <strong>That said, we suggest that you always run your
+kernel with the debugger attached from boot.</strong></p>
+</div>
+<div class="paragraph">
+<p>If you get tired of typing these commands, there are ways to set up a GDB
+alias for the <code>target</code> command and have it be run when GDB starts. For the
+even more adventurous, you can set up a <code>tmux</code> script that will automatically
+create two windows, boot your kernel in one and start the debugger in the
+other. Programming FTW!</p>
+</div>
+<div class="paragraph">
+<p>Finally, note that because GDB is debugging your kernel through the <code>sys161</code>
+system simulator, not all GDB features are supported. Watchpoints, for
+example, are known not to work. In addition, when stepping through code you
+should keep in mind that your kernel is multithreaded and that other threads
+may have run in-between each step.</p>
+</div>
+<div class="sect3">
+<a class="anchor" id="_gdb_exercises"></a><h4>5.3.1. GDB exercises</h4>
+<div class="paragraph">
+<p>If you are just getting started with GDB, here are some exercises specific to
+OS/161 that you may want to try:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Set a breakpoint on the <code>panic</code> function. Initiate a panic from the kernel
+menu and confirm that GDB hits the break point. Inspect the call stack and
+step up and down a few times before allowing the kernel to continue and
+<code>sys161</code> to exit.</p>
+</li>
+<li>
+<p>Create a panic by modifying your OS/161 source code. Use GDB to find the
+source of the panic. If you are working with a partner, have your partner
+hide a panic in the source code and use GDB to find it. Then hide one for
+them.</p>
+</li>
+<li>
+<p>Step through kernel boot, stepping in to and over a few of the boot helper
+functions that initialize various subsystems.</p>
+</li>
+<li>
+<p>Put a breakpoint on the kernel exception handler and step through it when
+it fires. Use it to determine what generates exceptions when your kernel is
+sitting idly at the menu.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+				<div class="hidden-print">
+					<a class="anchor" id="videos"></a>
+					<h2>Related Videos</h2>
+					<p class="lead">
+					Below are some related videos and slides that may help you
+					complete this assignment.
+					</p>
+					<div class="row">
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="QOV9_RsqBZo"><img class="youtube-thumb" src="//i.ytimg.com/vi/QOV9_RsqBZo/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-05-2014</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="u6SqF_wI8k4"><img class="youtube-thumb" src="//i.ytimg.com/vi/u6SqF_wI8k4/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-02-2016</li>
+								<li>Jerry Ajay</li>
+								
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="scrollspy" class="col-md-3 spelling_exception">
+				<ul id="side" class="fixed-md-3 nav hidden-xs hidden-sm hidden-print" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">1. Introduction</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_objectives">1.1. Objectives</a></li>
+							<li class="h6"><a href="#_a_note_on_cut_and_paste">1.2. A Note on Cut-and-Paste</a></li>
+							<li class="h6"><a href="#_a_note_on_learning_git">1.3. A Note on Learning Git</a></li>
+							<li class="h6"><a href="#_collaboration_guidelines">1.4. Collaboration Guidelines</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_choosing_and_initializing_your_development_environment">2. Choosing and Initializing Your Development Environment</a>
+					</li>
+					<li class="h5"><a href="#_configuring_building_and_running_a_kernel">3. Configuring, Building, and Running a Kernel</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_download_the_os161_source_code">3.1. Download the OS/161 Source Code</a></li>
+							<li class="h6"><a href="#_configure_your_os161_source_tree">3.2. Configure Your OS/161 Source Tree</a></li>
+							<li class="h6"><a href="#_configure_your_os161_kernel">3.3. Configure Your OS/161 Kernel</a></li>
+							<li class="h6"><a href="#_build_your_os161_kernel">3.4. Build Your OS/161 Kernel</a></li>
+							<li class="h6"><a href="#_configuring_sys161">3.5. Configuring sys161</a></li>
+							<li class="h6"><a href="#_running_your_first_kernel">3.6. Running Your First Kernel</a></li>
+							<li class="h6"><a href="#_kernel_development_workflow">3.7. Kernel Development Workflow</a></li>
+							<li class="h6"><a href="#_building_the_user_space_tools">3.8. Building the User Space Tools</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_exploring_os161">4. Exploring OS/161</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_the_top_of_the_source_directory">4.1. The Top of the Source Directory</a></li>
+							<li class="h6"><a href="#_user_land">4.2. User Land</a></li>
+							<li class="h6"><a href="#_kernel_sources">4.3. Kernel Sources</a></li>
+							<li class="h6"><a href="#_source_exploration_exercises">4.4. Source Exploration Exercises</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_your_os161_toolchain">5. Your OS/161 Toolchain</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_editing_os161">5.1. Editing OS/161</a></li>
+							<li class="h6"><a href="#_collaborating_with_git">5.2. Collaborating with Git</a></li>
+							<li class="h6"><a href="#_debugging_using_gdb">5.3. Debugging Using GDB</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#videos">Related Videos</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/asst/0.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/asst/0.adoc" target="_blank">View</a>
+			<br>
+			Built 9/18/2020 @ 10:49 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

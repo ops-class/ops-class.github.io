@@ -1,0 +1,1443 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Introduction to CSE 421/521</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Introduction to an introduction to operating systems, the course staff, and course policies.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline slide" id="_welcome_to_cse_421521">
+<h2>Welcome to CSE 421/521</h2>
+
+<div class="ulist">
+<div class="title">Today:</div>
+<ul>
+<li>
+<p>Meet the CSE 421/521 staff!</p>
+</li>
+<li>
+<p>Introduction to course content</p>
+</li>
+<li>
+<p>Overview of course policies</p>
+</li>
+</ul>
+</div>
+<div class="videoblock">
+
+<iframe width="320" height="180" src="//www.youtube.com/embed/9L8yEDcZ-QI?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+
+</div>
+<div class="slide" id="_why_im_here">
+<h2>Why I&#x2019;m Here</h2>
+
+
+
+</div>
+<div class="slide canvas-image" style="background-image: url(&quot;https://flagshipfiction.files.wordpress.com/2015/02/morpheus-red-pill-vs-blue-pill.jpg&quot;);">
+
+
+
+<div class="paragraph meme-bottom">
+<p>I took the red pill</p>
+</div>
+
+</div>
+<div class="nooutline slide" id="_why_im_here_2">
+<h2>Why I&#x2019;m Here</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>I took CS161 @ Harvard&#x2014;&#x200B;now also known as CSE 421/521 at the
+University at Buffalo&#x2014;&#x200B;from Margo Seltzer in 2001</p>
+</li>
+<li class="slide">
+<p>At that point I was a physics major, but I wouldn&#x2019;t be for long&#x2026;</p>
+</li>
+<li class="slide">
+<p>&#x2026;&#x200B;because I discovered that I loved building computer systems and teaching
+people about them.</p>
+</li>
+<li class="slide">
+<p>I would up in graduate school (where I TA&#x2019;d this course many times).</p>
+</li>
+<li class="slide">
+<p>And graduate school landed me right back here to begin the cycle again.</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="openblock big vcenter">
+<div class="content">
+<div class="paragraph">
+<p><strong>So be careful: this class can be transformative!</strong></p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_2" style="background-image: url(&quot;http://laschoolreport.com/wp-content/uploads/2013/08/Sad-Teacher.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Took this class</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>Became a professor</p>
+</div>
+
+</div>
+<div class="nooutline slide" id="_why_are_you_here">
+<h2>Why Are You Here?</h2>
+
+
+
+</div>
+<div class="slide" id="_introducing_the_2015_course_staff">
+<h2>Introducing the 2015 Course Staff</h2>
+
+
+
+</div>
+<div class="slide canvas-image" id="_3" style="background-image: url(&quot;http://kickofjoy.com/wp-content/uploads/2014/04/5-Soulful-Ways-To-Support-Your-Best-Friends.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Meet</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>Your new best friends</p>
+</div>
+
+</div>
+<div class="nooutline slide" id="_introducing_the_2015_course_staff_2">
+<h2>Introducing the 2015 Course Staff</h2>
+
+<div class="paragraph">
+<p>We probably have the <strong>best</strong> course staff ever this year: a mixture of new
+TAs, veteran volunteers, and a large group of &quot;ninjas&quot;&#x2014;students returning
+from last year to help out.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Official Teaching Assistants</div>
+<ol class="arabic">
+<li class="slide">
+<p><strong>Jerry Ajay</strong></p>
+</li>
+<li class="slide">
+<p><strong>Ali Ben Ali</strong></p>
+</li>
+<li class="slide">
+<p><strong>Xu Zhen</strong></p>
+</li>
+</ol>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Ali and Jerry will teach recitations, and all three TAs will mark all graded
+work.</p>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="olist arabic">
+<div class="title">Unofficial Teaching Assistants</div>
+<ol class="arabic">
+<li class="slide">
+<p><strong>Yihong Chen</strong></p>
+</li>
+<li class="slide">
+<p><strong>Scott Haseley</strong></p>
+</li>
+<li class="slide">
+<p><strong>Carl Nuessle</strong></p>
+</li>
+<li class="slide">
+<p><strong>Guru Prasad</strong></p>
+</li>
+<li class="slide">
+<p><strong>Jinghao Shi</strong></p>
+</li>
+</ol>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>These <a href="https://blue.cse.buffalo.edu" target="_blank" class="external">blue</a> group graduate students will help
+with office hours and work on tool development. All are former 421/521
+students!</p>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="olist arabic">
+<div class="title">Ninjas:</div>
+<ol class="arabic">
+<li class="slide">
+<p><strong>Dan Conway</strong></p>
+</li>
+<li class="slide">
+<p><strong>Gela Malek Pour</strong></p>
+</li>
+<li class="slide">
+<p><strong>Isaac Reath</strong></p>
+</li>
+<li class="slide">
+<p><strong>Benjamin Rueda</strong></p>
+</li>
+<li class="slide">
+<p><strong>Mark Simpson</strong></p>
+</li>
+<li class="slide">
+<p><strong>Yousuf Zubairi</strong></p>
+</li>
+</ol>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Our ninjas are all (excellent) returning 2015 undergraduates. You&#x2019;ll see them
+in office hours and they are also helping develop course infrastructure.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_operating_systems_briefly_defined">
+<h2>Operating Systems Briefly Defined</h2>
+
+<div class="olist arabic">
+<div class="title">Operating System:</div>
+<ol class="arabic">
+<li class="slide">
+<p>A <strong>computer program</strong> that</p>
+</li>
+<li class="slide">
+<p><strong>multiplexes hardware resources</strong> and</p>
+</li>
+<li class="slide">
+<p><strong>implements useful abstractions</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>The OS is just another computer program! <span class="slide">(If a large,
+complex, mature and mission critical one.)</span></p>
+</div>
+</div>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p><strong>Multiplexing</strong> allows multiple people or programs to use the same set of
+hardware resources&#x2014;&#x200B;processors, memory, disks, network connection&#x2014;&#x200B;safely and
+efficiently.</p>
+</div>
+</div>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p><strong>Abstractions</strong>--processes, threads, address spaces, files, and
+sockets&#x2014;&#x200B;simplify the usage of hardware resources by organizing information
+or implementing new capabilities.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_motivating_this_class">
+<h2>Motivating This Class</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>How many of you have participated in OS development?</p>
+</li>
+<li class="slide">
+<p>How many of you regularly program in languages that use operating system
+abstractions directly?</p>
+</li>
+<li class="slide">
+<p>So why study operating systems? Why is this class even offered? <strong>Why is it
+required?</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_4" style="background-image: url(&quot;http://www.illuminatiagenda.com/wp-content/uploads/2013/01/jackie-chan-illuminati.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Remind me</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>What&#x2019;s this for again?</p>
+</div>
+
+</div>
+<div class="slide" id="_why_study_operating_systems">
+<h2>Why Study Operating Systems?</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Reality</strong>: this is how computers really work, and as a computer scientist or
+engineer you should know how computers really work.</p>
+</li>
+<li class="slide">
+<p><strong>Ubiquity</strong>: operating systems are everywhere and you are likely to eventually
+encounter them or their limitations.</p>
+</li>
+<li class="slide">
+<p><strong>Beauty</strong>: operating systems are examples of mature solutions to difficult
+design and engineering problems. Studying them will improve your ability to
+design and implement abstractions.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_why_program_operating_systems">
+<h2>Why Program Operating Systems?</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Design</strong>: programming operating systems stresses the importance of careful
+design and specification before coding begins. You will learn the value of
+design, probably the hard way.</p>
+</li>
+<li class="slide">
+<p><strong>Difficulty</strong>: operating systems are large existing code bases where new
+solutions have stringent performance requirements. Programming operating
+systems will make you a better programmer and improve all of your subsequent
+work.</p>
+</li>
+<li class="slide">
+<p><strong>Debugging</strong>: debugging operating systems is challenging due to their multi-
+threaded nature and the lack of typical debugging support provided to
+applications. Again, debugging operating systems will sharpen your debugging
+skills.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_course_structure">
+<h2>Course Structure</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Conceptual learning&#x2026;&#x200B;</p>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Lectures</p>
+</li>
+<li class="slide">
+<p>Recitations</p>
+</li>
+<li class="slide">
+<p>Exams</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>&#x2026;&#x200B;by doing (programming).</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_learning_objectives_conceptual">
+<h2>Learning Objectives: Conceptual</h2>
+
+<div class="olist arabic">
+<div class="title">When you finish CSE 421/521 you will:</div>
+<ol class="arabic">
+<li class="slide">
+<p>understand the abstractions supported by modern operating systems</p>
+</li>
+<li class="slide">
+<p>be able to describe how operating systems policies and mechanisms safely
+and efficiently multiplex hardware resources</p>
+</li>
+<li class="slide">
+<p>be able to analyze historical, current, and emerging operating system
+designs and features</p>
+</li>
+</ol>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>The main way we will know that you are learning is by your participation in
+class and recitations.</p>
+</div>
+</div>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>You will be tested for mastery on exams.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_conceptual_progression">
+<h2>Conceptual Progression</h2>
+
+<div class="ulist small">
+<ul>
+<li class="slide">
+<p>Introduction to operating system abstractions and structure.</p>
+</li>
+<li class="slide">
+<p>Abstracting and multiplexing:</p>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>the CPU&#x2014;&#x200B;interrupts, context, threads, processes, processor scheduling,
+thread synchronization.</p>
+</li>
+<li class="slide">
+<p>memory&#x2014;&#x200B;memory layout, address translation, paging and segmentation,
+address spaces, translation caching, page fault handling, page eviction,</p>
+</li>
+<li class="slide">
+<p>swapping.</p>
+</li>
+<li class="slide">
+<p>storage&#x2014;&#x200B;spinning disks and Flash, spinning disk scheduling, on-disk
+layout, files, buffer cache, crash and recovery.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Virtualization.</p>
+</li>
+<li class="slide">
+<p>Networking (time permitting)</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_learning_the_concepts">
+<h2>Learning the Concepts</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Attend class.</p>
+</li>
+<li class="slide">
+<p>Come to class on time:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Music starts as soon as I can get into the room&#x2026;&#x200B;</p>
+</li>
+<li>
+<p>Lectures will start at 2:05PM sharp and finish by 2:50PM.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Ask questions during class.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>I&#x2019;m very flexible about how much we cover this semester.</p>
+</li>
+<li>
+<p>I would rather teach less and have everyone understand it.</p>
+</li>
+<li>
+<p>Our back-and-forth during class is the one of the few indicators I have of
+how much you are absorbing&#x2026;&#x200B;</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_references">
+<h2>References</h2>
+
+<div class="openblock slide spelling_exception">
+<div class="content">
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="http://www.amazon.com/Modern-Operating-Systems-Andrew-Tanenbaum/dp/013359162X/" target="_blank"><img src="http://ecx.images-amazon.com/images/I/51dqadCuRiL.jpg" alt="51dqadCuRiL" style="width: 25%;"></a>
+</div>
+<div class="title">Figure 1. Modern Operating Systems by Andrew Tanenbaum</div>
+</div>
+</div>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="openblock spelling_exception">
+<div class="content">
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="http://www.amazon.com/C-Programming-Language-2nd/dp/0131103628/" target="_blank"><img src="http://ecx.images-amazon.com/images/I/71RwRPoFK%2BL.jpg" alt="71RwRPoFK%2BL" style="width: 25%;"></a>
+</div>
+<div class="title">Figure 2. The C Programming Language by Kernighan and Ritchie</div>
+</div>
+</div>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p><strong>Material presented in lecture takes priority over anything you find in
+a book or online.</strong></p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_learning_objectives_programming">
+<h2>Learning Objectives: Programming</h2>
+
+<div class="olist arabic">
+<div class="title">When you finish CSE 421/521 you will:</div>
+<ol class="arabic">
+<li class="slide">
+<p>be able to design and implement well-structured systems software</p>
+</li>
+<li class="slide">
+<p>utilize appropriate synchronization primitives</p>
+</li>
+<li class="slide">
+<p>identify and correct bugs in complex multi-threaded systems</p>
+</li>
+<li class="slide">
+<p>be able to formulate and test performance hypotheses</p>
+</li>
+</ol>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>We will know that you are learning by your participation in class, recitations,
+and office hours, and your use of online testing resources.</p>
+</div>
+</div>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>You will be tested for mastery by each programming assignment.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_programming_progression">
+<h2>Programming Progression</h2>
+
+<div class="paragraph">
+<p><strong>All due dates Friday @ 5PM EST.</strong></p>
+</div>
+<div class="ulist slide">
+<ul>
+<li>
+<p>ASST0: Introduction to OS/161&#x2014;&#x200B;Due Friday 2/12 @ 5PM.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Become comfortable using standard UNIX development tools.</p>
+</li>
+<li>
+<p>Learn to navigate the OS/161 source tree.</p>
+</li>
+<li>
+<p>Configuring, building and running your first kernel.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="ulist slide">
+<ul>
+<li>
+<p>ASST1: Synchronization Primitives&#x2014;&#x200B;Due Friday 2/12 @ 5PM.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Design and implement locks and condition variables.</p>
+</li>
+<li>
+<p>Use them to solve several toy synchronization problems.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_did_you_think_it_would_be_that_easy">
+<h2>Did You Think It Would Be That Easy?</h2>
+
+<div class="videoblock">
+
+<iframe width="640" height="360" src="//www.youtube.com/embed/hii2SwI39ek?rel=0&amp;start=492&amp;end=503&amp;enablejsapi=1" allowfullscreen id="_iframe_1"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_1"></div><div class="anim-pause slide" data-what="iframe#_iframe_1"></div></div>
+
+</div>
+<div class="slide canvas-image" id="_5" style="background-image: url(&quot;http://images.vcpost.com/data/images/full/17029/kill-bill-vol-2.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Thought I was done</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>Then noticed ASST3</p>
+</div>
+
+</div>
+<div class="slide" id="_programming_progression_2">
+<h2>Programming Progression</h2>
+
+<div class="paragraph">
+<p><strong>All due dates Friday @ 5PM EST.</strong></p>
+</div>
+<div class="openblock small">
+<div class="content">
+<div class="ulist slide">
+<ul>
+<li>
+<p>ASST2: System Calls and Process Support&#x2014;&#x200B;due Friday March 11th @ 5PM.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>The file system system calls: <code>open()</code>, <code>close()</code>, <code>read()</code>, <code>write()</code>, <code>lseek()</code>, <code>dup2()</code>, <code>chdir()</code>, and <code>getcwd()</code>. does this work</p>
+</li>
+<li>
+<p>The process-related system calls: <code>fork()</code>, <code>execv()</code>, <code>waitpid()</code>, <code>\_exit()</code>.</p>
+</li>
+<li>
+<p>Several process scheduling algorithms.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="ulist slide">
+<ul>
+<li>
+<p>ASST3: Virtual Memory&#x2014;&#x200B;due Friday May 13th @ 5PM.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>TLB fault handling</p>
+</li>
+<li>
+<p>Paging to disk</p>
+</li>
+<li>
+<p>Several TLB entry and page replacement algorithms</p>
+</li>
+<li>
+<p><code>sbrk()</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_os161">
+<h2>OS/161</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>OS/161 is an instructional operating system developed by David Holland at
+Harvard University.</p>
+</li>
+<li>
+<p>It attempts to strike a balance between Linux and other extremely-mature
+systems&#x2014;&#x200B;too difficult to hack on&#x2014;&#x200B;and existing instructional operating
+systems frameworks&#x2014;&#x200B;not realistic enough.</p>
+</li>
+<li>
+<p>Your OS/161 kernel runs in an emulator, <code>sys161</code>, which emulates an MIPS r2000/
+r3000 instruction set architecture (ISA).</p>
+</li>
+<li>
+<p>Using <code>sys161</code> allows us to simplify debugging and hardware support.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_10000_hours">
+<h2>10,000 Hours</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>While many operating systems concepts are elegantly simple, implementing them
+is not.</p>
+</li>
+<li class="slide">
+<p>Therefor, this class is not easy:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><span class="red">3.52 (-0.57)</span> and <span class="red">4.03 (-0.06)</span> on &quot;Appropriate Workload&quot;
+score in 2013 course evaluations for 421 and 521 respectively (90%+ response rate).</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>However, this class is also worthwhile:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><span class="green">4.14 (+0.31)</span> and <span class="green">4.59 (+0.76)</span> overall rating (2013).</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_6" style="background-image: url(&quot;http://www.quickmeme.com/img/18/18df2b56513f75a0930a1b8f8eada16b1acb44ed986b69144e9f0abb8b2c5b33.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Sorry</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>Learning is hard</p>
+</div>
+
+</div>
+<div class="nooutline slide" id="_2013_student_feedback">
+<h2>2013 Student Feedback</h2>
+
+<div class="openblock smaller">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>&quot;This has been without a doubt the best class I have taken at UB.&quot;</p>
+</li>
+<li>
+<p>&quot;Prof. Challen holds the most engaging, thoughtful, and useful lectures I have experienced at UB.&quot;</p>
+</li>
+<li>
+<p>&quot;My favorite computer science course ever!&quot;</p>
+</li>
+<li>
+<p>&quot;I would really recommend this class to anyone who values a true challenge and professionalism.&quot;</p>
+</li>
+<li>
+<p>&quot;This is the best class and best instructor i ever had.&quot;</p>
+</li>
+<li>
+<p>&quot;Very good teacher. Engages the entire class. Love it.&quot;</p>
+</li>
+<li>
+<p>&quot;This was easily the best course I have taken at UB.&quot;</p>
+</li>
+<li>
+<p>&quot;Learned the most from this course out of all my courses, regardless of the fact that the course is pretty hard.&quot;</p>
+</li>
+<li>
+<p>&quot;&#x2026;&#x200B;I think I learned more in this from the projects in any other course ever.&quot;</p>
+</li>
+<li>
+<p>&quot;One of the most beneficial courses I have taken at UB.&quot;</p>
+</li>
+<li>
+<p>&quot;Definitely the best CS course at UB in my opinion.&quot;</p>
+</li>
+<li>
+<p>&quot;AWESOME course!!&quot;</p>
+</li>
+<li>
+<p>&quot;The best course I have taken in UB so far!&quot;</p>
+</li>
+<li>
+<p>&quot;Probably the best course offered in Computer Science Dept.&quot;</p>
+</li>
+<li>
+<p>&quot;This was the best courses I took at UB, in fact the best course i have taken so far ever.&quot;</p>
+</li>
+<li>
+<p>&quot;The best course I have attended so far&quot;</p>
+</li>
+<li>
+<p>&quot;One of the best classes I&#x2019;ve ever come across&quot;</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+<div class="nooutline slide" id="_questions_about_content">
+<h2>Questions about Content?</h2>
+
+
+
+</div>
+<div class="slide" id="_ops_class_org_website">
+<h2>ops-class.org Website</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>It&#x2019;s not ready&#x2026;&#x200B; but should be soon.</p>
+</li>
+<li class="slide">
+<p>We&#x2019;re in the process of making a lot of improvements this year, so please
+bear with us&#x2026;&#x200B;</p>
+</li>
+<li class="slide">
+<p>If it interferes with the deadlines we&#x2019;ll adjust them. ASST0 should be
+posted by the end of the week and you will be provided access to the
+resources you need to complete it.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_grading">
+<h2>Grading</h2>
+
+<div class="openblock small">
+<div class="content">
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Conceptual--(50%)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>5%--Preterm Exam (Wednesday)</p>
+</li>
+<li>
+<p>15%--Midterm Exam</p>
+</li>
+<li>
+<p>30%--Final Exam</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Programming--(50%)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>5%--ASST0</p>
+</li>
+<li>
+<p>10%--ASST1</p>
+</li>
+<li>
+<p>15%--ASST2</p>
+</li>
+<li>
+<p>20%--ASST3</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>The preterm exam is free points: 5% for showing up and doing your best.
+If you do not take the preterm your midterm and final exam scores will be
+scaled appropriately.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_continuous_choose_your_own_grade_programming_evaluations">
+<h2>Continuous Choose-Your-Own Grade Programming Evaluations</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Almost all assignment grading in CSE421/521 is automated.</p>
+</li>
+<li class="slide">
+<p>Therefore&#x2026;&#x200B; you can have your code graded repeatedly whenever you like.</p>
+</li>
+<li class="slide">
+<p>Therefore&#x2026;&#x200B; you can stop each assignment whenever you are satisfied with
+your grade.</p>
+</li>
+<li class="slide">
+<p>We are still deciding how to handle the hand-graded parts of the
+assignments&#x2026;&#x200B; stay tuned.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_continuous_choose_your_own_grade_details_and_caveats">
+<h2>Continuous Choose-Your-Own Grade Details and Caveats</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Assignments are done in pairs, so find a partner who is interested in
+achieving the same grade as you are.</p>
+</li>
+<li class="slide">
+<p>Note that we do not allow students to work alone except in extremely
+unusual
+circumstances.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>&quot;I want to work alone&quot; does not represent one of these
+situations!</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Assignments are cumulative and we will not distribute solution sets without
+a significant penalty.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_communication">
+<h2>Communication</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>We will sign you all up for a mass email list.</p>
+</li>
+<li>
+<p>We also have a Discourse forum linked off the website which is the best way to
+get help quickly.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_using_email">
+<h2>Using Email</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>If you need to email the course staff (<mark>staff@ops-class.org</mark>), please consider
+the following:</p>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Is this information likely to be available on the website? If yes, go find it!</p>
+</li>
+<li class="slide">
+<p>Is the answer to this question likely to benefit other students? If yes,
+use Discourse.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Before you email me directly, please also consider the following:</p>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Is this something that the course staff could answer? If yes, email them.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Here&#x2019;s the bottom line: the more time we spend answering repetitive email,
+the less time we have available to help you with real problems.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_getting_help_recitations">
+<h2>Getting Help: Recitations</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Ali and Jerry will be holding recitations. Unfortunately recitations this
+year are for undergraduates only and one is at 8AM.</p>
+</li>
+<li>
+<p>Recitations this year will cover a mix of conceptual and assignment-driven
+material.</p>
+</li>
+<li>
+<p>We will also try to post some screencasts this year!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_getting_help_office_hours">
+<h2>Getting Help: Office Hours</h2>
+
+<div class="openblock small">
+<div class="content">
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>All TAs and Ninjas will be holding office hours.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>We are hoping to have around 40 hours of office hours scheduled per week,
+meaning that you have plenty of opportunities to complete the challenging
+CSE 421 assignments.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Office hours are the best place to get help on the programming assignments.</p>
+</li>
+<li class="slide">
+<p>CSE 421/521 office hours will be in Davis Hall in locations announced on the
+calendar, but probably near Davis 301B or in the Second Floor atrium.</p>
+</li>
+<li class="slide">
+<p>Just come in and do the assignments during office hours&#x2014;&#x200B;that way, when you
+get stuck, you are in the right place.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_getting_help_working_in_pairs">
+<h2>Getting Help: Working in Pairs</h2>
+
+<div class="paragraph">
+<p>Partner groups are jointly responsible for joint work.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>If any part is plagiarized, both partners fail.</p>
+</li>
+<li class="slide">
+<p>If any part is plagiarized, both partners fail.</p>
+</li>
+<li class="slide">
+<p>If you have concerns about work your partner has submitted, immediately
+approach the course staff.</p>
+</li>
+<li class="slide">
+<p>If you do not we will assume later that your consent was given.</p>
+</li>
+<li class="slide">
+<p>It is entirely your responsibility to ensure that your team&#x2019;s submission
+is fair and reflects your contributions.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Pair programming assignments for CSE 421/521 are very clear about what kinds
+of collaboration are permitted. We consider violating these expectations to
+be cheating.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_getting_help_helping_each_other">
+<h2>Getting Help: Helping Each Other</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>The course staff will be working as hard as you&#x2014;&#x200B;and sometimes harder&#x2014;&#x200B;but
+there are many of you and few of us. Look to your left and your right: these
+are your comrades.</p>
+</li>
+<li class="slide">
+<p>Good classes come through CSE 421/521 as a team.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_collaboration">
+<h2>Collaboration</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Simple rule: talking about code is collaborating, talking in code (or
+exchanging code) is cheating.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Unless you are talking to your partner in which case anything goes.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_cheaters">
+<h2>Cheaters</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>I take cheating very seriously:</p>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Not because I am vindictive and mean&#x2026;&#x200B;</p>
+</li>
+<li class="slide">
+<p>&#x2026;&#x200B; but because I believe in protecting and honoring those of you that
+work hard and play by the rules.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_7" style="background-image: url(&quot;https://jrarcieri.files.wordpress.com/2011/09/the-last-of-the-mohicans-original.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>I will find cheaters</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>No matter how long it takes</p>
+</div>
+
+</div>
+<div class="slide" id="_cheaters_2">
+<h2>Cheaters</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>We will use an online service to detect and investigating code similarity.</p>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>It is very fast, so we can use it on every submission.</p>
+</li>
+<li class="slide">
+<p>It is very accurate.</p>
+</li>
+<li class="slide">
+<p>We will compare your assignment against everything we can think of: this
+years&apos;, last years&apos;, anything you can find online, assignments submitted at
+Harvard, etc.</p>
+</li>
+<li class="slide">
+<p>I have a <em>huge</em> repository of old assignments now. If you can find it, I&#x2019;ve
+already got it.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_8" style="background-image: url(&quot;http://www.scoutnetworkblog.com/wp-content/uploads/2011/03/girl-with-the-dragon-tattoo-noomi-rapace.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>And when I do</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>I&#x2019;ll be mad</p>
+</div>
+
+</div>
+<div class="slide" id="_cheaters_3">
+<h2>Cheaters</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>We catch and fail cheaters. Not for the assignment: for the entire class.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_9" style="background-image: url(&quot;http://i2.cdn.turner.com/cnnnext/dam/assets/150212130357-buzzfeed-obama-exlarge-169.jpeg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Cheated in 421/521</p>
+</div>
+<div class="paragraph meme-bottom slide">
+<p>Got an F</p>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_10" style="background-image: url(&quot;http://www.jewishjournal.com/images/articles/dos-equis-guy.JPG&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Cheated in 421/521</p>
+</div>
+<div class="paragraph meme-bottom slide">
+<p>Got an F</p>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_11" style="background-image: url(&quot;http://benchmarkitconsulting.com/wp-content/uploads/2013/02/AngryCat-266x300.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Cheated in 421/521</p>
+</div>
+<div class="paragraph meme-bottom slide">
+<p>Got an F</p>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_12" style="background-image: url(&quot;http://s1.totalprosports.com/wp-content/uploads/2015/01/Tom-Brady-trolls-Colts.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Didn&#x2019;t deflate footballs</p>
+</div>
+<div class="paragraph meme-bottom slide">
+<p>Got an F for copying code in 421/521</p>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_13" style="background-image: url(&quot;http://www.writespirit.net/wp-content/uploads/old-images/mother-teresa.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Cheated in 421/521</p>
+</div>
+<div class="paragraph meme-bottom slide">
+<p>Not really!</p>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_14" style="background-image: url(&quot;https://pbs.twimg.com/profile_images/1146014416/mark-zuckerberg.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Didn&#x2019;t cheat in 421/521</p>
+</div>
+<div class="paragraph meme-bottom slide">
+<p>Runs own business!</p>
+</div>
+
+</div>
+<div class="slide" id="_questions_about_collaboration">
+<h2>Questions About Collaboration?</h2>
+
+
+
+</div>
+<div class="nooutline slide" id="_inclement_weather">
+<h2>Inclement Weather</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>If Buffalo Public Schools are closed, we will not have class.</p>
+</li>
+<li>
+<p>If the University at Buffalo is closed, we will not have class.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_15" style="background-image: url(&quot;/img/slides/memes/yihong-snow.jpg&quot;);">
+
+
+
+<div class="paragraph meme-bottom">
+<p>Must do office hours!</p>
+</div>
+
+</div>
+<div class="slide" id="_questions_about_course_policies">
+<h2>Questions About Course Policies?</h2>
+
+
+
+</div>
+<div class="nooutline slide" id="_errata">
+<h2>Errata</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Pre-class music</strong>: if you have suggestions, please stop by my office hours.
+One request per student per semester and requests must be made in person.</p>
+</li>
+<li class="slide">
+<p>Does UB think your name is &quot;., foo bar&quot;, <strong>and it isn&#x2019;t actually &quot;., foo
+bar&quot;</strong>? Please let us know (<a href="mailto:staff@ops-class.org">staff@ops-class.org</a>).</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_16" style="background-image: url(&quot;http://1.bp.blogspot.com/_oOBwed426Vs/TEniVVa0ILI/AAAAAAAAAI8/D5xQBxhF7UI/s1600/\&apos;David\&apos;+Mr+Opportunity+Honda.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Sorry</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>I don&#x2019;t speak foreign!</p>
+</div>
+
+</div>
+<div class="nooutline slide" id="_next_steps">
+<h2>Next Steps</h2>
+
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Sit tight for more details to appear online.</p>
+</li>
+<li>
+<p>Find a partner!</p>
+<div class="ulist">
+<ul>
+<li>
+<p>I will hold office hours Wednesday 1/27 from 11AM to 1PM if you have
+questions about the course and want to chat in person.</p>
+</li>
+<li>
+<p>Recitations and office hours will start next week.</p>
+</li>
+<li>
+<p>The preterm exam will be Wednesday. Please bring a pen or pencil and your UB
+ID card.</p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-01-25-intro">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

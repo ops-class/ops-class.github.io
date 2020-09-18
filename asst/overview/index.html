@@ -1,0 +1,240 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Build Your Own OS</title>
+		<meta name="description" lang="en-us" content="Programming assignents are the heart of the ops-class.org experience. The most effective way to learn operating system concepts is to build one yourself.
+">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle active" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7 col-md-offset-2">
+				<a class="anchor" id="top"></a>
+				<h1>Build Your Own OS</h1>
+				<div class="paragraph lead">
+<p>The best way to learn about operating systems is to implement one.
+So programming assignments are the heart of <a href="/" class="hidden-print"><code>ops-class.org</code></a>.</p>
+</div>
+<div class="paragraph">
+<p><a href="/" class="hidden-print"><code>ops-class.org</code></a> assignments use the excellent <a href="http://os161.eecs.harvard.edu" class="hidden-print external" target="_blank">OS/161</a> instructional operating
+system.
+<a href="http://os161.eecs.harvard.edu" class="hidden-print external" target="_blank">OS/161</a> was developed at Harvard University by
+<a href="http://www.hcs.harvard.edu/~dholland/" target="_blank" class="external">David Holland</a>,
+<a href="https://www.eecs.harvard.edu/margo/" target="_blank" class="external">Margo Seltzer</a>, and
+<a href="https://github.com/ops-class/os161/blob/master/CHANGES" target="_blank" class="external">others</a>.
+It provides some of the realism of large operating systems like
+<a href="https://www.linux.com" target="_blank" class="external">Linux</a>.
+But it remains compact enough to give you a chance to implement large OS
+subsystems&#x2014;like <a href="/asst/3/">virtual memory</a>&#x2014;yourself.
+<a href="http://dl.acm.org/citation.cfm?id=563383" target="_blank" class="external">This paper</a> provides a good
+overview of OS/161.</p>
+</div>
+<div class="paragraph">
+<p>The assignments also provide a variety of different programming challenges.
+<a href="/asst/1/" class="hidden-print">ASST1</a> is just a warmup.
+<a href="/asst/2/" class="hidden-print">ASST2</a> challenges you to connect two existing interfaces.
+<a href="/asst/3/" class="hidden-print">ASST3</a> provides the opportunity to implement a large piece of functionality
+and design several internal interfaces.
+These challenges are similar to those that you will face in industry or when
+building large software systems.
+And all the assignments require understanding a large and complex code base.</p>
+</div>
+<div class="paragraph">
+<p>If that wasn&#x2019;t exciting enough, these assignments are the <em>same ones</em> that
+kept <a href="https://en.wikipedia.org/wiki/Mark_Zuckerberg" target="_blank" class="external">Mark Zuckerberg</a>
+<a href="https://www.youtube.com/watch?v=-3Rt2_9d7Jg" target="_blank" class="external">busy in his last semester at
+Harvard</a>&#x2014;while he was starting <a href="https://www.facebook.com" target="_blank" class="external">Facebook</a>.
+Many students at multiple institutions have benefited from their struggle
+with <a href="http://os161.eecs.harvard.edu" class="hidden-print external" target="_blank">OS/161</a>.
+We think you will too.</p>
+</div>
+<div class="paragraph">
+<p>We provide a bit more detail about each assignment below.</p>
+</div>
+<div class="sect1">
+<a class="anchor" id="_asst0"></a><h2><a href="/asst/0/" class="hidden-print">ASST0</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This first assignment introduces you to the programming environment you will
+be working in this semester: the OS/161 operating system, the <code>sys161</code>
+simulator, the GNU debugger (GDB), and the Git revision control system.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_asst1"></a><h2><a href="/asst/1/" class="hidden-print">ASST1</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Your first real taste of kernel programming.
+Implement critical kernel synchronization primitives&#x2014;locks, condition
+variables and reader-writer locks.
+Next, use them to solve a few simple toy synchronization problems.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_asst2"></a><h2><a href="/asst/2/" class="hidden-print">ASST2</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The first big and complex assignment.
+Implement the system call interface.
+When you are finished, your kernel can run user programs.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_asst3"></a><h2><a href="/asst/3/" class="hidden-print">ASST3</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The mountain top.
+A large amount of code to implement and several internal interfaces to
+design.
+Implement virtual memory, including address translation, TLB management, page
+replacement and swapping.
+When you are done, your kernel can run forever without running out of memory.</p>
+</div>
+</div>
+</div>
+			</div>
+			<div id="scrollspy" class="col-md-3 spelling_exception">
+				<ul id="side" class="fixed-md-3 nav hidden-xs hidden-sm hidden-print" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">Build Your Own OS</a></li>
+					<li class="h5"><a href="#_asst0">ASST0</a>
+					</li>
+					<li class="h5"><a href="#_asst1">ASST1</a>
+					</li>
+					<li class="h5"><a href="#_asst2">ASST2</a>
+					</li>
+					<li class="h5"><a href="#_asst3">ASST3</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/asst/overview.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/asst/overview.adoc" target="_blank">View</a>
+			<br>
+			Built 9/18/2020 @ 10:49 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

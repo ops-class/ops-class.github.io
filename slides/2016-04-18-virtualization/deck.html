@@ -1,0 +1,648 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Full Virtualization</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Introduction to virtualization.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="http://www.cs.columbia.edu/~kathy/" target="_blank"><img src="/img/slides/women/006.jpg" alt="006" style="width: 100%;"></a>
+</div>
+<div class="title">Figure 1. Kathleen McKeown</div>
+</div>
+<div class="paragraph h4 center">
+<p><span class="fa fa-music"></span> <a href="http://iggypop.com" target="_blank" class="external">The Passenger by Iggy Pop</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/hLhN__oEHaw?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+
+</div>
+<div class="nooutline slide" id="_today">
+<h2>Today</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Why virtualize?</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_cat_announce_txt">
+<h2>$ cat announce.txt</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p><a href="/asst/3/">ASST3</a>.2 is due Friday @ 5PM.</p>
+</li>
+<li>
+<p>Schedule change today: virtualization is awesome!</p>
+</li>
+<li>
+<p>Please suggest topics for later in the class&#x2026;&#x200B;</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="paragraph">
+<p>Read <a href="http://www.cl.cam.ac.uk/research/srg/netos/papers/2003-xensosp.pdf" target="_blank" class="external">&quot;Xen
+and the Art of Virtualization&quot; (PDF)</a> for Wednesday.</p>
+</div>
+
+</div>
+<div class="slide" id="_what_is_virtualization">
+<h2>What Is Virtualization?</h2>
+
+<div class="paragraph">
+<p>Until today we&#x2019;ve been talking about operating systems running on
+<strong>physical machines</strong>: a collection of</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p><strong>real</strong> hardware resources,</p>
+</li>
+<li class="slide">
+<p>that the operating system has <strong>exclusive</strong> access to</p>
+</li>
+<li class="slide">
+<p>through <strong>hardware interfaces</strong> (instruction set architectures, device
+I/O ports, etc.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="slide" id="_what_is_virtualization_2">
+<h2>What Is Virtualization?</h2>
+
+<div class="paragraph">
+<p>Operating systems can also run inside <strong>virtual machines (VMs)</strong> implemented by
+<strong>virtual machine monitors (VMMs)</strong>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>We refer to an operating system running inside a virtual machine as a
+<strong>guest OS</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Virtual machines differ from physical machines in important ways.</div>
+<ul>
+<li class="slide">
+<p>They <em>do not</em> provide the guest OS with <strong>exclusive</strong> access to the
+underlying physical machine.</p>
+</li>
+<li class="slide">
+<p>Equivalently, they <em>do not</em> provide the guest OS with
+<strong>privileged</strong> (or fully-privileged) access to the physical machine.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_what_is_virtualization_3">
+<h2>What Is Virtualization?</h2>
+
+<div class="olist arabic">
+<div class="title"><span class="spelling_exception">Et</span> voila: the <strong>virtual machine monitor (VMM)</strong> is</div>
+<ol class="arabic">
+<li class="slide">
+<p>a piece of software running on an operating system (the <strong>host OS</strong>)</p>
+</li>
+<li class="slide">
+<p>that can allow another operating system (the <strong>guest OS</strong>) to be run
+as an application</p>
+</li>
+<li class="slide">
+<p>alongside other applications.</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>When we said that the <strong>operating system</strong> was really <em>just another
+program</em> we weren&#x2019;t kidding!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_meme" style="background-image: url(&quot;https://i.ytimg.com/vi/ZKpFFD7aX3c/maxresdefault.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>This is not</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>The only matrix</p>
+</div>
+
+</div>
+<div class="slide" id="_why_virtualize">
+<h2>Why Virtualize?</h2>
+
+<div class="paragraph">
+<p>(Clearly there is a big <strong>how</strong> question here, but let&#x2019;s start with <strong>why</strong>!)</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>We&#x2019;ve been talking about <strong>operating systems</strong> all semester&#x2026;&#x200B;</p>
+</li>
+<li class="slide">
+<p>&#x2026;&#x200B;and I hope by this point I&#x2019;ve convinced you that they are <strong>pretty great</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>But just for the sake of argument&#x2026;&#x200B; what might be some problems with the
+operating system environments we&#x2019;ve discussed thus far?</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_problems_with_operating_systems_hardware_coupling">
+<h2>Problems with Operating Systems: Hardware Coupling</h2>
+
+<div class="olist arabic">
+<div class="title">Unfortunate <strong>coupling</strong> between hardware resources and the operating system.</div>
+<ol class="arabic">
+<li class="slide">
+<p>Hard to run multiple operating systems on the same machine. (Geeky.)</p>
+</li>
+<li class="slide">
+<p>Difficult to transfer software setups to another machine, unless it
+has identical or nearly identical hardware.</p>
+</li>
+<li class="slide">
+<p>Messy to adjust hardware resources to system needs. Requires
+sticking your hand in the box and mucking around.</p>
+</li>
+<li class="slide">
+<p>Requires static, up-front provision of machine resources.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="slide" id="_problems_with_operating_systems_application_isolation">
+<h2>Problems with Operating Systems: Application Isolation</h2>
+
+<div class="olist arabic">
+<div class="title">Lack of true <strong>isolation</strong> between multiple applications.</div>
+<ol class="arabic">
+<li class="slide">
+<p>Operating systems &quot;leak&quot; a lot of information between processes
+through the file system and other channels.</p>
+</li>
+<li class="slide">
+<p>Multiple applications may require specific (and conflicting)
+software packages to run.</p>
+</li>
+<li class="slide">
+<p>Certain applications may have very specific operating systems
+configuration and tuning requirements.</p>
+</li>
+<li class="slide">
+<p>In some cases, software vendors <em>will not provide support</em> if you
+are running their precious application alongside <strong>anything</strong> else.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="slide" id="_why_we_virtualize">
+<h2>Why We Virtualize</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>We can package and distribute an entire software development
+environment which can be used and discarded.</p>
+</li>
+<li class="slide">
+<p>We can dynamically divide up one large machine into multiple smaller
+machines, each running a different operating system and applications.</p>
+</li>
+<li class="slide">
+<p>We can easily replicate an entire machine image in order to duplicate
+or move it.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_to_be_a_vmm">
+<h2>To Be a VMM</h2>
+
+<div class="paragraph">
+<p>In 1974 (!) <span class="spelling_exception">Popek and Goldberg</span> provide three essential requirements for a
+piece of software to be considered a <strong>virtual machine monitor</strong> (VMM), or to
+implement a <strong>virtual machine</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p><strong>Fidelity:</strong> software on the VMM executes identically to how it would
+on real hardware (modulo timing effects).</p>
+</li>
+<li class="slide">
+<p><strong>Performance:</strong> to achieve good performance <em>most</em> instructions
+executed by the guest OS should be run directly on the underlying
+physical hardware.</p>
+</li>
+<li class="slide">
+<p><strong>Safety:</strong> the VMM should manage all hardware resources.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="slide" id="_two_approaches_to_virtualization">
+<h2>Two Approaches to Virtualization</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Full virtualization</strong>. Should be able to run an <strong>unmodified</strong> guest OS. We
+will discuss this today.</p>
+</li>
+<li class="slide">
+<p><strong>Paravirtualization</strong>. Includes small changes to the guest operating
+system to improve interaction with the virtual machine monitor. We will read
+this paper for Monday.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_full_virtualization">
+<h2>Full Virtualization</h2>
+
+<div class="paragraph">
+<p><strong>Our goal:</strong> run an <strong>unmodified</strong> operating system and applications in a VM
+itself running on a host OS and potentially next to other VMs.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>VMware</strong> is the best-known provider of full virtualization software
+solutions.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Why is this hard?</div>
+<ul>
+<li class="slide">
+<p>How do we handle traps by applications running in the guest OS?</p>
+</li>
+<li class="slide">
+<p>Guest OS will try to execute <strong>privileged instructions</strong>!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_de_privileging_the_guest_os">
+<h2><span class="spelling_exception">De-Privileging</span> the Guest OS</h2>
+
+<div class="ulist">
+<div class="title slide">What happens if we run the Guest OS with <strong>kernel</strong> privileges?</div>
+<ul>
+<li class="slide">
+<p>Privileged instructions work as expected, but guest has access to the
+<strong>entire machine</strong>! (Violates safety.)</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">What happens if we run the Guest OS with <strong>user</strong> privileges?</div>
+<ul>
+<li class="slide">
+<p>Need to figure out how to deal with privileged instructions&#x2026;&#x200B;</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_trapping_privileged_instructions">
+<h2>Trapping Privileged Instructions</h2>
+
+<div class="paragraph">
+<p>Ideally, when <strong>privileged</strong> instructions are run by the guest OS at
+user privilege level:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p>The CPU traps the instruction due to a <strong>privilege violation</strong>.</p>
+</li>
+<li class="slide">
+<p>The trap is handled by the VMM.</p>
+</li>
+<li class="slide">
+<p>Assuming the guest OS is doing something legitimate, the VMM adjusts
+the VM state and continues the guest OS.</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>We refer to an instruction set having this property as <strong>classically
+virtualizable</strong>.</p>
+</li>
+<li class="slide">
+<p>We refer to the approach described above as <strong>trap and emulate</strong>.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_trap_and_emulate">
+<h2>Trap and Emulate</h2>
+
+<div class="ulist">
+<div class="title slide">What does the VMM do with traps that occur within the virtual machine?</div>
+<ul>
+<li class="slide">
+<p>If the trap is caused by an <strong>application</strong>, pass the trap to the guest
+OS.</p>
+</li>
+<li class="slide">
+<p>If the trap is caused by the <strong>guest OS</strong>, handle the trap by adjusting
+the state of the virtual machine.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_getting_trappy">
+<h2><span class="spelling_exception">Getting Trappy</span></h2>
+
+<div class="paragraph">
+<p>VMware and VirtualBox VMMs run as standard system processes but
+<strong>require</strong> operating system support.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>All</strong> traps and exceptions originating inside the VM <em>must</em> be
+handled by the VMM.</p>
+</li>
+<li class="slide">
+<p>Most of the time guest applications and the guest OS simply use the
+physical processor <strong>normally</strong>.</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="olist arabic">
+<div class="title">What happens when an application running <em>inside</em> the virtual machine makes a system call?</div>
+<ol class="arabic">
+<li class="slide">
+<p><code>syscall</code>: host OS vectors trap to VMM.</p>
+</li>
+<li class="slide">
+<p>VMM inspects trap, identifies it as a system call, and passes
+control and arguments to the guest OS trap handling code.</p>
+</li>
+<li class="slide">
+<p><code>rfe</code>: when the guest OS is done, it will also trap back to the VMM by
+executing a privileged instruction.</p>
+</li>
+<li class="slide">
+<p>VMM will pass arguments back to the process that originated the
+system call.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="slide" id="_getting_really_trappy">
+<h2><span class="spelling_exception">Getting (Really) Trappy</span></h2>
+
+<div class="olist arabic">
+<div class="title">What happens when a process inside the virtual machine creates a TLB fault?</div>
+<ol class="arabic">
+<li class="slide">
+<p>Trap to the <strong>host OS</strong>.</p>
+</li>
+<li class="slide">
+<p>Hand trap to the <strong>VMM</strong>.</p>
+</li>
+<li class="slide">
+<p>VMM inspects trap, sees that it was generated by the application,
+passes control to the <strong>guest OS</strong>.</p>
+</li>
+<li class="slide">
+<p>Guest OS begins handling the TLB fault, tries to load an entry into the TLB.</p>
+</li>
+<li class="slide">
+<p>Trap to the <strong>host OS</strong>.</p>
+</li>
+<li class="slide">
+<p>Hand trap to the <strong>VMM</strong>.</p>
+</li>
+<li class="slide">
+<p>VMM inspects trap, sees that it was generated by the guest OS, adjusts the
+state of the virtual machine appropriately.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="slide" id="_hardware_virtualization">
+<h2>Hardware Virtualization</h2>
+
+<div class="paragraph">
+<p>Note that what is being virtualized is the <strong>hardware interface</strong>.</p>
+</div>
+<div class="paragraph">
+<p>Let&#x2019;s compare to <strong>virtual memory</strong>:</p>
+</div>
+<div class="ulist">
+<div class="title slide">What is the interface?</div>
+<ul>
+<li class="slide">
+<p><strong>Load</strong> and <strong>store</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<div class="title">How do we ensure safety?</div>
+<p><strong>Translate</strong> <em>every</em> unprivileged memory access.</p>
+</div>
+<div class="ulist">
+<div class="title slide">How do we get good performance?</div>
+<ul>
+<li class="slide">
+<p><strong>Cache</strong> translations in the TLB.</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="paragraph">
+<p>What about full hardware virtualization:</p>
+</div>
+<div class="ulist">
+<div class="title slide">What is the interface?</div>
+<ul>
+<li class="slide">
+<p><strong>All</strong> instructions executed on the processor that modify the state of the machine.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">How do we ensure safety?</div>
+<ul>
+<li class="slide">
+<p><strong>Intercept</strong> or <strong>rewrite</strong> unsafe instructions that could &quot;pierce&quot; the VM.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">How do we get good performance?</div>
+<ul>
+<li class="slide">
+<p>Allow <strong>safe</strong> instructions to run directly on the physical hardware (or &quot;bare metal&quot;).</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_sadly">
+<h2>Sadly</h2>
+
+<div class="paragraph">
+<p>The x86 architecture <strong>is not</strong> (or was not) classically virtualizable.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Some instructions <strong>did not trap correctly</strong>.</p>
+</li>
+<li class="slide">
+<p>Others had <strong>different side effects</strong> when run in kernel or user mode. <strong>Ugh.</strong></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">VMware developed an innovative solution to this problem: <strong>binary translation</strong>.</div>
+<ul>
+<li class="slide">
+<p>During guest OS execution scan code pages for non-virtualizable
+instructions and rewrite them to safe instruction sequences.</p>
+</li>
+<li class="slide">
+<p>Cache translations to improve performance.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_a_short_non_exhaustive_list_of_cool_details_i_have_glossed_over">
+<h2>A Short, Non-Exhaustive List of Cool Details I Have Glossed Over</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>x86 privilege rings.</p>
+</li>
+<li class="slide">
+<p>Primary and shadow page tables.</p>
+</li>
+<li class="slide">
+<p>Memory traces.</p>
+</li>
+<li class="slide">
+<p>x86 extensions to better support virtualization.</p>
+</li>
+<li class="slide">
+<p>Lot&#x2019;s of good resources out there to learn more.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Paravirtualization.</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-04-18-virtualization">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

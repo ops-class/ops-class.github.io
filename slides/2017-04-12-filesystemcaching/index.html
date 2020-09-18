@@ -1,0 +1,807 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | File System Caching and Consistency</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Discussion of file system caching and its impacts on consistency.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2017-04-10-filesystemstructures/" title="Previous: File System Data Structures" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2017-04-14-ffs/" title="Next: Journaling and FFS">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="3P6wSKJHa5w"><img class="youtube-thumb" src="//i.ytimg.com/vi/3P6wSKJHa5w/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>File System Caching and Consistency</h1>
+				
+
+
+<div class="sect1">
+<a class="anchor" id="_making_file_systems_fast"></a><h2>Making File Systems Fast</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">How do we make a big slow thing look faster?</div>
+<ul>
+<li>
+<p><strong>Use a cache!</strong> (Put a smaller, faster thing in front of it.)</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>In the case of the file system the smaller, faster thing is <strong>memory</strong>.
+We call the memory used to cache file system data the <strong>buffer cache</strong>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_putting_spare_memory_to_work"></a><h2>Putting Spare Memory To Work</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Operating systems use memory:</div>
+<ul>
+<li>
+<p><strong>as memory</strong> (duh), but also</p>
+</li>
+<li>
+<p>to cache file data in order to improve performance.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">These two uses of memory <strong>compete</strong> with each other.</div>
+<ul>
+<li>
+<p><strong>Big</strong> buffer cache, <strong>small</strong> main memory: <span class="slide">file access is fast, but
+potential thrashing in the memory subsystem&#x2026;&#x200B;</span></p>
+</li>
+<li>
+<p><strong>Small</strong> buffer cache, <strong>large</strong> main memory: <span class="slide">little swapping occurs but
+file access is extremely slow.</span></p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>On Linux the <code>swappiness</code> kernel parameter controls how aggressively
+the operating system prunes unused process memory pages and hence the
+balance between memory and buffer cache.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_where_to_put_the_buffer_cache"></a><h2>Where To Put the Buffer Cache?</h2>
+<div class="sectionbody">
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/disks/buffercachelocation-1.svg" alt="buffercachelocation 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/disks/buffercachelocation-2.svg" alt="buffercachelocation 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/disks/buffercachelocation-3.svg" alt="buffercachelocation 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_above_the_file_system"></a><h2>Above the File System</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What do we cache?</div>
+<ul>
+<li>
+<p><strong>Entire files and directories!</strong></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">What is the buffer cache interface?</div>
+<ul>
+<li>
+<p><code>open</code>, <code>close</code>, <code>read</code>, <code>write</code>. (Same as the file system call interface.)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_above_the_file_system_operations"></a><h2>Above the File System: Operations</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title"><code>open</code></div>
+<ul>
+<li>
+<p>Pass down to underlying file system.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><code>read</code></div>
+<ul>
+<li>
+<p>If file is not in the buffer cache, pass down to underlying
+file system and load contents into the buffer cache.</p>
+</li>
+<li>
+<p>If the file is in the cache, return the cached contents.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><code>write</code></div>
+<ul>
+<li>
+<p>If file is not in the buffer cache, pass load contents into the
+buffer cache and then modify them.</p>
+</li>
+<li>
+<p>If the file is in the cache, modify the cached contents.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><code>close</code></div>
+<ul>
+<li>
+<p>Remove from the cache (if necessary) and flush contents through the file system.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_above_the_file_system_pros_and_cons"></a><h2>Above the File System: Pros and Cons</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Pros:</div>
+<ul>
+<li>
+<p>Buffer cache sees file operations, may lead to better prediction or
+performance.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Cons:</div>
+<ul>
+<li>
+<p>Hides many file operations from the file system, preventing it from
+providing consistency guarantees.</p>
+</li>
+<li>
+<p>Can&#x2019;t cache file system metadata: inodes, superblocks, etc.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_below_the_file_system"></a><h2>Below the File System</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What do we cache?</div>
+<ul>
+<li>
+<p><strong>Disk blocks!</strong></p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">What is the buffer cache interface?</div>
+<ul>
+<li>
+<p><code>readblock</code>, <code>writeblock</code>. (Same as the disk interface.)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_below_the_file_system_pros_and_cons"></a><h2>Below the File System: Pros and Cons</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Pros:</div>
+<ul>
+<li>
+<p>Can cache all blocks including file system data structures, inodes,
+superblocks, etc.</p>
+</li>
+<li>
+<p>Allows file system to see all file operations even if they eventually
+hit the cache.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Cons:</div>
+<ul>
+<li>
+<p>Cannot observe file semantics or relationships.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>This is what modern operating systems do.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+
+
+
+<div class="sect1">
+<a class="anchor" id="_caching_and_consistency"></a><h2>Caching and Consistency</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">How can the cache cause consistency problems?</div>
+<ul>
+<li>
+<p>Objects in the cache are lost on failures!</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Remember: almost <strong>every</strong> file system operation involves modifying
+<em>multiple</em> disk blocks.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Example of creating a new file in an existing directory:</div>
+<ol class="arabic">
+<li>
+<p>Allocate an <strong>inode</strong>, mark the used inode bitmap.</p>
+</li>
+<li>
+<p>Allocate <strong>data blocks</strong>, mark the used data block bitmap.</p>
+</li>
+<li>
+<p><strong>Associate</strong> data blocks with the file by modifying the inode.</p>
+</li>
+<li>
+<p>Add inode to the given <strong>directory</strong> by modifying the directory file.</p>
+</li>
+<li>
+<p><strong>Write</strong> data blocks.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_how_caching_exacerbates_consistency"></a><h2>How Caching Exacerbates Consistency</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Observation: file system operations that modify multiple blocks may leave the
+file system in an <strong>inconsistent</strong> state if partially completed.</p>
+</div>
+<div class="ulist">
+<div class="title">How does caching exacerbate this situation?</div>
+<ul>
+<li>
+<p>May increase the time span between when the <em>first</em> write of the
+operation hits the disk and the <em>last</em> is completed.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_what_can_go_wrong"></a><h2>What Can Go Wrong?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>What kinds of inconsistency can take place if the system is interrupted
+between the multiple operations necessary to complete a write?</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Allocate an <strong>inode</strong>, mark the used inode bitmap. <span class="slide"><strong>inode</strong>
+incorrectly marked in use.</span></p>
+</li>
+<li>
+<p>Allocate <strong>data blocks</strong>, mark the used data block bitmap. <span class="slide">Data
+blocks incorrectly marked in use.</span></p>
+</li>
+<li>
+<p><strong>Associate</strong> data blocks with the file by modifying the inode.
+<span class="slide">Dangling file not present in any directory.</span></p>
+</li>
+<li>
+<p>Add inode to the given <strong>directory</strong> by modifying the directory file.</p>
+</li>
+<li>
+<p><strong>Write</strong> data blocks. <span class="slide">Data loss!</span></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_maintaining_file_system_consistency"></a><h2>Maintaining File System Consistency</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What&#x2019;s the safest approach?</div>
+<ul>
+<li>
+<p><strong>Don&#x2019;t buffer writes!</strong></p>
+</li>
+<li>
+<p>We call this a <em>write through</em> cache because writes do not hit the cache.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">What&#x2019;s the most dangerous approach?</div>
+<ul>
+<li>
+<p><strong>Buffer all operations until blocks are evicted.</strong></p>
+</li>
+<li>
+<p>We call this a <em>write back</em> cache.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Which approach is better for</div>
+<ul>
+<li>
+<p>performance?</p>
+</li>
+<li>
+<p>safety?</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="ulist">
+<div class="title">What about a middle ground?</div>
+<ul>
+<li>
+<p>Write important file system data metadata structures&#x2014;superblock, inode
+maps, bitmaps, etc.&#x2014;immediately, but delay data writes.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>File systems also give use processes some control through <code>sync</code> (sync
+the entire file system) and <code>fsync</code> (sync one file).</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_another_approach_to_consistency"></a><h2>Another Approach to Consistency</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>What&#x2019;s <em>not</em> atomic? <span class="slide">Writing <strong>multiple</strong> disk blocks.</span></p>
+</li>
+<li>
+<p>What <em>is</em> atomic? <span class="slide">Writing <strong>one</strong> disk block.</span></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_journaling"></a><h2>Journaling</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Track pending changes to the file system in a special area on disk
+called the <strong>journal</strong>.</p>
+</li>
+<li>
+<p>Following a failure, <strong>replay</strong> the journal to bring the file system back
+to a consistent state.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Creation example:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Dear Journal, here&#x2019;s what I&#x2019;m going to do today:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Allocate inode 567 for a new file.</p>
+</li>
+<li>
+<p>Associate data blocks 5, 87, and 98 with inode 567.</p>
+</li>
+<li>
+<p>Add inode 567 to the directory with inode 33.</p>
+</li>
+<li>
+<p>That&#x2019;s it!</p>
+</li>
+</ol>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_journaling_checkpoints"></a><h2>Journaling: Checkpoints</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What happens when we flush cached data to disk?</div>
+<ul>
+<li>
+<p>Update the journal!</p>
+</li>
+<li>
+<p>This is called a <strong>checkpoint</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="quoteblock slide">
+<blockquote>
+<div class="paragraph">
+<p>Dear Journal, here&#x2019;s what I&#x2019;m going to do today:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong class="line-through">Allocate inode 567 for a new file.</strong></p>
+</li>
+<li>
+<p><strong class="line-through">Associate data blocks 5, 87, and 98 with inode 567.</strong></p>
+</li>
+<li>
+<p><strong class="line-through">Add inode 567 to the directory with inode 33.</strong></p>
+</li>
+<li>
+<p><strong class="line-through">That&#x2019;s it!</strong></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Dear Journal, I already did everything mentioned above! Checkpoint!</p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_journaling_recovery"></a><h2>Journaling: Recovery</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What happens on recovery?</div>
+<ul>
+<li>
+<p>Start at the <strong>last checkpoint</strong> and work forward, updating on-disk
+structures as needed.</p>
+</li>
+</ul>
+</div>
+<div class="quoteblock slide">
+<blockquote>
+<div class="paragraph">
+<p>Dear Journal, I already did everything mentioned above! Checkpoint!</p>
+</div>
+<div class="paragraph">
+<p>Dear Journal, here&#x2019;s what I&#x2019;m going to do today:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Allocate inode 567 for a new file. <strong class="slide">Did this already!</strong></p>
+</li>
+<li>
+<p>Associate data blocks 5, 87, and 98 with inode 567. <strong class="slide">Didn&#x2019;t do
+this&#x2026;&#x200B; OK, done!</strong></p>
+</li>
+<li>
+<p>Add inode 567 to the directory with inode 33. <strong class="slide">Didn&#x2019;t do this
+either! OK, done.</strong></p>
+</li>
+<li>
+<p>That&#x2019;s it! <strong class="slide">All caught up!</strong></p>
+</li>
+</ol>
+</div>
+</blockquote>
+</div>
+<div class="ulist">
+<div class="title">What about incomplete journal entries?</div>
+<ul>
+<li>
+<p>These are <strong>ignored</strong> as they may leave the file system in an incomplete
+state.</p>
+</li>
+</ul>
+</div><div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>What would happen if we processed the following incomplete journal entry?</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Dear Journal, here&#x2019;s what I&#x2019;m going to do today:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Allocate inode 567 for a new file.</p>
+</li>
+<li>
+<p>Associate data blocks 5, 87, and 98 with inode 567.</p>
+</li>
+</ol>
+</div>
+</blockquote>
+</div>
+</div>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_journaling_implications"></a><h2>Journaling: Implications</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Observation: <strong>metadata</strong> updates (allocate inode, free data block, add
+to directory, etc.) can be represented compactly and probably written to
+the journal <strong>atomically</strong>.</p>
+</div>
+<div class="ulist">
+<div class="title">What about data blocks themselves changed by write()?</div>
+<ul>
+<li>
+<p>We could <strong>include them in the journal</strong> meaning that each data block
+would potentially be written <em>twice</em> (ugh).</p>
+</li>
+<li>
+<p>We could <strong>exclude them from the journal</strong> meaning that file system
+structures are maintained but not file data.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2017-04-10-filesystemstructures/" title="Previous: File System Data Structures" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2017-04-14-ffs/" title="Next: Journaling and FFS">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">Making File Systems Fast</a>
+					</li>
+					<li class="h5"><a href="#_putting_spare_memory_to_work">Putting Spare Memory To Work</a>
+					</li>
+					<li class="h5"><a href="#_where_to_put_the_buffer_cache">Where To Put the Buffer Cache?</a>
+					</li>
+					<li class="h5"><a href="#_above_the_file_system">Above the File System</a>
+					</li>
+					<li class="h5"><a href="#_above_the_file_system_operations">Above the File System: Operations</a>
+					</li>
+					<li class="h5"><a href="#_above_the_file_system_pros_and_cons">Above the File System: Pros and Cons</a>
+					</li>
+					<li class="h5"><a href="#_below_the_file_system">Below the File System</a>
+					</li>
+					<li class="h5"><a href="#_below_the_file_system_pros_and_cons">Below the File System: Pros and Cons</a>
+					</li>
+					<li class="h5"><a href="#_caching_and_consistency">Caching and Consistency</a>
+					</li>
+					<li class="h5"><a href="#_how_caching_exacerbates_consistency">How Caching Exacerbates Consistency</a>
+					</li>
+					<li class="h5"><a href="#_what_can_go_wrong">What Can Go Wrong?</a>
+					</li>
+					<li class="h5"><a href="#_maintaining_file_system_consistency">Maintaining File System Consistency</a>
+					</li>
+					<li class="h5"><a href="#_another_approach_to_consistency">Another Approach to Consistency</a>
+					</li>
+					<li class="h5"><a href="#_journaling">Journaling</a>
+					</li>
+					<li class="h5"><a href="#_journaling_checkpoints">Journaling: Checkpoints</a>
+					</li>
+					<li class="h5"><a href="#_journaling_recovery">Journaling: Recovery</a>
+					</li>
+					<li class="h5"><a href="#_journaling_implications">Journaling: Implications</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 4/10/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/filesystemcaching.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/filesystemcaching.adoc" target="_blank">View</a>
+			<br>
+			Built 4/11/2017 @ 20:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

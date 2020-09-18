@@ -1,0 +1,1077 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Synchronization</title>
+		<meta name="description" lang="en-us" content="In ASST1 you will implement new synchronization primitives for OS/161 and use them to solve several synchronization problems.
+">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle active" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7 col-md-offset-2">
+				<a class="anchor" id="top"></a>
+				<h1>ASST1: Synchronization</h1>
+				<div class="openblock visible-print">
+<div class="content">
+<div class="admonitionblock warning alert alert-warning" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span></td>
+<td class="content">
+This assignment is available online at
+<a href="https://www.ops-class.org/asst/1/" class="hidden_print external" target="_blank"><code>https://www.ops-class.org/asst/1/</code></a>.
+The online version is easier to read and includes helpful links, embedded video
+walkthroughs, and other useful resources.
+</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_introduction"></a><h2>1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>In this assignment you will implement new synchronization primitives for
+<a href="http://os161.eecs.harvard.edu" class="hidden-print external" target="_blank">OS/161</a> and use them to solve several synchronization problems.</p>
+</div>
+<div class="paragraph">
+<p>Once you complete ASST1 you should have a fairly solid grasp of the pitfalls
+of concurrent programming and&#x2014;&#x200B;more importantly&#x2014;&#x200B;how to avoid those pitfalls
+in the code you write during the rest of the semester.</p>
+</div>
+<div class="paragraph">
+<p>To complete this assignment you will need to be familiar with the OS/161
+thread code. The thread system provides interrupts, control functions,
+spinlocks, and semaphores. You will implement locks, condition variables, and
+reader/writer locks.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_objectives"></a><h3>1.1. Objectives</h3>
+<div class="paragraph">
+<p>After completing ASST1 you should:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Understand the OS/161 thread subsystem and existing synchronization
+primitives: spinlocks and semaphores.</p>
+</li>
+<li>
+<p>Have implemented working locks, condition variables, and reader-writer
+locks that you can use it later assignments.</p>
+</li>
+<li>
+<p>Be able to properly address different synchronization problems by choosing
+and applying the correct synchronization primitive.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_collaboration_guidelines"></a><h3>1.2. Collaboration Guidelines</h3>
+<div class="paragraph">
+<p>ASST1 is your first chance to write real kernel code. Here are the guidelines
+for how to work with other students and work with your partner (if you have one):</p>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Pair programming to complete the implementation tasks is <strong>strongly
+encouraged</strong>.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Answering the code reading questions side-by-side with your
+partner is <strong>strongly encouraged</strong>.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Helping other students with Git, GDB, editing, and with other parts of
+the OS/161 toolchain is encouraged.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Discussing the code reading questions and browsing the source tree with
+other students is encouraged.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock warning alert alert-warning" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span></td>
+<td class="content">
+Dividing the code reading questions and development tasks between
+partners is discouraged.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+Copying any answers from anyone who is not your partner or anywhere
+else and submitting them as your own is cheating.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+You may not refer to or incorporate any external sources without
+explicit permission <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Which you are extremely unlikely to get.&lt;/body&gt;&lt;/html&gt;">1</span>.
+</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_writing_readable_and_maintainable_code"></a><h2>2. Writing Readable and Maintainable Code</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>Whenever you program you should aim to write well-documented, readable code.</p>
+</div>
+<div class="paragraph">
+<p>If you are working alone, you will appreciate this yourself. If you are
+working with others, they will appreciate it. If you are publishing code to
+the broader community, others will both appreciate and be impressed by it.</p>
+</div>
+<div class="paragraph">
+<p>These assignments provide you with a chance to continue developing good code
+writing habits. If you are working with a partner, good style will help them
+understand your code and you understand theirs. It will also help the course
+staff understand your code when you need help. And you are starting with a
+very well-formatted and commented code base which provides an excellent
+example of what to do.</p>
+</div>
+<div class="paragraph">
+<p>There is no single right way to organize and document your code. It is not
+our intent to dictate a particular coding style for this class. The best way
+to learn about writing readable code is to read other people&#x2019;s code. Read the
+OS/161 code, read your partner&#x2019;s code, read the source code of some freely
+available operating system. When you read someone else&#x2019;s code, note what you
+like and what you don&#x2019;t like. Pay close attention to the lines of comments
+which most clearly and efficiently explain what is going on. When you write
+code yourself, keep these observations in mind.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_comments_are_not_a_panacea"></a><h3>2.1. Comments Are Not a Panacea</h3>
+<div class="paragraph">
+<p>Note that commenting, while potentially useful, does not make up for poor
+coding conventions. In many cases, well-structured code with good choices of
+variables and function names needs comments only in cases where something
+unusual must be pointed out.</p>
+</div>
+<div class="paragraph">
+<p>For example, try to determine what the following (intentionally obfuscated)
+code on the left does. The click on the right side for the much better
+solution. Note that with appropriately named variables no commentary is
+needed for this very familiar piece of code.</p>
+</div>
+<div class="col-md-6">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">a</span> {</span>
+	<span class="hljs-keyword">char</span> *b;
+	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">foo</span> *<span class="hljs-title">c</span>;</span>
+};
+<span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">a</span> *<span class="hljs-title">d</span> = <span class="hljs-title">NULL</span>;</span>
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">e</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">a</span> *<span class="hljs-title">f</span> = <span class="hljs-title">d</span>;</span>
+	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">a</span> *<span class="hljs-title">g</span>;</span>
+	d = <span class="hljs-literal">NULL</span>;
+
+	<span class="hljs-keyword">while</span> (f != <span class="hljs-literal">NULL</span>) {
+		g = f-&gt;c;
+		f-&gt;c = d;
+		d = f;
+		f = g;
+	}
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="col-md-6">
+<div class="listingblock showonclick">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">item</span> {</span>
+	<span class="hljs-keyword">char</span> *data;
+	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">foo</span> *<span class="hljs-title">next</span>;</span>
+};
+<span class="hljs-keyword">static</span> <span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">item</span> *<span class="hljs-title">list</span> = <span class="hljs-title">NULL</span>;</span>
+
+<span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">reverse_list</span><span class="hljs-params">()</span> </span>{
+	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">item</span> *<span class="hljs-title">current</span> = <span class="hljs-title">list</span>;</span>
+	<span class="hljs-class"><span class="hljs-keyword">struct</span> <span class="hljs-title">item</span> *<span class="hljs-title">next</span>;</span>
+	<span class="hljs-built_in">list</span> = <span class="hljs-literal">NULL</span>;
+
+	<span class="hljs-keyword">while</span> (current != <span class="hljs-literal">NULL</span>) {
+		next = current-&gt;next;
+		current-&gt;next = <span class="hljs-built_in">list</span>;
+		<span class="hljs-built_in">list</span> = current;
+		current = next;
+	}
+}</code></pre>
+</div>
+<div class="showonclick-button">Show</div></div>
+</div>
+<div style="clear:both;"></div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_just_a_few_tips"></a><h3>2.2. Just a Few Tips</h3>
+<div class="paragraph">
+<p>Here are some general tips for writing better code:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Group related items together</strong>, whether they are variable declarations,
+lines of code, or functions.</p>
+</li>
+<li>
+<p><strong>Use descriptive names</strong> for variables and procedures. Be consistent with
+this throughout the program.</p>
+</li>
+<li>
+<p><strong>Comments should describe <em>the programmer&#x2019;s intent</em></strong>, not the actual
+mechanics of the code. A comment which says &quot;Find a free disk block&quot; is much
+more informative than one that says &quot;Find first non-zero element of array.&quot;
+The first adds information to what is present in code itself, the second does
+not.</p>
+</li>
+<li>
+<p><strong>Avoid repetition.</strong> Cut and pasting code is generally an <strong>extremely bad
+idea.</strong> Refactor things instead.</p>
+</li>
+<li>
+<p><strong>Keep functions short.</strong> Short functions are more likely to be reusable as
+well as comprehensible. Good function names describe exactly what the
+function does and make it easy for others to use your interface.</p>
+</li>
+<li>
+<p><strong>Use assertions.</strong> Assertions are a great way to help proactively debug your
+code. When assertions fail it can indicate either that some part of your code
+is not working properly, or that your assumptions about what would be true at
+that point are incorrect. Both are great things to find out.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You and your partner will probably find it useful to agree on a coding style.
+For instance, you might want to agree on how variables and functions will be
+named (<code>my_function</code>, <code>myFunction</code>, <code>MyFunction</code>, <code>mYfUnCtIoN</code>, or
+<code>ymayUnctionFay</code>) since your code will have to interoperate and be jointly
+readable. Note that OS/161 uses the <code>my_function</code> convention, so you may want
+to too.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_setup"></a><h2>3. Setup</h2>
+<div class="sectionbody">
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="EBYjVlAOc54"><img class="youtube-thumb" src="//i.ytimg.com/vi/EBYjVlAOc54/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph lead">
+<p>We have provided a framework allowing you to develop and test your
+solutions for the ASST1 synchronization problems described below.</p>
+</div>
+<div class="paragraph">
+<p>This framework consists of:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>kern/synchprobs/*</code>: these files are where you
+will implement your solutions to the synchronization problems.</p>
+</li>
+<li>
+<p><code>kern/test/synchprobs.c</code>: this file contains driver code
+we will use to test your solutions. You can and should change this file
+to stress test your code, but there should be no dependencies between
+your synchronization problem solutions and the problem drivers. <strong>We
+will replace the contents of this file (and the rest of the <code>kern/test</code>
+directory) during testing.</strong></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>To include these files in your kernel you will need enable the <code>synchprobs</code>
+OS/161 kernel configuration option when you configure your kernel to start
+ASST1. Once you do this you should notice two new menu options under the
+tests menu.</p>
+</div>
+<div class="paragraph">
+<p>Finally, to successfully run the ASST1 tests you will need to configure your
+kernel to use a large amount of memory. We suggest the maximum of 16 MB. This
+is because your kernel currently leaks memory allocations that are larger
+than a page, and that includes all 4K thread stacks. So you will find that
+even if you correctly allocate and deallocate memory in your synchronization
+primitives and problems, your kernel will only run a certain number of tests
+before it runs out of memory and `panic`s. This is normal. <strong>However, you should
+make sure that your kernel does not leak smaller amounts of memory.</strong> Your
+kernel includes tools to help you measure this.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_concurrency_in_os161"></a><h2>4. Concurrency in OS/161</h2>
+<div class="sectionbody">
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="e1VTtzjIaqs"><img class="youtube-thumb" src="//i.ytimg.com/vi/e1VTtzjIaqs/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph lead">
+<p>The goal of synchronization is to eliminate any undesirable timing
+effects&#x2014;&#x200B;or <em>race conditions</em>&#x2014;on the output of your programs while
+preserving as much concurrency as possible.</p>
+</div>
+<div class="paragraph">
+<p>For the synchronization problems we provide, threads <em>may</em> run in different
+orders depending on the order of events, but by using the synchronization
+primitives you will build, you should be able to guarantee that they meet the
+constraints inherent to each problem (while not deadlocking).</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_built_in_tests"></a><h3>4.1. Built-In Tests</h3>
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="nRaxyy_4mo4"><img class="youtube-thumb" src="//i.ytimg.com/vi/nRaxyy_4mo4/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph">
+<p>When you boot OS/161 you should see options to run various thread tests. The
+thread test code uses the semaphore synchronization primitive. You should
+trace the execution of one of these thread tests in GDB to see how the
+scheduler acts, how threads are created, and what exactly happens in a
+context switch. You should be able to step through a call to <code>thread_switch</code>
+and see exactly where the current thread changes.</p>
+</div>
+<div class="paragraph">
+<p>Thread test 1&#x2014;&#x200B;or <code>tt1</code> at the kernel menu or on the command line&#x2014;&#x200B;prints the
+numbers 0 through 7 each time each thread loops. Thread test 2 (<code>tt2</code>) prints
+only when each thread starts and exits. The latter is intended to show that
+the scheduler doesn&#x2019;t cause starvation&#x2014;&#x200B;the threads should all start
+together, spin for awhile, and then end together. It&#x2019;s a good idea to
+familiarize yourself with the other thread tests as well.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_debugging_concurrent_programs"></a><h3>4.2. Debugging Concurrent Programs</h3>
+<div class="paragraph">
+<p>One of the frustrations of debugging concurrent programs is that timing
+effects will cause them them to do something different each time. The end
+result should not be different&#x2014;&#x200B;that would be a race condition. But the
+ordering of threads and how they are scheduled may change. Our test drivers
+in the <code>kern/test</code> directory will frequently have threads spin or yield
+unpredictably when starting tests to create more <em>randomness</em>. However, for
+the purposes of testing you may want to create more <em>determinism</em>.</p>
+</div>
+<div class="paragraph">
+<p>The random number generator used by OS/161 is seeded by the random device
+provided by System/161. This means that you can reproduce a specific
+execution sequence by using a fixed seed for the random device. You can pass
+an explicit seed into random device by editing the <code>random</code> line in your
+<code>sys161.conf</code> file. This may be help you create more reproducible behavior,
+at least when you are running the exact same series of tests.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_code_reading_questions"></a><h3>4.3. Code Reading Questions</h3>
+<div class="paragraph">
+<p>While these code reading questions are ungraded, it is <em>strongly</em> recommended
+that you complete them with you partner.</p>
+</div>
+<div class="sect3">
+<a class="anchor" id="_thread_questions"></a><h4>4.3.1. Thread questions</h4>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What happens to a thread when it calls <code>thread_exit</code>? What about when it
+sleeps?</p>
+</li>
+<li>
+<p>What function&#x2014;&#x200B;or functions&#x2014;&#x200B;handle(s) a context switch?</p>
+</li>
+<li>
+<p>What does it mean for a thread to be in each of the possible thread states?</p>
+</li>
+<li>
+<p>What does it mean to turn interrupts off? How is this accomplished? Why is
+it important to turn off interrupts in the thread subsystem code?</p>
+</li>
+<li>
+<p>What happens when a thread wakes up another thread? How does a sleeping
+thread get to run again?</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_scheduling_questions"></a><h4>4.3.2. Scheduling questions</h4>
+<div class="olist arabic">
+<ol class="arabic" start="6">
+<li>
+<p>What function (or functions) choose the next thread to run?</p>
+</li>
+<li>
+<p>How is the next thread to run chosen?</p>
+</li>
+<li>
+<p>What role does the hardware timer play in scheduling?</p>
+</li>
+<li>
+<p>What hardware independent function is called on a timer interrupt?</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_synchronization_questions"></a><h4>4.3.3. Synchronization questions</h4>
+<div class="olist arabic">
+<ol class="arabic" start="10">
+<li>
+<p>Describe how <code>wchan_sleep</code> and <code>wchan_wakeone</code> are used to implement
+semaphores.</p>
+</li>
+<li>
+<p>Why does the lock API in OS/161 provide <code>lock_do_i_hold</code>, but not
+<code>lock_get_holder</code>?</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_implementing_synchronization_primitives"></a><h2>5. Implementing Synchronization Primitives</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>It&#x2019;s finally time to write some OS/161 code. The moment you&#x2019;ve been waiting
+for!</p>
+</div>
+<div class="paragraph">
+<p>It is possible to implement the primitives below on top of other
+primitives&#x2014;&#x200B;but it is not necessarily a good idea. You should definitely read
+and understanding the existing semaphore implementation since that can be
+used as a model for several of the other primitives we ask you to implement
+below.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_implement_locks"></a><h3>5.1. Implement Locks</h3>
+<div class="paragraph">
+<p>Implement locks for OS/161. The interface for the lock structure is defined
+in <code>kern/include/synch.h</code>. Stub code is provided in <code>kern/threads/synch.c</code>.
+<strong>When you are done you should repeatedly pass the provided <code>lt{1,2,3}</code> lock tests.</strong></p>
+</div>
+<div class="paragraph">
+<p>Note that you will not be able to run any of these tests an unlimited number
+of times. Due to limitations in the current virtual memory system used by
+your kernel, appropriately called <code>dumbvm</code>, your kernel is leaking a lot of
+memory. However, your synchronization primitives themselves <em>should not leak
+memory</em>, and you can inspect the kernel heap stats to ensure that they do
+not. (We will.)</p>
+</div>
+<div class="paragraph">
+<p>You may wonder why, if the kernel is leaking memory, the kernel heap stats
+don&#x2019;t change between runs of <code>sy1</code>, for example, indicating that the
+semaphore implementation allocates and frees memory properly. The reason is
+that the kernel <code>malloc</code> implementation we have provided is <em>not</em> broken, and
+it will correctly allocate, free and reallocate small items inside of the
+memory made available to it by the kernel. What does leak are larger
+allocations like, for example, the 4K thread kernel stacks, and it is these
+large items that eventually cause the kernel to run out of memory and
+<code>panic</code>. Look at <code>kern/arch/mips/vm/dumbvm.c</code> for more details about what&#x2019;s
+broken and why.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_implement_condition_variables"></a><h3>5.2. Implement Condition Variables</h3>
+<div class="paragraph">
+<p>Implement condition variables with Mesa&#x2014;&#x200B;or non-blocking&#x2014;&#x200B;semantics for
+OS/161. The interface for the condition variable structure is also defined in
+<code>synch.h</code> and stub code is provided in <code>synch.c</code>.</p>
+</div>
+<div class="paragraph">
+<p>We have not discussed the differences between condition variable
+semantics. Two different varieties exist: Hoare, or blocking, and Mesa,
+or non-blocking. The difference is in how <code>cv_signal</code> is
+handled:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>In <strong>Hoare</strong> semantics, the thread that calls <code>cv_signal</code> will block until
+the signaled thread (if any) runs and releases the lock.</p>
+</li>
+<li>
+<p>In <strong>Mesa</strong> semantics the thread that calls <code>cv_signal</code> will awaken one
+thread waiting on the condition variable but will not block.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Please implement Mesa semantics. <strong>When you are done you should repeatedly
+pass the provided <code>cvt{1,2,3,4}</code> condition variable tests.</strong></p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_implement_reader_writer_locks"></a><h3>5.3. Implement Reader-Writer Locks</h3>
+<div class="paragraph">
+<p>Implement reader-writer locks for OS/161. A reader-writer lock is a lock that
+threads can acquire in one of two ways: read mode or write mode. Read mode
+does not conflict with read mode, but read mode conflicts with write mode and
+write mode conflicts with write mode. The result is that many threads can
+acquire the lock in read mode, <em>or</em> one thread can acquire the lock in write
+mode.</p>
+</div>
+<div class="paragraph">
+<p>Your solution must also ensure that no thread waits to acquire the lock
+indefinitely, called <em>starvation</em>. Your implementation must solve many
+readers, one writer problem and ensure that no writers are starved even in
+the presence of many readers. Build something you will be comfortable using
+later. Implement your interface in <code>synch.h</code> and your code in <code>synch.c</code>,
+conforming to the interface that we have provided.</p>
+</div>
+<div class="paragraph">
+<p>Unlike locks and condition variables, where we have provided you with a test
+suite, we are leaving it to you to develop a test that exercises your
+reader-writer locks. You will want to edit <code>kern/main/menu.c</code> to allow
+yourself to run your test as <code>rwt1</code> from the kernel menu or command line. We
+have our own reader-writer test that we will use to test and grade your
+implementation.</p>
+</div>
+<div class="paragraph">
+<p>Does this depart from our normal practice of providing you with the tools
+necessary to evaluate your assignment? Yes. And for a very good reason:
+writing tests is a <em>critical development practice</em>. You will write a lot of
+OS/161 code this semester, and particularly for <a href="/asst/2/" class="hidden-print">ASST2</a> and <a href="/asst/3/" class="hidden-print">ASST3</a> our tests
+are designed to tell if everything is working at a very high level. They are
+<em>comprehensive</em> tests, not <em>unit</em> tests, which target a particular piece of
+functionality. Writing good unit tests is extremely important to building
+large pieces of software&#x2014;&#x200B;some even claim that you should write the unit test
+<em>first</em> and then the implementation that passes it. So we are using this
+opportunity to force you to write a unit test in the hopes that you will
+continue this practice later.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_solving_synchronization_problems"></a><h2>6. Solving Synchronization Problems</h2>
+<div class="sectionbody">
+<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+<div class="youtube-container" data-id="nmApAqIlxKQ"><img class="youtube-thumb" src="//i.ytimg.com/vi/nmApAqIlxKQ/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+</div>
+<div class="paragraph lead">
+<p>The following problems will give you the opportunity to solve some
+fairly straightforward synchronization problems.</p>
+</div>
+<div class="paragraph">
+<p>We have provided you with basic driver code in <code>kern/tests/synchprobs.c</code> that
+starts a predefined number of threads which call functions in
+<code>{whalemating.c,stoplight.c}</code>. You are responsible for
+implementing those functions which determine what those threads do. You
+can&#x2014;&#x200B;and should&#x2014;&#x200B;make changes to the driver code in <code>synchprobs.c</code>, but note
+that this file will be replaced by the drivers we cook up for testing. Also
+note that that code is <em>not</em> the same as what we have provided you.</p>
+</div>
+<div class="paragraph">
+<p>When you configure your kernel for ASST1, the driver code and extra menu
+options for executing your solutions are automatically compiled in. Type <code>?</code>
+at the menu to get a list of commands. Remember to specify a seed to use in
+the random number generator by editing your <code>sys161.conf</code> file. It is much
+easier to debug initial problems when the sequence of execution and context
+switches is reproducible.</p>
+</div>
+<div class="paragraph">
+<p>There are two synchronization problems posed for you. You can solve these
+problems using any mixture of semaphores, locks, condition variables, and
+reader-writer locks. However, one way may be more straightforward than
+another and so you should put some thought into choosing the correct
+primitives.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_the_classic_cs161_whale_mating_problem"></a><h3>6.1. The Classic <a href="http://www.eecs.harvard.edu/~cs161/" target="_blank" class="external">CS161</a> Whale Mating Problem</h3>
+<div class="paragraph">
+<p>You have been hired by the New England Aquarium&#x2019;s research division to help
+find a way to increase the whale population. Because there are not enough of
+them, the whales are having synchronization problems in finding a mate. The
+trick is that in order to have children, three whales are needed; one male,
+one female, and one to play matchmaker&#x2014;&#x200B;literally, to push the other two
+whales together <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Panda_pornography&quot; target=&quot;_blank&quot; class=&quot;external&quot;&gt;Pandas actually have this problem&amp;#x2026;&amp;#x200B;&lt;/a&gt;&lt;/body&gt;&lt;/html&gt;">2</span>.</p>
+</div>
+<div class="paragraph">
+<p>Your job is to write the three procedures <code>male()</code>, <code>female()</code>, and
+<code>matchmaker()</code>. Each whale is represented by a separate thread. A male whale
+calls <code>male()</code>, which waits until there is a waiting female and matchmaker;
+similarly, a female whale must wait until a male whale and matchmaker are
+present. Once all three are present, the magic happens and then all three
+return.</p>
+</div>
+<div class="paragraph">
+<p>Each whale thread should call the appropriate
+<code>{male,female,matchmaker}_start()</code> function when it begins mating or
+matchmaking and the appropriate <code>{male,female,matchmaker}_end()</code> function
+when mating or matchmaking completes. These functions are part of the problem
+driver in <code>synchprobs.c</code> and you are welcome to change them, but again we
+will install and use our own versions for testing. We have provided stub code
+for the whale mating problem that you should use in <code>whalemating.c</code>.</p>
+</div>
+<div class="paragraph">
+<p>The test driver in <code>synchprobs.c</code> forks thirty threads, and has ten of them
+invoke <code>male()</code>, ten of them invoke <code>female()</code>, and ten of them invoke
+<code>matchmaker()</code>. Stub routines, which do nothing but call the appropriate
+<code>_start()</code> and <code>_end()</code> functions, are provided for these three functions.
+Your job will be to re-implement these functions so that they solve the
+synchronization problem described above.</p>
+</div>
+<div class="paragraph">
+<p>When you are finished, you should be able to examine the output from running
+<code>sp1</code> and convince yourself that your solution satisfies the constraints
+outlined above.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_the_buffalo_intersection_problem"></a><h3>6.2. The Buffalo Intersection Problem</h3>
+<div class="paragraph">
+<p>If you drive in Buffalo you know two things very well:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Four-way stops are common.</p>
+</li>
+<li>
+<p>Knowledge of how to correctly proceed through a four-way stop is rare.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In general, four-way stops are so tricky that they&#x2019;ve even been known to
+flummox the otherwise
+<a href="http://www.nytimes.com/2015/09/02/technology/personaltech/google-says-its-not-the-driverless-cars-fault-its-other-drivers.html" target="_blank" class="external">unflummoxable
+Google self-driving car</a>, which both knows and is programmed to follow the
+rules.</p>
+</div>
+<div class="paragraph">
+<p>Given that robot cars are the future anyway, we can rethink the entire idea
+of a four-way stop. Let&#x2019;s model the intersection as shown below. We consider
+the intersection as composed of four <em>quadrants</em>, numbered 0&#x2013;3. Cars
+approach the intersection from one of four <em>directions</em>, also numbered
+0&#x2013;3. Note that we have numbered the quadrants so that a car approaching
+from direction X enters the intersection in quadrant X.</p>
+</div>
+<img src="/img/asst/stoplight.jpg" style="width:50%; min-width:300px; padding: 10px 0 10px;" class="img-responsive center-block" alt="Stoplight diagram">
+<div class="paragraph">
+<p>Given our model of the intersection, your job is to use synchronization
+primitives to implement a solution meeting the following requirements:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>No two cars may be in the same quadrant of the intersection at the same
+time. This constitutes a crash.</p>
+</li>
+<li>
+<p>Once a car enters any intersection quadrant it must always be in some
+quadrant until it calls <code>leaveIntersection</code>.</p>
+</li>
+<li>
+<p>Cars do not move diagonally between intersection quadrants.</p>
+</li>
+<li>
+<p>Your solution should improve traffic flow compared to a conventional
+four-way stop while not starving traffic from any direction.</p>
+</li>
+<li>
+<p>Also don&#x2019;t hit the dog!</p>
+</li>
+</ol>
+</div>
+<div class="sect3">
+<a class="anchor" id="_stoplight_code_reading_questions"></a><h4>6.2.1. Stoplight code reading questions</h4>
+<div class="paragraph">
+<p>Before you begin coding, consider the following questions:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Assume that Buffalonians are not Buffalonians and obey the law: whoever
+arrives at the intersection first proceeds first. Using the language of
+synchronization primitives describe the way this intersection is controlled.
+In what ways is this method suboptimal?</p>
+</li>
+<li>
+<p>Now, assume that the Buffalonians are Buffalonians and do not follow the
+convention described above. In what one instance can this four-&#xAD;&#x2010;&#x2011;way-&#xAD;&#x2010;&#x2011;stop
+intersection produce a deadlock? It is helpful to think of this in terms of
+the model we are using instead of trying to visualize an actual intersection.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>We have provided driver code for the stoplight problem in <code>stoplight.c</code>. The
+driver forks off a number of cars which approach the intersection from a
+randomly chosen direction and then randomly call one of three routines:
+<code>gostraight</code>, <code>turnleft</code> and <code>turnright</code>. Each car should identify itself as
+it passed through any intersection quadrant by calling the <code>inQuadrant</code>
+function provided in <code>synchprobs.c</code>, and should identify itself when it
+leaves the intersection by calling <code>leaveIntersection</code>.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_grading"></a><h2>7. Grading</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>We will test five things about your ASST1 submission:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Do your locks work?</strong> We will use <code>lt{1,2,3}</code> to test this. Most of the
+points will be for <code>lt1</code>, since the other tests are fairly simple.</p>
+</li>
+<li>
+<p><strong>Do your CVs work?</strong> We will use <code>cvt{1,2,3,4}</code> to test this. Most of the
+points will be for <code>cvt{1,2}</code>, since the other tests are again fairly simple.</p>
+</li>
+<li>
+<p><strong>Do your reader-writer locks work?</strong> We will use <code>rwt{1,2,3,4,5}</code> from <em>our</em> test
+suite to test this. You should implement your own test for your reader-writer
+locks.</p>
+</li>
+<li>
+<p><strong>Does your whale mating solution work?</strong> We will use <code>sp1</code> to test this.</p>
+</li>
+<li>
+<p><strong>Does your stoplight solution work?</strong> We will use <code>sp2</code> to test this.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Note that for our testing tools to work you must preserve these menu command
+mappings so that the tests above work as expected.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_reader_writer_lock_tests"></a><h3>7.1. Reader-Writer Lock Tests</h3>
+<div class="paragraph">
+<p>Here is a brief description of each of the five tests we will use to evaluate
+your reader-writer lock implementation:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong><code>rwt1</code></strong>: An end-to-end test that determines whether your reader-writer
+locks provide proper mutual exclusion for writers and shared access for
+readers. You will fail this test if you reader-writer locks do not provide
+enough read concurrency (as if they were normal locks) or starve readers or
+writers.</p>
+</li>
+<li>
+<p><strong><code>rwt2</code></strong>: This test determines whether a group of readers can achieve
+maximum concurrency when using your reader-writer lock.</p>
+</li>
+<li>
+<p><strong><code>rwt{3,4,5}</code></strong>: These are correctness tests similar to <code>lt{2,3}</code> and
+<code>cvt{3,4}</code>. They panic on success.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Note that, unlike the lock tests, our reader-writer lock tests do not require
+you to track ownership: that is, if a thread tries to release a reader-writer
+lock that it does not hold that does not have to immediately panic. That
+said, it is possible and a good idea to do this both for readers and writers:
+take a look at <code>kern/include/array.h</code> for some help. We just don&#x2019;t test it.</p>
+</div>
+</div>
+</div>
+</div>
+
+				<div class="hidden-print">
+					<a class="anchor" id="videos"></a>
+					<h2>Related Videos</h2>
+					<p class="lead">
+					Below are some related videos and slides that may help you
+					complete this assignment.
+					</p>
+					<div class="row">
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="7egfPSSzi_0"><img class="youtube-thumb" src="//i.ytimg.com/vi/7egfPSSzi_0/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-12-2014</li>
+								<li>Guru Prasad</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="SxYj0GLu-6o"><img class="youtube-thumb" src="//i.ytimg.com/vi/SxYj0GLu-6o/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-19-2014</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="nfzazfQH8TY"><img class="youtube-thumb" src="//i.ytimg.com/vi/nfzazfQH8TY/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-03-2015</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="QSL5RK9uMSc"><img class="youtube-thumb" src="//i.ytimg.com/vi/QSL5RK9uMSc/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-10-2015</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="9DA06Rw9SAk"><img class="youtube-thumb" src="//i.ytimg.com/vi/9DA06Rw9SAk/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-09-2016</li>
+								<li>Jerry Ajay</li>
+								<li><a href="https://drive.google.com/file/d/0B2KANO6SyBWldG9icFVxdXlvSGM/view" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="RQXv7hnXXio"><img class="youtube-thumb" src="//i.ytimg.com/vi/RQXv7hnXXio/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-07-2017</li>
+								<li>Ali Ben Ali and Carl Nuessle</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlLURUMlBaUlV4OVk" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="fl6HfwxFx4c"><img class="youtube-thumb" src="//i.ytimg.com/vi/fl6HfwxFx4c/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>02-14-2017</li>
+								<li>Ali Ben Ali and Carl Nuessle</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWldVVFbldmN3Ayc1U" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="scrollspy" class="col-md-3 spelling_exception">
+				<ul id="side" class="fixed-md-3 nav hidden-xs hidden-sm hidden-print" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">1. Introduction</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_objectives">1.1. Objectives</a></li>
+							<li class="h6"><a href="#_collaboration_guidelines">1.2. Collaboration Guidelines</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_writing_readable_and_maintainable_code">2. Writing Readable and Maintainable Code</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_comments_are_not_a_panacea">2.1. Comments Are Not a Panacea</a></li>
+							<li class="h6"><a href="#_just_a_few_tips">2.2. Just a Few Tips</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_setup">3. Setup</a>
+					</li>
+					<li class="h5"><a href="#_concurrency_in_os161">4. Concurrency in OS/161</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_built_in_tests">4.1. Built-In Tests</a></li>
+							<li class="h6"><a href="#_debugging_concurrent_programs">4.2. Debugging Concurrent Programs</a></li>
+							<li class="h6"><a href="#_code_reading_questions">4.3. Code Reading Questions</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_implementing_synchronization_primitives">5. Implementing Synchronization Primitives</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_implement_locks">5.1. Implement Locks</a></li>
+							<li class="h6"><a href="#_implement_condition_variables">5.2. Implement Condition Variables</a></li>
+							<li class="h6"><a href="#_implement_reader_writer_locks">5.3. Implement Reader-Writer Locks</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_solving_synchronization_problems">6. Solving Synchronization Problems</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_the_classic_cs161_whale_mating_problem">6.1. The Classic CS161 Whale Mating Problem</a></li>
+							<li class="h6"><a href="#_the_buffalo_intersection_problem">6.2. The Buffalo Intersection Problem</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_grading">7. Grading</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_reader_writer_lock_tests">7.1. Reader-Writer Lock Tests</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#videos">Related Videos</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/asst/1.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/asst/1.adoc" target="_blank">View</a>
+			<br>
+			Built 9/18/2020 @ 10:49 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

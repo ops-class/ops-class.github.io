@@ -1,0 +1,526 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Scaling Linux to Many Cores</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Discussion of &quot;An Analysis of Linux Scalability to Many Cores&quot; by Silas Boyd-Wickizer et al.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2016-04-27-hints/" title="Previous: Hints for Computer System Design" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2016-05-02-cells/" title="Next: Cells: A Virtual Mobile Smartphone Architecture">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="F9z7zuezpzI"><img class="youtube-thumb" src="//i.ytimg.com/vi/F9z7zuezpzI/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Scaling Linux to Many Cores</h1>
+				
+<div class="sect1 spelling_exception">
+<a class="anchor" id="_an_analysis_of_linux_scalability_to_many_cores"></a><h2>An Analysis of Linux Scalability to Many Cores</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="http://pdos.csail.mit.edu/papers/linux:osdi10.pdf" target="_blank" class="external">&quot;An Analysis of Linux
+Scalability to Many Cores&quot; (PDF)</a>, by:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Silas Boyd-Wickizer</p>
+</li>
+<li>
+<p>Austin T. Clemens</p>
+</li>
+<li>
+<p>Yandong Mao</p>
+</li>
+<li>
+<p>Aleksey Pesterev</p>
+</li>
+<li>
+<p>M. Frans Kaashoek</p>
+</li>
+<li>
+<p>Robert Morris</p>
+</li>
+<li>
+<p>Nickolai Zeldovich</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_discussion_of_the_hints"></a><h2>Discussion of the Hints</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/papers/hints_table.jpg" alt="hints table" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_paper_overview"></a><h2>Paper Overview</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What kind of paper is this?</div>
+<ul>
+<li>
+<p>Benchmarking and analysis paper. (A kind we did not previously discuss&#x2026;&#x200B;)</p>
+</li>
+<li>
+<p>But also kind of a <em>big idea</em> paper.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">What&#x2019;s the big idea?</div>
+<ul>
+<li>
+<p>People (including the authors) have been proposing that traditional OS designs would not scale to
+many-core machines.</p>
+</li>
+<li>
+<p>Is this true?</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock spelling_exception">
+<blockquote>
+<div class="paragraph">
+<p>There is a sense in the community that traditional kernel
+designs won&#x2019;t scale well on multicore processors: that
+applications will spend an increasing fraction of their time
+in the kernel as the number of cores increases. Prominent
+researchers have advocated rethinking operating systems and new kernel designs intended to allow
+scalability have been proposed (e.g., Barrelfish,
+Corey, and fos). <strong>This paper asks whether traditional
+kernel designs can be used and implemented in a
+way that allows applications to scale.</strong></p>
+</div>
+</blockquote>
+</div>
+<div class="quoteblock slide">
+<blockquote>
+<div class="paragraph">
+<p>This question is difficult to answer conclusively, but we attempt to shed a
+small amount of light on it.</p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_whats_the_approach"></a><h2>What&#x2019;s The Approach?</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What is the approach taken in the paper?</div>
+<ul>
+<li>
+<p>Benchmark Linux using applications that should scale well.</p>
+</li>
+<li>
+<p>Identify and fix scalability bottlenecks.</p>
+</li>
+<li>
+<p>Repeat.</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock spelling_exception">
+<blockquote>
+<div class="paragraph">
+<p><strong>First</strong> we measure scalability of the MOSBENCH applications on a recent Linux
+kernel (2.6.35-rc5, released July 12, 2010) with 48 cores, using the
+in-memory tmpfs file system to avoid disk bottlenecks. gmake scales well, but
+the other applications scale poorly, performing much less work per core with
+48 cores than with one core.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>We attempt to understand and fix the scalability problems, by modifying
+either the applications or the Linux kernel.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>We then iterate, since fixing one scalability problem usually exposes further
+ones.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The end result for each application is either good scalability on 48 cores,
+or attribution of non-scalability to a hard-to-fix problem with the
+application, the Linux kernel, or the underlying hardware.</p>
+</div>
+</blockquote>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The analysis of whether the kernel design is compatible with scaling rests on
+the extent to which our changes to the Linux kernel turn out to be modest,
+and the extent to which hard-to-fix problems with the Linux kernel ultimately
+limit application scalability.</p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_whats_the_result"></a><h2>What&#x2019;s The Result?</h2>
+<div class="sectionbody">
+<div class="quoteblock slide">
+<blockquote>
+<div class="paragraph">
+<p>Our final contribution is an analysis using MOSBENCH that suggests that there
+is <strong>no immediate scalability reason to give up on traditional kernel designs</strong>.</p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_what_is_mosbench"></a><h2>What is MOSBENCH?</h2>
+<div class="sectionbody">
+<div class="ulist spelling_exception">
+<div class="title">What applications are included in MOSBENCH?</div>
+<ul>
+<li>
+<p>A mail server (<code>exim</code>), using multiple processes to process incoming mail
+concurrently.</p>
+</li>
+<li>
+<p>An in-memory key-value store object cache (<code>memcached</code>), using multiple
+servers to handle multiple connections in parallel. (Already working around
+an internal bottleneck.)</p>
+</li>
+<li>
+<p>A web server (<code>apache</code>) using one process per core.</p>
+</li>
+<li>
+<p>A database server (<code>postgres</code>), which starts one process per connection.</p>
+</li>
+<li>
+<p>A parallel build (<code>gmake</code>) building Linux using multiple cores.</p>
+</li>
+<li>
+<p>A file indexer (`psearchy&apos;).</p>
+</li>
+<li>
+<p>A map-reduce library (<code>metis</code>).</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Are these good benchmarks?</div>
+<ul>
+<li>
+<p>The goal is to identify <em>kernel</em> bottlenecks.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">What&#x2019;s a sign of bad kernel scalability?</div>
+<ul>
+<li>
+<p>Spending more time in the kernel as the number of cores rises.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_aside_why_does_gmake_scale_well"></a><h2>(Aside) Why Does <code>gmake</code> Scale Well?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>All the benchmarks scale poorly to multiple cores&#x2026;&#x200B;except <code>gmake</code>.</p>
+</div>
+<div class="ulist">
+<div class="title">Why?</div>
+<ul>
+<li>
+<p>Because kernel developers use it all the time!</p>
+</li>
+</ul>
+</div>
+<div class="quoteblock slide">
+<blockquote>
+<div class="paragraph">
+<p><code>gmake</code> is the unofficial default benchmark in the Linux community since all
+developers use it to build the Linux kernel. Indeed, many Linux patches
+include comments like &quot;This speeds up compiling the kernel.&quot;</p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_the_problems"></a><h2>The Problems</h2>
+<div class="sectionbody">
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Here are a few types of serializing interactions that the MOSBENCH
+applications encountered. These are all classic considerations in parallel
+programming&#x2026;&#x200B;</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>1) The tasks may <strong>lock a shared data structure</strong>, so that increasing the
+number of cores increases the lock wait time.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>2) The tasks may <strong>write a shared memory location</strong>, so that increasing the
+number of cores increases the time spent waiting for the cache coherence
+protocol to fetch the cache line in exclusive mode. This problem can occur
+even in lock-free shared data structures.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The tasks may <strong>compete for space in a limited-size shared hardware cache</strong>, so
+that increasing the number of cores increases the cache miss rate. This
+problem can occur even if tasks never share memory.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>The tasks may <strong>compete for other shared hardware resources</strong> such as
+inter-core interconnect or DRAM interfaces, so that additional cores spend
+their time waiting for those resources rather than computing.</p>
+</div>
+</blockquote>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>There may be <strong>too few tasks to keep all cores busy</strong>, so that increasing the
+number of cores leads to more idle cores.</p>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_to_the_paper"></a><h2>To The Paper</h2>
+<div class="sectionbody">
+<div class="responsive-embed embed-responsive-4by3" style="height:440px;">
+<iframe style="width:100%" height="400" class="embed-responsive-item" src="//pdos.csail.mit.edu/papers/linux:osdi10.pdf"></iframe>
+</div>
+</div>
+</div>
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2016-04-27-hints/" title="Previous: Hints for Computer System Design" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2016-05-02-cells/" title="Next: Cells: A Virtual Mobile Smartphone Architecture">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">An Analysis of Linux Scalability to Many Cores</a>
+					</li>
+					<li class="h5"><a href="#_discussion_of_the_hints">Discussion of the Hints</a>
+					</li>
+					<li class="h5"><a href="#_paper_overview">Paper Overview</a>
+					</li>
+					<li class="h5"><a href="#_whats_the_approach">What&#x2019;s The Approach?</a>
+					</li>
+					<li class="h5"><a href="#_whats_the_result">What&#x2019;s The Result?</a>
+					</li>
+					<li class="h5"><a href="#_what_is_mosbench">What is MOSBENCH?</a>
+					</li>
+					<li class="h5"><a href="#_aside_why_does_gmake_scale_well">(Aside) Why Does gmake Scale Well?</a>
+					</li>
+					<li class="h5"><a href="#_the_problems">The Problems</a>
+					</li>
+					<li class="h5"><a href="#_to_the_paper">To The Paper</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/2016/scaling.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/2016/scaling.adoc" target="_blank">View</a>
+			<br>
+			Built 4/28/2016 @ 20:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

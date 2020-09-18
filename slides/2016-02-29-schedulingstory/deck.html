@@ -1,0 +1,1412 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | A Scheduling Story</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Introduction to MLFQ, Con Kolivas, Linux development, and the Rotating Staircase Deadline Scheduler.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="https://en.wikipedia.org/wiki/Mitchell_Baker" target="_blank"><img src="/img/slides/women/040.jpg" alt="040" style="width: 100%;"></a>
+</div>
+<div class="title">Figure 1. Mitchell Baker</div>
+</div>
+<div class="paragraph h3 center">
+<p><span class="fa fa-music"></span> <a href="https://breakingbenjamin.com/" target="_blank" class="external">Failure by Breaking Benjamin</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/fVIh1MFWDVw?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+
+</div>
+<div class="nooutline slide" id="_today_a_linux_scheduling_story">
+<h2>Today: A Linux Scheduling Story</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>An introduction to Linux kernel development.</p>
+</li>
+<li>
+<p>Scheduling tensions: server, desktops, and performance.</p>
+</li>
+<li>
+<p>The road to the Completely Fair Scheduler:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Who are Ingo Molnar and Con Kolivas?</p>
+</li>
+<li>
+<p>The Linux 2.6 O(1) scheduler</p>
+</li>
+<li>
+<p>The Rotating Staircase Deadline Scheduler (RSDL)</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_cat_announce_txt">
+<h2>$ cat announce.txt</h2>
+
+
+
+</div>
+<div class="nooutline slide" id="_i_have_a_problem_right">
+<h2>I Have a Problem, Right?</h2>
+
+<div class="quoteblock small spelling_exception">
+<blockquote>
+<div class="paragraph">
+<p>I could not take it anymore so I counted the number of times this guy says
+&quot;right&quot; from 19:00 to 24:00&#x2026;&#x200B;  53 &quot;rights&quot; in 5 minutes. That is a &quot;right&quot;
+for every 5.6 seconds! AAAAARGH!!!!</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#x2014; Svein Engelsgjerd
+</div>
+</div>
+
+</div>
+<div class="slide" id="_oracular_spectacular">
+<h2>Oracular Spectacular</h2>
+
+<div class="ulist">
+<div class="title slide">Normally we <strong>cannot predict the future</strong></div>
+<ul>
+<li class="slide">
+<p>Control flow is unpredictable.</p>
+</li>
+<li class="slide">
+<p>Users are unpredictable.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Instead, <strong>use the past to predict the future</strong>.</div>
+<ul>
+<li class="slide">
+<p>What did the thread do recently? It will probably keep doing that.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_multi_level_feedback_queues">
+<h2>Multi-Level Feedback Queues</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Choose a <strong>scheduling quantum</strong>. This is the maximum amount of time any
+thread will be able to run at one time.</p>
+</li>
+<li class="slide">
+<p>Establish some number of queues; each represents a <strong>level</strong>.</p>
+</li>
+<li class="slide">
+<p>Threads from the highest-level queues are chosen first.</p>
+</li>
+<li class="slide">
+<p>Then:</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li class="slide">
+<p>Choose and run a thread from the highest-level non-empty queue.</p>
+</li>
+<li class="slide">
+<p>If the thread <strong>blocks</strong> or <strong>yields</strong>, promote it to a higher level
+queue.</p>
+</li>
+<li class="slide">
+<p>If the thread must be <strong>preempted</strong> at the end of a quantum, demote it
+to a lower level queue.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_multi_level_feedback_queues_2">
+<h2>Multi-Level Feedback Queues</h2>
+
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-1.svg" alt="mlfq 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-2.svg" alt="mlfq 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-3.svg" alt="mlfq 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-4.svg" alt="mlfq 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-5.svg" alt="mlfq 5" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-6.svg" alt="mlfq 6" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-7.svg" alt="mlfq 7" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-8.svg" alt="mlfq 8" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-9.svg" alt="mlfq 9" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-10.svg" alt="mlfq 10" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-11.svg" alt="mlfq 11" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-12.svg" alt="mlfq 12" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-13.svg" alt="mlfq 13" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-14.svg" alt="mlfq 14" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-15.svg" alt="mlfq 15" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/mlfq-16.svg" alt="mlfq 16" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_multi_level_feedback_queues_3">
+<h2>Multi-Level Feedback Queues</h2>
+
+<div class="ulist">
+<div class="title slide">What happens to:</div>
+<ul>
+<li class="slide">
+<p>CPU-bound threads? They descend to the depths.</p>
+</li>
+<li class="slide">
+<p>I/O-bound threads? They rise to the heights!</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Can anyone spot any problems with this approach?</div>
+<ul>
+<li class="slide">
+<p><strong>Starvation!</strong> Threads trapped in the lower queues may never have a
+chance to run.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>One solution is to periodically <strong>rebalance</strong> the levels by periodically
+tossing everyone back to the top level. <span class="slide">(Seems like kind of a
+hack.)</span></p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_establishing_priorities">
+<h2>Establishing Priorities</h2>
+
+<div class="paragraph">
+<p><strong>Priorities</strong> are a scheduling <strong>abstraction</strong> that allows the user, or
+the system itself, to assign relative important to different tasks on
+the system.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Backup task: low priority.</p>
+</li>
+<li class="slide">
+<p>Video encoding: low priority.</p>
+</li>
+<li class="slide">
+<p>Video playback: high priority.</p>
+</li>
+<li class="slide">
+<p>Interactive applications: medium priority.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Priorities are always <strong>relative</strong>, and so host to a variety of
+different problems.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_priority_starvation">
+<h2>Priority Starvation</h2>
+
+<div class="paragraph">
+<p>Strict priorities can lead to starvation when low-priority threads are
+constantly blocked by high-priority threads with work to do.</p>
+</div>
+<div class="olist arabic">
+<div class="title">One solution: <strong>lottery</strong> scheduling:</div>
+<ol class="arabic">
+<li class="slide">
+<p>Give each thread a number of <strong>tickets</strong> proportional to their
+<strong>priority</strong>.</p>
+</li>
+<li class="slide">
+<p>Choose a ticket at random. The thread holding the ticket gets to
+run.</p>
+</li>
+</ol>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Priorities may also be used to determine <strong>how long</strong> threads are
+allowed to run, i.e. dynamically adjusting their time quantum.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="nooutline slide" id="_scheduling_algorithms_questions">
+<h2>Scheduling Algorithms: Questions?</h2>
+
+
+
+</div>
+<div class="slide" id="_the_semi_recent_recent_history_of_the_linux_scheduler">
+<h2>The Semi-Recent Recent History of the Linux Scheduler</h2>
+
+<div class="paragraph">
+<p>The recent evolution of the Linux scheduler provides a fascinating view into:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>the difficulties in supporting a huge and growing number of hardware
+platforms. (Servers, desktops, Android, embedded devices, etc.)</p>
+</li>
+<li>
+<p>the tensions that arise in collaborative development.</p>
+</li>
+<li>
+<p>the difficulties is steering large software projects fueled by
+volunteers.</p>
+</li>
+<li>
+<p>the challenges of interactive benchmarking.</p>
+</li>
+<li>
+<p>incredibly contributions made by hackers with day jobs.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_linux_by_the_numbers">
+<h2>Linux By The Numbers</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>9.2 million</strong> lines of code. (55% device drivers.)</p>
+</li>
+<li class="slide">
+<p><strong>2,400</strong> developers.</p>
+</li>
+<li class="slide">
+<p>New kernel every <strong>2.75</strong> months.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_linux_development_process">
+<h2>Linux Development Process</h2>
+
+<div class="paragraph">
+<p><strong>Big caveat</strong>: I am not speaking from experience!</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Each file has a maintainer.</p>
+</li>
+<li class="slide">
+<p>Each subsystem has a maintainer.</p>
+</li>
+<li class="slide">
+<p>And then there&#x2019;s Linus/Andrew.</p>
+</li>
+</ul>
+</div>
+<table class="tableblock frame-all grid-all stretch slide">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="/img/slides/figures/scheduling/mm.jpg" alt="mm" title="Andrew Morton" style="width: 80%;"></span></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><span class="image"><img src="/img/slides/figures/scheduling/linus.jpg" alt="linus" title="Linus Torvalds" style="width: 50%;"></span></p></td>
+</tr>
+</tbody>
+</table>
+
+</div>
+<div class="slide" id="_kernel_development">
+<h2>Kernel Development</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Linus, Andrew, and others maintain the <strong>mainline</strong> Linux kernel tree
+used to generate official releases.</p>
+</li>
+<li class="slide">
+<p>Other developers may maintain their own trees to experiment with new
+features. Some code will eventually move into the mainline, other things
+may not.</p>
+</li>
+<li class="slide">
+<p>(Git was built to facilitate this working model. And to not suck.)</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_desktop_v_server">
+<h2>Desktop v. Server</h2>
+
+<div class="paragraph">
+<p>Just one example of tensions in a large community that now supports
+many devices.</p>
+</div>
+<div class="ulist">
+<div class="title slide">Server Linux:</div>
+<ul>
+<li class="slide">
+<p><strong>Well-defined</strong> goals and well-established benchmarks.</p>
+</li>
+<li class="slide">
+<p><strong>Corporate</strong> clients, many who pay for support.</p>
+</li>
+<li class="slide">
+<p><strong>Regular contact</strong> with the Linux community.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Desktop Linux:</div>
+<ul>
+<li class="slide">
+<p><strong>Poorly-defined</strong> goals, a scarcity of good benchmarks, and few people
+savvy enough to run them.</p>
+</li>
+<li class="slide">
+<p>Users <strong>too cheap</strong> to buy Windows.</p>
+</li>
+<li class="slide">
+<p>Development? <strong>What&#x2019;s that?</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_the_linux_kernel_mailing_list">
+<h2>The Linux Kernel Mailing List</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>I tried reading it once. <strong>I had no idea what was going on 99% of the
+time.</strong></p>
+</li>
+<li class="slide">
+<p>This is an intimidating place to go for &quot;help&quot;, and you probably won&#x2019;t
+get it.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_the_linux_kernel_mailing_list_2">
+<h2>The Linux Kernel Mailing List</h2>
+
+<div class="paragraph">
+<p>And, it&#x2019;s sometimes a male-dominated mean environment:</p>
+</div>
+<div class="quoteblock small">
+<blockquote>
+<div class="paragraph">
+<p>Seriously, guys?  Is this what we need in order to get improve -stable?
+Linus Torvalds is advocating for physical intimidation and violence.
+Ingo Molnar and Linus are advocating for verbal abuse.</p>
+</div>
+<div class="paragraph">
+<p>Not <strong>fucking</strong> cool.  Violence, whether it be physical intimidation,
+verbal threats or verbal abuse is not acceptable.  Keep it professional
+on the mailing lists.</p>
+</div>
+<div class="paragraph">
+<p>Let&#x2019;s discuss this at Kernel Summit where we can at least yell at each
+other in person.  Yeah, just try yelling at me about this.  I&#x2019;ll roar
+right back, louder, for all the people who lose their voice when they
+get yelled at by top maintainers.  I won&#x2019;t be the nice girl anymore.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#x2014; Sarah Sharp
+</div>
+</div>
+
+</div>
+<div class="slide" id="_linux_scheduling_pre_2_6">
+<h2>Linux Scheduling Pre-2.6</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Pre-2.6 Linux systems used a scheduler that scaled poorly, requiring
+O(n) time to schedule tasks where n is the number of runnable threads.</p>
+</li>
+<li class="slide">
+<p>The Linux 2.6 scheduler aimed to fix this.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_the_linux_2_6_o1_scheduler">
+<h2>The Linux 2.6 O(1) Scheduler</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>For Linux 2.6, Ingo Molnar, the Linux kernel scheduler maintainer,
+implemented a new O(1) scheduler to address the scalability problems
+inherent to the earlier approach.</p>
+</li>
+<li class="slide">
+<p>The O(1) scheduler combines a <strong>static</strong> and <strong>dynamic</strong> priority.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Static priority: set by the user or system using nice.</p>
+</li>
+<li>
+<p>Dynamic priority: a potential &quot;boost&quot; to the static priority intended
+to reward interactive threads.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_problems_with_the_o1_scheduler">
+<h2>Problems With The O(1) Scheduler</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>The <strong>interactivity</strong> boost code got very complex and difficult to
+understand. It was not clear that it was doing the right thing.</p>
+</li>
+<li class="slide">
+<p>Not surprisingly, the scheduler was also difficult to model, useful in
+order to convince yourself that it is doing &quot;the right thing.&quot;</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_enter_con_kolivas">
+<h2>Enter Con Kolivas</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>An <strong>Australian anaesthetist</strong> turned Linux kernel programmer.</p>
+</li>
+<li class="slide">
+<p>Con became interested in scheduling, and in particular scheduling for
+interactive workloads and systems.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="imageblock hascaption">
+<div class="content">
+<img src="/img/slides/figures/scheduling/con.jpg" alt="con" style="width: 40%;">
+</div>
+<div class="title">Figure 2. Con Kolivas</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_interactivity_what_is_it">
+<h2>Interactivity, what is it?</h2>
+
+<div class="quoteblock smaller spelling_exception">
+<blockquote>
+<div class="paragraph">
+<p>There has been a lot of talk about what makes up a nice feeling desktop
+under linux. It comes down to two different but intimately related
+parameters which are not well defined. We often use the terms
+responsiveness and interactivity in the same sentence, but I&#x2019;d like to
+separate the two. As there is no formal definition I prefer to define
+them as such:</p>
+</div>
+<div class="paragraph">
+<p><strong>Responsiveness</strong>: The rate at which your workloads can proceed under
+different load conditions.</p>
+</div>
+<div class="paragraph">
+<p><strong>Interactivity</strong>: The scheduling latency and jitter present in tasks where
+the user would notice a palpable deterioration under different load
+conditions.</p>
+</div>
+<div class="paragraph">
+<p>Responsiveness would allow you to continue using your machine without
+too much interruption to your work, whereas interactivity would allow
+you to play audio or video without any dropouts, or drag a gui window
+across the screen and have it render smoothly across the screen without
+jerks.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#x2014; Con Kolivas
+</div>
+</div>
+
+</div>
+<div class="slide" id="_2004_kolivas_releases_the_rotating_staircase_scheduler">
+<h2>2004: Kolivas Releases The Rotating Staircase Scheduler</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Removes 498 lines of &quot;black magic&quot; aimed at improving interactivity
+and replaces them with 200 lines of new code implementing a simple,
+rank-based approach.</p>
+</li>
+<li class="slide">
+<p>Some similarities to MLFQ.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_2007_kolivas_releases_the_rotating_staircase_deadline_scheduler">
+<h2>2007: Kolivas Releases The Rotating Staircase Deadline Scheduler</h2>
+
+<div class="quoteblock small spelling_exception">
+<blockquote>
+<div class="paragraph">
+<p>A starvation free, strict fairness O(1) scalable design with
+interactivity as good as the above restrictions can provide. There is no
+interactivity estimator, no sleep/run measurements and only simple fixed
+accounting. The design has strict enough a design and accounting that
+task behaviour can be modelled and maximum scheduling latencies can be
+predicted by the virtual deadline mechanism that manages runqueues. The
+prime concern in this design is to maintain fairness at all costs
+determined by nice level, yet to maintain as good interactivity as can
+be allowed within the constraints of strict fairness.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#x2014; Con Kolivas
+</div>
+</div>
+
+</div>
+<div class="slide" id="_the_rotating_staircase_deadline_scheduler_rsdl">
+<h2>The Rotating Staircase Deadline Scheduler (RSDL)</h2>
+
+<div class="paragraph">
+<p>(Complete description <a href="http://ck.wikia.com/wiki/RSDL" target="_blank" class="external">here</a>.)</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>One parameter: the <strong>round-robin interval</strong> (<code>RR_INTERVAL</code>).</p>
+</li>
+<li class="slide">
+<p>One input: a thread <strong>priority</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Priority defines the levels at which each task can run.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>High priority tasks: <strong>more</strong> levels, <strong>more</strong> chances to run.</p>
+</li>
+<li>
+<p>Low priority tasks: <strong>fewer</strong> levels, <strong>fewer</strong> chances to run.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Tasks can run for at most a fixed amount of time per level.</p>
+</li>
+<li class="slide">
+<p>Each level can also run for at most a fixed amount of time&#x2014;&#x200B;ensures <strong>bounded
+latency</strong>.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_rsdl">
+<h2>RSDL</h2>
+
+<div class="ulist">
+<div class="title slide">To begin a scheduling epoch:</div>
+<ul>
+<li class="slide">
+<p>Put all threads in a queue determined by their priority.</p>
+</li>
+<li class="slide">
+<p>Then:</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p>Run threads from the highest non-empty queue round-robin</p>
+</li>
+<li class="slide">
+<p>If a thread <strong>blocks</strong> or <strong>yields</strong>, it remains at that level</p>
+</li>
+<li class="slide">
+<p>If a thread runs out of its quota, it moves to the <strong>next level down.</strong></p>
+</li>
+<li class="slide">
+<p>If the level runs out of <em>its</em> quota, <strong>all threads move to the next level
+down.</strong></p>
+</li>
+<li class="slide">
+<p>Continue until all quotas are exhausted or no threads are runnable, then restart another epoch.</p>
+</li>
+</ol>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_rsdl_2">
+<h2>RSDL</h2>
+
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-1.svg" alt="rsdl 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-2.svg" alt="rsdl 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-3.svg" alt="rsdl 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-4.svg" alt="rsdl 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-5.svg" alt="rsdl 5" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-6.svg" alt="rsdl 6" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-7.svg" alt="rsdl 7" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-8.svg" alt="rsdl 8" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-9.svg" alt="rsdl 9" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-10.svg" alt="rsdl 10" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-11.svg" alt="rsdl 11" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-12.svg" alt="rsdl 12" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-13.svg" alt="rsdl 13" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-14.svg" alt="rsdl 14" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-15.svg" alt="rsdl 15" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-16.svg" alt="rsdl 16" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-17.svg" alt="rsdl 17" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-18.svg" alt="rsdl 18" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-19.svg" alt="rsdl 19" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-20.svg" alt="rsdl 20" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-21.svg" alt="rsdl 21" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-22.svg" alt="rsdl 22" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-23.svg" alt="rsdl 23" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-24.svg" alt="rsdl 24" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-25.svg" alt="rsdl 25" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-26.svg" alt="rsdl 26" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-27.svg" alt="rsdl 27" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-28.svg" alt="rsdl 28" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-29.svg" alt="rsdl 29" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-30.svg" alt="rsdl 30" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-31.svg" alt="rsdl 31" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-32.svg" alt="rsdl 32" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-33.svg" alt="rsdl 33" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-34.svg" alt="rsdl 34" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-35.svg" alt="rsdl 35" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-36.svg" alt="rsdl 36" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-37.svg" alt="rsdl 37" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/scheduling/rsdl-38.svg" alt="rsdl 38" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_nice_features_of_rsdl">
+<h2>Nice Features of RSDL</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Can easily calculate how long it will be before a thread at a certain
+priority level runs given the number of runnable tasks in the system and
+their priorities. <strong>Easy to model.</strong></p>
+</li>
+<li class="slide">
+<p>Simple, fixed accounting. Scheduling can be done in O(1).</p>
+</li>
+<li class="slide">
+<p>More recent versions use <strong>interleaving</strong> to further reduce the delay
+between tasks scheduling with different priorities:</p>
+</li>
+</ul>
+</div>
+<div class="listingblock slide small">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c">PRIORITY:<span class="hljs-number">0.</span>................<span class="hljs-number">.20</span>................<span class="hljs-number">.39</span>
+nice <span class="hljs-number">-20</span> <span class="hljs-number">0000000000000000000000000000000000000000</span>
+nice <span class="hljs-number">-10</span> <span class="hljs-number">1000100010001000100010001000100010010000</span>
+nice   <span class="hljs-number">0</span> <span class="hljs-number">1010101010101010101010101010101010101010</span>
+nice   <span class="hljs-number">5</span> <span class="hljs-number">1011010110110101101101011011010110110110</span>
+nice  <span class="hljs-number">10</span> <span class="hljs-number">1110111011101110111011101110111011101110</span>
+nice  <span class="hljs-number">15</span> <span class="hljs-number">1111111011111110111111101111111011111110</span>
+nice  <span class="hljs-number">19</span> <span class="hljs-number">1111111111111111111111111111111111111110</span></code></pre>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_achieving_interactivity">
+<h2>Achieving Interactivity</h2>
+
+<div class="quoteblock spelling_exception">
+<blockquote>
+<div class="paragraph">
+<p>This design relies on the fact that interactive tasks, by their nature, sleep
+often. Most fair scheduling designs end up penalising such tasks indirectly
+giving them less than their fair possible share because of the sleep, and
+have to use a mechanism of bonusing their priority to offset this based on
+the duration they sleep.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#x2014; Con Kolivas
+</div>
+</div>
+
+</div>
+<div class="slide" id="_sounds_great_so_now_what">
+<h2>Sounds Great! So Now What?</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Kolivas struggles to demonstrate that his scheduler is better than the
+native scheduler. (Remember about desktop benchmarks?)</p>
+</li>
+<li class="slide">
+<p>Despite popularity with users, RSDL never leaves Con&#x2019;s private -ck
+Linux kernel tree.</p>
+</li>
+<li class="slide">
+<p>Simultaneously, Ingo Molnar (remember him?) develops and integrates a
+new Completely Fair Scheduler based on Kolivas&apos; work.</p>
+</li>
+<li class="slide">
+<p>Con withdraws from the Linux community, citing the difficulty in
+having multiple patches, including RSDL, accepted.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_to_rule_them_all">
+<h2>To Rule Them All</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Interesting design question: does it make sense to rely on a <strong>single
+scheduler</strong> given the diversity of devices Linux runs on?</p>
+</li>
+<li class="slide">
+<p>Kolivas proposed a <strong>pluggable</strong> scheduler architecture, parts of which
+were later adopted.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_moral">
+<h2>Moral?</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Find something to do that&#x2019;s fun.</p>
+</li>
+<li class="slide">
+<p>Get good at it.</p>
+</li>
+<li class="slide">
+<p>If you have good ideas, <strong>they will carry the day</strong>, even if your
+implementation does not.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_hes_baaaccckkk">
+<h2>&#x2026;&#x200B;He&#x2019;s <span class="spelling_exception">Baaaccckkk!</span></h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>In 2009 Kolivas returns with the Brain Fuck Scheduler, which continues
+to try and achieve interactivity without sacrificing simplicity.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_bfs">
+<h2>BFS</h2>
+
+<div class="quoteblock smaller spelling_exception">
+<blockquote>
+<div class="paragraph">
+<p>BFS is the Brain Fuck Scheduler. It was designed to be forward looking only,
+make the most of lower spec machines, and not scale to massive hardware. ie it
+is a desktop orientated scheduler, with extremely low latencies for excellent
+interactivity by design rather than &quot;calculated&quot;, with rigid fairness, nice
+priority distribution and extreme scalability within normal load levels.</p>
+</div>
+</blockquote>
+<div class="attribution">
+&#x2014; Con Kolivas
+</div>
+</div>
+
+</div>
+<div class="slide" id="_why_brain_fuck">
+<h2>Why Brain Fuck?</h2>
+
+<div class="ulist small">
+<ul>
+<li class="slide">
+<p>Because it throws out everything about what we know is good about how
+to design a modern scheduler in scalability.</p>
+</li>
+<li class="slide">
+<p>Because it&#x2019;s so ridiculously simple.</p>
+</li>
+<li class="slide">
+<p>Because it performs so ridiculously well on what it&#x2019;s good at despite
+being that simple.</p>
+</li>
+<li class="slide">
+<p>Because it&#x2019;s designed in such a way that mainline would never be
+interested in adopting it, which is how I like it.</p>
+</li>
+<li class="slide">
+<p>Because it will make people sit up and take notice of where the
+problems are in the current design.</p>
+</li>
+<li class="slide">
+<p>Because it throws out the philosophy that one scheduler fits all and
+shows that you can do a <em>lot</em> better with a scheduler designed for a
+particular purpose. I don&#x2019;t want to use a steamroller to crack nuts</p>
+</li>
+<li class="slide">
+<p>Because it actually means that more CPUs means better latencies.</p>
+</li>
+<li class="slide">
+<p>Because I must be fucked in the head to be working on this again.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_monday">
+<h2>Monday</h2>
+
+<div class="paragraph">
+<p>Virtual memory: my <strong>favorite</strong> operating systems topic.</p>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-02-29-schedulingstory">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

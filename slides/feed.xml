@@ -1,0 +1,543 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ops-class.org Lectures</title>
+    <description>OS lectures and videos by Geoffrey Challen.</description>
+		<link>https://www.ops-class.org/slides/</link>
+
+		<atom:link href="https://www.ops-class.org/slides/feed.xml" rel="self" type="application/rss+xml" />
+
+    <item>
+      <title>Exam Review</title>
+      <description>Exam review ask me anything session.</description>
+      <pubDate>Wed, 10 May 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-05-10-exam/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-05-10-exam/</guid>
+    </item>
+    <item>
+      <title>Hints for Computer System Design</title>
+      <description>Discussion of introduction to Hints for Computer System Design by Butler Lampson.</description>
+      <pubDate>Mon, 08 May 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-05-08-hints/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-05-08-hints/</guid>
+    </item>
+    <item>
+      <title>Amdahl&#x27;s Law</title>
+      <description>Continuation of a discussion of performance and benchmarking, and introduction to Amdahl&#x27;s Law.</description>
+      <pubDate>Wed, 03 May 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-05-03-amdahls/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-05-03-amdahls/</guid>
+    </item>
+    <item>
+      <title>Performance and Benchmarking</title>
+      <description>Discussion of the process of benchmarking and performance improvement.</description>
+      <pubDate>Mon, 01 May 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-05-01-performance/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-05-01-performance/</guid>
+    </item>
+    <item>
+      <title>Container Virtualization</title>
+      <description>Discussion of container or operating-system virtualization.</description>
+      <pubDate>Fri, 28 Apr 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-04-28-containers/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-04-28-containers/</guid>
+    </item>
+    <item>
+      <title>Xen and the Art of Virtualization</title>
+      <description>Discussion of the Xen approach to paravirtualization.</description>
+      <pubDate>Wed, 26 Apr 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-04-26-xen/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-04-26-xen/</guid>
+    </item>
+    <item>
+      <title>Full Virtualization</title>
+      <description>Introduction to virtualization.</description>
+      <pubDate>Mon, 24 Apr 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-04-24-virtualization/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-04-24-virtualization/</guid>
+    </item>
+    <item>
+      <title>RAID</title>
+      <description>Overview of Redundant Arrays of Inexpensive Disks (RAID).</description>
+      <pubDate>Wed, 19 Apr 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-04-19-raid/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-04-19-raid/</guid>
+    </item>
+    <item>
+      <title>Log-Structured File Systems</title>
+      <description>Discussion of log-structured file systems.</description>
+      <pubDate>Mon, 17 Apr 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-04-17-lfs/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-04-17-lfs/</guid>
+    </item>
+    <item>
+      <title>Journaling and FFS</title>
+      <description>The UNIX Fast File System (FFS).</description>
+      <pubDate>Fri, 14 Apr 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-04-14-ffs/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-04-14-ffs/</guid>
+    </item>
+    <item>
+      <title>File System Caching and Consistency</title>
+      <description>Discussion of file system caching and its impacts on consistency.</description>
+      <pubDate>Wed, 12 Apr 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-04-12-filesystemcaching/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-04-12-filesystemcaching/</guid>
+    </item>
+    <item>
+      <title>File System Data Structures</title>
+      <description>Continuation of a discussion of file system data structures.</description>
+      <pubDate>Mon, 10 Apr 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-04-10-filesystemstructures/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-04-10-filesystemstructures/</guid>
+    </item>
+    <item>
+      <title>Introduction to File Systems</title>
+      <description>Introduction to file system data structures and challenges.</description>
+      <pubDate>Fri, 07 Apr 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-04-07-filesystems/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-04-07-filesystems/</guid>
+    </item>
+    <item>
+      <title>Files</title>
+      <description>Introduction to files, file metadata and UNIX file system semantics.</description>
+      <pubDate>Wed, 05 Apr 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-04-05-files/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-04-05-files/</guid>
+    </item>
+    <item>
+      <title>Disks</title>
+      <description>Introduction to disks and the basics of stable storage.</description>
+      <pubDate>Mon, 03 Apr 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-04-03-disks/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-04-03-disks/</guid>
+    </item>
+    <item>
+      <title>Page Replacement</title>
+      <description>Discussion of page replacement policies.</description>
+      <pubDate>Wed, 29 Mar 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-03-29-pagereplacement/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-03-29-pagereplacement/</guid>
+    </item>
+    <item>
+      <title>Swapping</title>
+      <description>A discussion of how to swap in and out pages.</description>
+      <pubDate>Mon, 27 Mar 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-03-27-swapping/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-03-27-swapping/</guid>
+    </item>
+    <item>
+      <title>Paging</title>
+      <description>Page table design and implementation.</description>
+      <pubDate>Wed, 15 Mar 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-03-15-paging/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-03-15-paging/</guid>
+    </item>
+    <item>
+      <title>Page Translation</title>
+      <description>Discussion of page translation.</description>
+      <pubDate>Mon, 13 Mar 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-03-13-pagetranslation/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-03-13-pagetranslation/</guid>
+    </item>
+    <item>
+      <title>Address Translation</title>
+      <description>Discussion of efficiently translating virtual addresses to physical addresses.</description>
+      <pubDate>Fri, 10 Mar 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-03-10-addresstranslation/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-03-10-addresstranslation/</guid>
+    </item>
+    <item>
+      <title>Virtual Addresses</title>
+      <description>Discussion of creating and translating virtual addresses.</description>
+      <pubDate>Wed, 08 Mar 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-03-08-virtualaddresses/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-03-08-virtualaddresses/</guid>
+    </item>
+    <item>
+      <title>Introduction to Memory Management</title>
+      <description>Introduction to the challenge of OS energy management and the address space abstraction.</description>
+      <pubDate>Mon, 06 Mar 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-03-06-addressspaces/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-03-06-addressspaces/</guid>
+    </item>
+    <item>
+      <title>A Scheduling Story</title>
+      <description>Introduction to MLFQ, Con Kolivas, Linux development, and the Rotating Staircase Deadline Scheduler.</description>
+      <pubDate>Fri, 03 Mar 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-03-03-schedulingstory/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-03-03-schedulingstory/</guid>
+    </item>
+    <item>
+      <title>Simple Schedulers</title>
+      <description>An overview of simple schedulers including the know-nothings (random, round-robin) and oracle schedulers.</description>
+      <pubDate>Wed, 01 Mar 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-03-01-simpleschedulers/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-03-01-simpleschedulers/</guid>
+    </item>
+    <item>
+      <title>Introduction to Scheduling</title>
+      <description>Completion of a discussion of thread states followed by a motivation of the what, when and how of thread scheduling.</description>
+      <pubDate>Mon, 27 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-27-schedulingintro/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-27-schedulingintro/</guid>
+    </item>
+    <item>
+      <title>Threads and Thread Implementations</title>
+      <description>Introduction to the thread abstraction and discussion of different threading implementations.</description>
+      <pubDate>Fri, 24 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-24-threading/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-24-threading/</guid>
+    </item>
+    <item>
+      <title>Context Switching</title>
+      <description>The how and why of context switching.</description>
+      <pubDate>Wed, 22 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-22-contextswitching/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-22-contextswitching/</guid>
+    </item>
+    <item>
+      <title>Interrupt and Exception Handling</title>
+      <description>Introduction to the root of kernel privilege, interrupts and exception handling. Completion of wait and exit.</description>
+      <pubDate>Mon, 20 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-20-interrupts/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-20-interrupts/</guid>
+    </item>
+    <item>
+      <title>Deadlock and exec</title>
+      <description>Discussion of deadlock and completion of the process interface including a discussion of exec.</description>
+      <pubDate>Fri, 17 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-17-execwait/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-17-execwait/</guid>
+    </item>
+    <item>
+      <title>Synchronization Primitives</title>
+      <description>Spinlocks, locks, and condition variables.</description>
+      <pubDate>Wed, 15 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-15-synchproblems/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-15-synchproblems/</guid>
+    </item>
+    <item>
+      <title>Introduction to Synchronization</title>
+      <description>Introduction to synchronization and critical sections.</description>
+      <pubDate>Mon, 13 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-13-synchprimitives/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-13-synchprimitives/</guid>
+    </item>
+    <item>
+      <title>fork() and pipe()</title>
+      <description>Completion of a discussion of fork including the use of pipes.</description>
+      <pubDate>Fri, 10 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-10-forksynch/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-10-forksynch/</guid>
+    </item>
+    <item>
+      <title>Processes and File Handles</title>
+      <description>Introduction to file handles and file descriptors and the process life cycle.</description>
+      <pubDate>Wed, 08 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-08-forkandfilehandles/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-08-forkandfilehandles/</guid>
+    </item>
+    <item>
+      <title>More About Processes</title>
+      <description>Continuation of a discussion of the process abstraction.</description>
+      <pubDate>Mon, 06 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-06-moreprocesses/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-06-moreprocesses/</guid>
+    </item>
+    <item>
+      <title>The Process Abstraction</title>
+      <description>Introduction to the process abstraction and standard UNIX utilities.</description>
+      <pubDate>Fri, 03 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-03-processes/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-03-processes/</guid>
+    </item>
+    <item>
+      <title>ASST0 Setup</title>
+      <description>Getting starting with ASST0 and setting up the toolchain.</description>
+      <pubDate>Wed, 01 Feb 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-02-01-setup/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-02-01-setup/</guid>
+    </item>
+    <item>
+      <title>Introduction to CSE 421/521</title>
+      <description>Introduction to an introduction to operating systems, the course staff, and course policies.</description>
+      <pubDate>Mon, 30 Jan 2017 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2017-01-30-intro/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2017-01-30-intro/</guid>
+    </item>
+    <item>
+      <title>Exam Review</title>
+      <description>Exam review ask me anything session.</description>
+      <pubDate>Fri, 06 May 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-05-06-exam/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-05-06-exam/</guid>
+    </item>
+    <item>
+      <title>Cells: A Virtual Mobile Smartphone Architecture</title>
+      <description>Discussion of Cells: A Virtual Mobile Smartphone Architecture by Jeremy Andrus et al.</description>
+      <pubDate>Mon, 02 May 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-05-02-cells/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-05-02-cells/</guid>
+    </item>
+    <item>
+      <title>Scaling Linux to Many Cores</title>
+      <description>Discussion of &quot;An Analysis of Linux Scalability to Many Cores&quot; by Silas Boyd-Wickizer et al.</description>
+      <pubDate>Fri, 29 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-29-scaling/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-29-scaling/</guid>
+    </item>
+    <item>
+      <title>Hints for Computer System Design</title>
+      <description>Continuation of a discussion of performance and benchmarking, followed by an introduction to Hints for Computer System Design by Butler Lampson.</description>
+      <pubDate>Wed, 27 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-27-hints/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-27-hints/</guid>
+    </item>
+    <item>
+      <title>Performance and Benchmarking</title>
+      <description>Discussion of the process of benchmarking and performance improvement.</description>
+      <pubDate>Mon, 25 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-25-performance/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-25-performance/</guid>
+    </item>
+    <item>
+      <title>Atlantis: Robust, Extensible Execution Environments for Web Applications</title>
+      <description>Discussion of the Atlantis paper by James Mickens and collaborators.</description>
+      <pubDate>Fri, 22 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-22-atlantis/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-22-atlantis/</guid>
+    </item>
+    <item>
+      <title>Xen and the Art of Virtualization</title>
+      <description>Discussion of the Xen approach to paravirtualization.</description>
+      <pubDate>Wed, 20 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-20-xen/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-20-xen/</guid>
+    </item>
+    <item>
+      <title>Full Virtualization</title>
+      <description>Introduction to virtualization.</description>
+      <pubDate>Mon, 18 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-18-virtualization/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-18-virtualization/</guid>
+    </item>
+    <item>
+      <title>RAID</title>
+      <description>Overview of Redundant Arrays of Inexpensive Disks (RAID).</description>
+      <pubDate>Fri, 15 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-15-raid/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-15-raid/</guid>
+    </item>
+    <item>
+      <title>Log-Structured File Systems</title>
+      <description>Discussion of log-structured file systems.</description>
+      <pubDate>Wed, 13 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-13-lfs/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-13-lfs/</guid>
+    </item>
+    <item>
+      <title>Journaling and FFS</title>
+      <description>Introduction to journaling and the UNIX Fast File System (FFS).</description>
+      <pubDate>Mon, 11 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-11-ffs/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-11-ffs/</guid>
+    </item>
+    <item>
+      <title>File System Caching and Consistency</title>
+      <description>Discussion of file system caching and its impacts on consistency.</description>
+      <pubDate>Fri, 08 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-08-filesystemcaching/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-08-filesystemcaching/</guid>
+    </item>
+    <item>
+      <title>File System Data Structures</title>
+      <description>Continuation of a discussion of file system data structures.</description>
+      <pubDate>Wed, 06 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-06-filesystemstructures/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-06-filesystemstructures/</guid>
+    </item>
+    <item>
+      <title>Introduction to File Systems</title>
+      <description>Introduction to file system data structures and challenges.</description>
+      <pubDate>Mon, 04 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-04-filesystems/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-04-filesystems/</guid>
+    </item>
+    <item>
+      <title>Files</title>
+      <description>Introduction to files, file metadata and UNIX file system semantics.</description>
+      <pubDate>Fri, 01 Apr 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-04-01-files/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-04-01-files/</guid>
+    </item>
+    <item>
+      <title>Disks</title>
+      <description>Introduction to disks and the basics of stable storage.</description>
+      <pubDate>Wed, 30 Mar 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-03-30-disks/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-03-30-disks/</guid>
+    </item>
+    <item>
+      <title>Page Replacement</title>
+      <description>Discussion of page replacement policies.</description>
+      <pubDate>Mon, 28 Mar 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-03-28-pagereplacement/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-03-28-pagereplacement/</guid>
+    </item>
+    <item>
+      <title>Swapping</title>
+      <description>A discussion of how to swap in and out pages.</description>
+      <pubDate>Fri, 25 Mar 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-03-25-swapping/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-03-25-swapping/</guid>
+    </item>
+    <item>
+      <title>Paging</title>
+      <description>Page table design and implementation.</description>
+      <pubDate>Mon, 21 Mar 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-03-21-paging/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-03-21-paging/</guid>
+    </item>
+    <item>
+      <title>Page Translation</title>
+      <description>Discussion of page translation.</description>
+      <pubDate>Wed, 09 Mar 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-03-09-pagetranslation/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-03-09-pagetranslation/</guid>
+    </item>
+    <item>
+      <title>Address Translation</title>
+      <description>Discussion of efficiently translating virtual addresses to physical addresses.</description>
+      <pubDate>Mon, 07 Mar 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-03-07-addresstranslation/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-03-07-addresstranslation/</guid>
+    </item>
+    <item>
+      <title>Virtual Addresses</title>
+      <description>Discussion of creating and translating virtual addresses.</description>
+      <pubDate>Fri, 04 Mar 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-03-04-virtualaddresses/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-03-04-virtualaddresses/</guid>
+    </item>
+    <item>
+      <title>Introduction to Memory Management</title>
+      <description>Introduction to the challenge of OS energy management and the address space abstraction.</description>
+      <pubDate>Wed, 02 Mar 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-03-02-addressspaces/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-03-02-addressspaces/</guid>
+    </item>
+    <item>
+      <title>A Scheduling Story</title>
+      <description>Introduction to MLFQ, Con Kolivas, Linux development, and the Rotating Staircase Deadline Scheduler.</description>
+      <pubDate>Mon, 29 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-29-schedulingstory/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-29-schedulingstory/</guid>
+    </item>
+    <item>
+      <title>Simple Schedulers</title>
+      <description>An overview of simple schedulers including the know-nothings (random, round-robin) and oracle schedulers.</description>
+      <pubDate>Fri, 26 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-26-simpleschedulers/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-26-simpleschedulers/</guid>
+    </item>
+    <item>
+      <title>Introduction to Scheduling</title>
+      <description>Completion of a discussion of thread states followed by a motivation of the what, when and how of thread scheduling.</description>
+      <pubDate>Wed, 24 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-24-schedulingintro/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-24-schedulingintro/</guid>
+    </item>
+    <item>
+      <title>Threads and Thread Implementations</title>
+      <description>Introduction to the thread abstraction and discussion of different threading implementations.</description>
+      <pubDate>Mon, 22 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-22-threading/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-22-threading/</guid>
+    </item>
+    <item>
+      <title>Context Switching</title>
+      <description>The how and why of context switching.</description>
+      <pubDate>Fri, 19 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-19-contextswitching/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-19-contextswitching/</guid>
+    </item>
+    <item>
+      <title>Software Interrupts and Exceptions</title>
+      <description>Discussion of ways that applications can get the kernel&#x27;s attention.</description>
+      <pubDate>Wed, 17 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-17-multiprocessing/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-17-multiprocessing/</guid>
+    </item>
+    <item>
+      <title>Interrupt and Exception Handling</title>
+      <description>Introduction to the root of kernel privilege, interrupts and exception handling.</description>
+      <pubDate>Mon, 15 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-15-interrupts/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-15-interrupts/</guid>
+    </item>
+    <item>
+      <title>exec, wait and exit</title>
+      <description>Completion of the process interface including a discussion of exec, wait, and exit.</description>
+      <pubDate>Wed, 10 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-10-execwait/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-10-execwait/</guid>
+    </item>
+    <item>
+      <title>Synchronization Primitives and Problems</title>
+      <description>Continuation of an introduction to synchronization primitives and a discussion of several classic synchronization problems.</description>
+      <pubDate>Mon, 08 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-08-synchproblems/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-08-synchproblems/</guid>
+    </item>
+    <item>
+      <title>Synchronization Primitives</title>
+      <description>Completion of a discussion of critical sections, and an overview of locks and condition variables.</description>
+      <pubDate>Fri, 05 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-05-synchprimitives/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-05-synchprimitives/</guid>
+    </item>
+    <item>
+      <title>fork() and Synchronization</title>
+      <description>Completion of a discussion of fork including the use of pipes, and the beginning of a unit on synchronization.</description>
+      <pubDate>Wed, 03 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-03-forksynch/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-03-forksynch/</guid>
+    </item>
+    <item>
+      <title>Processes and File Handles</title>
+      <description>Continuation of a discussion of the process abstraction and introduction to file handles and file descriptors.</description>
+      <pubDate>Mon, 01 Feb 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-02-01-forkandfilehandles/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-02-01-forkandfilehandles/</guid>
+    </item>
+    <item>
+      <title>The Process Abstraction</title>
+      <description>Introduction to the process abstraction and standard UNIX utilities.</description>
+      <pubDate>Sat, 30 Jan 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-01-30-processes/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-01-30-processes/</guid>
+    </item>
+    <item>
+      <title>Introduction to CSE 421/521</title>
+      <description>Introduction to an introduction to operating systems, the course staff, and course policies.</description>
+      <pubDate>Mon, 25 Jan 2016 00:00:00 +0000</pubDate>
+			<link>https://www.ops-class.org/slides/2016-01-25-intro/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/slides/2016-01-25-intro/</guid>
+    </item>
+    <item>
+      <title></title>
+      <description></description>
+      <pubDate>Fri, 18 Sep 2020 14:49:27 +0000</pubDate>
+			<link>https://www.ops-class.org/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/</guid>
+    </item>
+    <item>
+      <title></title>
+      <description></description>
+      <pubDate>Fri, 18 Sep 2020 14:49:27 +0000</pubDate>
+			<link>https://www.ops-class.org/</link>
+			<guid isPermaLink="true">https://www.ops-class.org/</guid>
+    </item>
+  </channel>
+</rss>

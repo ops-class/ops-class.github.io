@@ -1,0 +1,455 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Introduction to Synchronization</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Introduction to synchronization and critical sections.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2017-02-10-forksynch/" title="Previous: fork() and pipe()" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2017-02-15-synchproblems/" title="Next: Synchronization Primitives">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="wAerP2Gbuf0"><img class="youtube-thumb" src="//i.ytimg.com/vi/wAerP2Gbuf0/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Introduction to Synchronization</h1>
+				
+
+
+<div class="sect1">
+<a class="anchor" id="_fast_forward_synchronization"></a><h2>Fast Forward: Synchronization</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What you need to know</div>
+<ul>
+<li>
+<p>The OS creates the <em>illusion of concurrency</em> by quickly switching the
+processor(s) between multiple threads</p>
+<div class="ulist">
+<ul>
+<li>
+<p>We will back up and discuss how this happens after discussion
+synchronization</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Threads</strong> are used to abstract and multiplex the CPU</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_pandoras_concurrency_box"></a><h2>Pandora&#x2019;s Concurrency Box</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">The illusion of concurrency is both <strong>powerful</strong> and <strong>useful</strong>:</div>
+<ul>
+<li>
+<p>It helps us think about how to structure our applications.</p>
+</li>
+<li>
+<p>It hides latencies caused by slow hardware devices.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Unfortunately, concurrency also creates <strong>problems</strong>:</div>
+<ul>
+<li>
+<p><strong>Coordination</strong>: how do we enable efficient communication between the
+multiple threads involved in performing a single task?</p>
+</li>
+<li>
+<p><strong>Correctness</strong>: how do we ensure that shared state remains consistent
+when being accessed by multiple threads concurrently? How do we enforce
+time-based semantics?</p>
+</li>
+<li>
+<p>We will focus on <strong>correctness</strong> today but return to <strong>coordination</strong>
+later.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_patient_0"></a><h2>Patient 0</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">The <strong>operating system</strong> itself is one of the most difficult concurrent programs to write. Why?</div>
+<ul>
+<li>
+<p>It is multiplexing access to hardware resources and therefore sharing
+a great deal of state between multiple processes!</p>
+</li>
+<li>
+<p>It frequently uses many threads to hide hardware delays while
+servicing devices and application requests.</p>
+</li>
+<li>
+<p><strong>Lots of shared state</strong> plus <strong>lots of threads</strong> equals a difficult
+synchronization problem.</p>
+</li>
+<li>
+<p>Also, if the operating system gets synchronization wrong <strong>bad things
+happen</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_concurrency_v_parallelism"></a><h2>Concurrency v. Parallelism</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <a href="https://golang.org/" target="_blank" class="external">Go developers</a> have a great description of this
+distinction. <a href="http://blog.golang.org/concurrency-is-not-parallelism" target="_blank" class="external">According
+to them</a>:</p>
+</div>
+<div class="openblock">
+<div class="content">
+<div class="quoteblock">
+<blockquote>
+&#x2026;&#x200B;when people hear the word concurrency they often think of parallelism, a
+related but quite distinct concept. In programming, concurrency is the
+composition of independently executing processes, while parallelism is the
+simultaneous execution of (possibly related) computations. Concurrency is
+about dealing with lots of things at once. Parallelism is about doing lots of
+things at once.
+</blockquote>
+</div>
+</div>
+</div>
+<div class="paragraph">
+<p><a href="https://vimeo.com/49718712" target="_blank" class="external">Watch the video</a> to find out more.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_unless_shown_otherwise"></a><h2>Unless Shown Otherwise&#x2026;&#x200B;</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Concurrency forces us to relax any assumptions that we may want to make about how any particular thread executes.</p>
+</div>
+<div class="olist arabic">
+<div class="title">Unless explicitly synchronized, threads may:</div>
+<ol class="arabic">
+<li>
+<p>Be run in <strong>any order</strong>,</p>
+</li>
+<li>
+<p>Be stopped and restarted at <strong>any time</strong>,</p>
+</li>
+<li>
+<p>Remain stopped for <strong>arbitrary lengths of time</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Generally these are <strong>good things</strong>&#x2014;the operating system is making
+choices about how to allocate resources.</p>
+</li>
+<li>
+<p>When accessing shared data these are <strong>challenges</strong> that force us to
+program more carefully.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+
+<div class="sect1">
+<a class="anchor" id="_race_conditions"></a><h2>Race Conditions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A <strong>race condition</strong> is &quot;when the output of a process is unexpectedly
+dependent on timing or other events.&quot;</p>
+</div>
+<div class="ulist">
+<div class="title">Note that the definition of a race depends on what we <strong>expected</strong> to happen:</div>
+<ul>
+<li>
+<p>We expected me to have <strong>$4,000</strong> after both deposits. (Otherwise we
+are not observing the Law of the Conversation of Money, probably
+important to banks except during bailouts.)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_concurrency_v_atomicity"></a><h2>Concurrency v. Atomicity</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title"><strong>Concurrency:</strong> the illusion that multiple things are happening at once.</div>
+<ul>
+<li>
+<p>Requires stopping or starting any thread at any time.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><strong>Atomicity:</strong> the illusion that a set of separate actions occurred <strong>all at once</strong>.</div>
+<ul>
+<li>
+<p>Requires not stopping certain threads at certain times or not
+starting certain threads at certain times, i.e. providing some limited
+control to threads over their scheduling.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_critical_sections"></a><h2>Critical Sections</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">A <strong>critical section</strong> contains a series of instructions that only one thread can be executing at any given time.</div>
+<ul>
+<li>
+<p>This set (or sets) of instructions will look atomic with respect to
+<strong>other threads executing code within the critical section</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">giveGWATheMoolah</span><span class="hljs-params">(<span class="hljs-keyword">account_t</span> account, <span class="hljs-keyword">int</span> largeAmount)</span> </span>{
+  <span class="hljs-keyword">int</span> gwaHas = get_balance(account);
+  gwaHas = gwaHas + largeAmount;
+  put_balance(account, gwaHas);
+  notifyGWAThatHeIsRich(gwaHas);
+  <span class="hljs-keyword">return</span>;
+}</code></pre>
+</div>
+</div><div class="olist arabic">
+<div class="title">In order to implement the previous example correctly:</div>
+<ol class="arabic">
+<li>
+<p>What is local state private to each thread? <strong class="slide">gwaHas</strong></p>
+</li>
+<li>
+<p>What is the shared state that is being accessed by giveGWATheMoolah?
+<strong class="slide">account</strong></p>
+</li>
+<li>
+<p>What lines are in the critical section? <strong class="slide">2-4</strong></p>
+</li>
+</ol>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_critical_section_requirements"></a><h2>Critical Section Requirements</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Mutual Exclusion:</strong> this is the most basic property. Only one thread
+should be executing in the critical section at one time.</p>
+</li>
+<li>
+<p><strong>Progress:</strong> all threads should eventually be able to proceed through
+the critical section.</p>
+</li>
+<li>
+<p><strong>Performance:</strong> we want to keep critical sections as small as possible
+without sacrificing correctness.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2017-02-10-forksynch/" title="Previous: fork() and pipe()" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2017-02-15-synchproblems/" title="Next: Synchronization Primitives">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">Fast Forward: Synchronization</a>
+					</li>
+					<li class="h5"><a href="#_pandoras_concurrency_box">Pandora&#x2019;s Concurrency Box</a>
+					</li>
+					<li class="h5"><a href="#_patient_0">Patient 0</a>
+					</li>
+					<li class="h5"><a href="#_concurrency_v_parallelism">Concurrency v. Parallelism</a>
+					</li>
+					<li class="h5"><a href="#_unless_shown_otherwise">Unless Shown Otherwise&#x2026;&#x200B;</a>
+					</li>
+					<li class="h5"><a href="#_race_conditions">Race Conditions</a>
+					</li>
+					<li class="h5"><a href="#_concurrency_v_atomicity">Concurrency v. Atomicity</a>
+					</li>
+					<li class="h5"><a href="#_critical_sections">Critical Sections</a>
+					</li>
+					<li class="h5"><a href="#_critical_section_requirements">Critical Section Requirements</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/synchprimitives.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/synchprimitives.adoc" target="_blank">View</a>
+			<br>
+			Built 2/12/2017 @ 19:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

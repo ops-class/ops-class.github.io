@@ -1,0 +1,578 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Files</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Introduction to files, file metadata and UNIX file system semantics.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2016-03-30-disks/" title="Previous: Disks" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2016-04-04-filesystems/" title="Next: Introduction to File Systems">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="TYn5_Jg26A0"><img class="youtube-thumb" src="//i.ytimg.com/vi/TYn5_Jg26A0/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Files</h1>
+				
+
+
+
+
+
+
+
+
+
+<div class="sect1">
+<a class="anchor" id="_file_systems_to_the_rescue"></a><h2>File Systems To The Rescue</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Low-level disk interface is messy and very limited:</div>
+<ul>
+<li>
+<p>Requires reading and writing entire 512-byte blocks.</p>
+</li>
+<li>
+<p>No notion of files, directories, etc.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>File systems take this limited block-level device and create the <strong>file
+abstraction</strong> almost <em>entirely in software</em>.</p>
+</div>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Compared to the CPU and memory that we have studied previously <strong>more</strong>
+of the file abstraction is implemented in software.</p>
+</li>
+<li>
+<p>This explains the plethora of available file systems: <span class="spelling_exception">ext2,3 and 4,
+reiserfs, NTFS, jfs, lfs, xfs</span>, etc.</p>
+</li>
+<li>
+<p>This is probably why many systems people have a soft spot for file
+systems even if they seem a bit outdated these days.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_what_about_flash"></a><h2>What About Flash?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>No moving parts! Great! We can eliminate a lot of the complexity of
+modern file systems. Yippee!</p>
+</div>
+<div class="ulist">
+<div class="title">Except that&#x2026;&#x200B;</div>
+<ul>
+<li>
+<p>Have to erase an entire large chunk before we can rewrite it.</p>
+</li>
+<li>
+<p>And it wears out faster that magnetic drives, and can wear unevenly
+if we are not careful.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Sigh&#x2026;&#x200B; things are sounding complicated again.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_clarifying_the_concept_of_a_file"></a><h2>Clarifying the Concept of a File</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Most of us are familiar with files, but the semantics of file have a
+variety of sources what are worth separating:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Just a file:</strong> the minimum it takes to be a file.</p>
+</li>
+<li>
+<p><strong>About a file:</strong> what other useful information do most file systems
+<em>typically</em> store about files?</p>
+</li>
+<li>
+<p><strong>Files and processes:</strong> what additional properties does the UNIX file
+system interface introduce to allow user processes to manipulate files?</p>
+</li>
+<li>
+<p><strong>Files together:</strong> given <em>multiple</em> files, how do we organize them in
+a useful way?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_just_a_file_the_minimum"></a><h2>Just a File: The Minimum</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What does a file have to do to be useful?</div>
+<ul>
+<li>
+<p><strong>Reliably</strong> store data. (Duh.)</p>
+</li>
+<li>
+<p>Be located! Usually via a <strong>name</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/disks/filebasic.svg" alt="image">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_basic_file_expectations"></a><h2>Basic File Expectations</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">At minimum we expect that</div>
+<ul>
+<li>
+<p>file contents <em>should not</em> change unexpectedly.</p>
+</li>
+<li>
+<p>file contents <em>should</em> change when requested and as requested.</p>
+</li>
+</ul>
+</div>
+<div style="page-break-after: always;"></div>
+<div class="paragraph">
+<p>These requirements seem simple but many file systems <strong>do not</strong> meet them!</p>
+</div>
+<div class="quoteblock spelling_exception">
+<blockquote>
+<div class="paragraph">
+<p>03 Mar 2012: Bug Report&#x2013;Serious file system corruption and data loss
+caused to other NTFS drives by Windows 8 CP</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p><strong>Failures</strong> such as power outages and sudden ejects make file system design difficult and
+exposed tradeoffs between durability and performance.</p>
+</div><div class="ulist">
+<ul>
+<li>
+<p>Memory: fast, transient. Disk: slow, stable.</p>
+</li>
+</ul>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_about_a_file_file_metadata"></a><h2>About a File: File Metadata</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">What else might we want to know about a file?</div>
+<ul>
+<li>
+<p><strong>When</strong> was the file created, last accessed, or last modified?</p>
+</li>
+<li>
+<p><strong>Who</strong> is allowed to what to the file&#x2014;read, write, rename, change
+other attributes, etc.</p>
+</li>
+<li>
+<p>Other file attributes?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_where_to_store_file_metadata"></a><h2>Where to Store File Metadata?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>An MP3 file contains audio data. But it also has attributes
+such as:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>title</p>
+</li>
+<li>
+<p>artist</p>
+</li>
+<li>
+<p>date</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Where should these attributes be stored?</div>
+<ul>
+<li>
+<p>In the file itself.</p>
+</li>
+<li>
+<p>In another file.</p>
+</li>
+<li>
+<p>In <em>attributes</em> associated with the file and maintained by the
+file system.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><strong>In the file</strong>:</div>
+<ul>
+<li>
+<p>Example: MP3 ID3 tag, a data container stored within an MP3 file in a
+prescribed format.</p>
+</li>
+</ul>
+</div><div class="ulist">
+<ul>
+<li>
+<p><strong>Pro:</strong> travels along with the file from computer to computer.</p>
+</li>
+<li>
+<p><strong>Con:</strong> requires all programs that access the file to understand the
+format of the embedded metadata.</p>
+</li>
+</ul>
+</div><div style="page-break-after: always;"></div><div class="ulist">
+<div class="title"><strong>In another file</strong>:</div>
+<ul>
+<li>
+<p>Example: iTunes database.</p>
+</li>
+</ul>
+</div><div class="ulist">
+<ul>
+<li>
+<p><strong>Pro:</strong> can be maintained separately by each application.</p>
+</li>
+<li>
+<p><strong>Con:</strong> does not move with the file and the separate file must be kept
+in sync when the files it stores information about change.</p>
+</li>
+</ul>
+</div><div style="page-break-after: always;"></div><div class="ulist">
+<div class="title"><strong>In attributes</strong>:</div>
+<ul>
+<li>
+<p>Example: attributes have been supported by a variety of file systems
+including prominently by BFS, the BeOS file system.</p>
+</li>
+</ul>
+</div><div class="ulist">
+<ul>
+<li>
+<p><strong>Pro:</strong> maintained by the file system so can be queried and queried
+quickly.</p>
+</li>
+<li>
+<p><strong>Con:</strong> does not move with the file, and creates compatibility problems with
+other file systems.</p>
+</li>
+</ul>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_processes_and_files_unix_semantics"></a><h2>Processes and Files: UNIX Semantics</h2>
+<div class="sectionbody">
+<div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Many file systems provide an interface for establishing a
+<strong>relationship</strong> between a process and a file.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>&quot;I have the file open. I am using this file.&quot;</p>
+</li>
+<li>
+<p>&quot;I am finished using the file and will close it now.&quot;</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Why does the file system want to establish these process-file relationships?</div>
+<ul>
+<li>
+<p>Can improve <strong>performance</strong> if the OS knows what files are actively
+being used by using caching or read-ahead.</p>
+</li>
+<li>
+<p>The file system may provide <strong>guarantees</strong> to processes based on this
+relationship, such as exclusive access.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Some file systems, particularly <em>networked</em> file systems, don&#x2019;t even
+bother to establish these relationships. (What happens if a networked
+client opens a file exclusively and then dies?)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_file_location_unix_semantics"></a><h2>File Location: UNIX Semantics</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>UNIX semantics simplify reads and writes to files by storing the file
+position for processes.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>This is a convenience, not a requirement: processes could be required
+to provide a position with every read and write.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_unix_file_interface"></a><h2>UNIX File Interface</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">Establishing relationships:</div>
+<ul>
+<li>
+<p><code>open(&quot;foo&quot;)</code>: &quot;I&#x2019;d like to use the file named foo.&quot;</p>
+</li>
+<li>
+<p><code>close(&quot;foo&quot;)</code>: &quot;I&#x2019;m finished with foo.&quot;</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Reading and writing:</div>
+<ul>
+<li>
+<p><code>read(2)</code>: &quot;I&#x2019;d like to perform a read from file handle 2 at the
+current position.&quot;</p>
+</li>
+<li>
+<p><code>write(2)</code>: &quot;I&#x2019;d like to perform a write from file handle 2 at the
+current position.&quot;</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title">Positioning:</div>
+<ul>
+<li>
+<p><code>lseek(2, 100)</code>: &quot;Please move my saved position for file handle 2 to position 100.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2016-03-30-disks/" title="Previous: Disks" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2016-04-04-filesystems/" title="Next: Introduction to File Systems">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">File Systems To The Rescue</a>
+					</li>
+					<li class="h5"><a href="#_what_about_flash">What About Flash?</a>
+					</li>
+					<li class="h5"><a href="#_clarifying_the_concept_of_a_file">Clarifying the Concept of a File</a>
+					</li>
+					<li class="h5"><a href="#_just_a_file_the_minimum">Just a File: The Minimum</a>
+					</li>
+					<li class="h5"><a href="#_basic_file_expectations">Basic File Expectations</a>
+					</li>
+					<li class="h5"><a href="#_about_a_file_file_metadata">About a File: File Metadata</a>
+					</li>
+					<li class="h5"><a href="#_where_to_store_file_metadata">Where to Store File Metadata?</a>
+					</li>
+					<li class="h5"><a href="#_processes_and_files_unix_semantics">Processes and Files: UNIX Semantics</a>
+					</li>
+					<li class="h5"><a href="#_file_location_unix_semantics">File Location: UNIX Semantics</a>
+					</li>
+					<li class="h5"><a href="#_unix_file_interface">UNIX File Interface</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/2016/files.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/2016/files.adoc" target="_blank">View</a>
+			<br>
+			Built 3/31/2016 @ 20:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

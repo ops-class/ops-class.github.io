@@ -1,0 +1,606 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Disks</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Introduction to disks and the basics of stable storage.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="http://en.wikipedia.org/wiki/Radia_Perlman" target="_blank"><img src="/img/slides/women/050.jpg" alt="050" style="width: 100%;"></a>
+</div>
+<div class="title">Figure 1. Radia Perlman</div>
+</div>
+<div class="paragraph center">
+<p><span class="fa fa-music"></span> <a href="http://foofighters.com" target="_blank" class="external">Learn to Fly by Foo Fighters</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/7dwuzqF6huc?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+
+</div>
+<div class="nooutline slide" id="_today">
+<h2>Today</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Introduction to stable storage.</p>
+</li>
+<li>
+<p>From <strong>disks</strong> to <strong>files</strong>.</p>
+</li>
+<li>
+<p>Spinning disk operation basics.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_cat_announce_txt">
+<h2>$ cat announce.txt</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><a href="https://www.ops-class.org/asst/3/" target="_blank" class="external">ASST3 core map</a> due Friday, April 8th @ 5PM.</p>
+</li>
+<li class="slide">
+<p><code>test161</code> <a href="https://test161.ops-class.org/leaders" target="_blank" class="external">leader boards</a> are live.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_virtual_memory_questions">
+<h2>Virtual Memory: Questions?</h2>
+
+
+
+</div>
+<div class="small slide" id="_ssds_v_hdds">
+<h2>SSDs v. HDDs</h2>
+
+<div class="ulist">
+<div class="title slide">Some important terminology:</div>
+<ul>
+<li class="slide">
+<p><strong>stable storage</strong>: storage that does not lose its contents when the
+computer is turned off.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Today we have two main categories of stable storage with very different characteristics:</div>
+<ul>
+<li class="slide">
+<p><strong>HDD</strong>, <strong>spinning disk</strong> or <strong>hard drive</strong>: a stable storage device
+constructed of rotating magnetic platters. (HDD stands for Hard Disk
+Drive.)</p>
+</li>
+<li class="slide">
+<p><strong>SSD</strong> or <strong>Flash drive</strong>: a stable storage device constructed of
+non-moving non-volatile memory.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">HDDs are <em>bigger</em>, <em>slower</em>, and <em>cheaper</em> than SSDs.</div>
+<ul>
+<li class="slide">
+<p>$0.10 per GB (HDD) v. $1 per GB (projected for SSDs in 2012).</p>
+</li>
+<li class="slide">
+<p>Today: $0.07 per GB (HDD) v. $0.15 per GB (SSD)&#x2014;not that bad!</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>If I am not clear about what type of storage I am referring to <strong>please
+ask</strong>. The differences between HDDs and SSDs lead to very different
+system designs!</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_why_study_spinning_disks">
+<h2>Why Study Spinning Disks?</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Flash is the future!</p>
+</li>
+<li class="slide">
+<p>But HDDs are still around.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Hierarchical file systems are dead. Long live search!</p>
+</li>
+<li class="slide">
+<p>But local search is still built on top of hierarchical file systems today.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>New storage technologies will completely alter the way that operating
+systems store data.</p>
+</li>
+<li class="slide">
+<p>But new solutions will benefit from, and probably resemble, earlier
+efforts.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Let&#x2019;s focus on the <strong>systems design principles</strong> at work here and admire
+the maturity of file system design. (And we won&#x2019;t linger here.)</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_disk_parts">
+<h2>Disk Parts</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Platter:</strong> a circular flat disk on which magnetic data is stored.
+Constructed of a rigid non-magnetic material coated with a <em>very thin</em>
+layer of magnetic material. Can have data written on both sides.</p>
+</li>
+<li class="slide">
+<p><strong>Spindle:</strong> the drive shaft on which multiple <strong>platters</strong> are mounted
+and spun between 4200&#x2013;15,000 RPM.</p>
+</li>
+<li class="slide">
+<p><strong>Head:</strong> the actuator that reads and writes data onto the magnetic
+surface of the <strong>platters</strong> while rotating at tens of nanometers over the
+platter surface.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_disk_part_diagram">
+<h2>Disk Part Diagram</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/disks/hdd.svg" alt="hdd" style="width: 80%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_disk_locations">
+<h2>Disk Locations</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Track:</strong> think of a lane on a race track running around the platter.</p>
+</li>
+<li class="slide">
+<p><strong>Sector:</strong> resembles a slice of pie cut out of a single platter.</p>
+</li>
+<li class="slide">
+<p><strong>Cylinder:</strong> imagine the intersection between a cylinder and the set of
+platters. Composed of a set of vertically-aligned tracks on all
+platters.</p>
+</li>
+<li class="slide">
+<p>Ah forget it. <strong>To the diagram!</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_disk_location_diagram">
+<h2>Disk Location Diagram</h2>
+
+<div class="paragraph">
+<p><span class="image"><img src="/img/slides/figures/disks/chs.svg" alt="chs" style="width: 100%;"></span></p>
+</div>
+
+</div>
+<div class="slide" id="_a_disk_in_action">
+<h2>A Disk In Action</h2>
+
+<div class="videoblock">
+
+<iframe width="640" height="360" src="//www.youtube.com/embed/9eMWG3fwiEU?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_1"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_1"></div><div class="anim-pause slide" data-what="iframe#_iframe_1"></div></div>
+
+</div>
+<div class="slide" id="_spinning_disks_are_different">
+<h2>Spinning Disks Are Different</h2>
+
+<div class="paragraph">
+<p>Spinning disks are fundamentally different from the other system
+components we have discussed so far.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Difference in <strong>kind</strong>: disks <strong>move</strong>!</p>
+</li>
+<li class="slide">
+<p>Difference in <strong>degree</strong>: disks are <strong>slow</strong>!</p>
+</li>
+<li class="slide">
+<p>Difference in <strong>integration</strong>: disks are <strong>devices</strong>, and less
+tightly-coupled to the abstractions built on top of them.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_disks_move_ergo_disks_are_slow">
+<h2>Disks Move, Ergo Disks Are Slow</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Electronics time scale: the time necessary for electrons to flow from
+one part of the computer or chip to another. <strong class="slide">Very fast!</strong></p>
+</li>
+<li class="slide">
+<p>Mechanics time scale: the time necessary for a physical object to move
+gently and precisely from one point to another point. <strong class="slide">Comparatively
+slow!</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_disks_move_ergo_disks_fail">
+<h2>Disks Move, Ergo Disks Fail</h2>
+
+<div class="ulist">
+<div class="title slide">Disks can fail by parts:</div>
+<ul>
+<li class="slide">
+<p>Many disks ship with sectors that are already broken. The operating
+system&#x2014;or disk software&#x2014;detect and ignore these sectors.</p>
+</li>
+<li class="slide">
+<p>Sectors may also fail over time, potentially resulting in data loss.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Disks can fail <strong>catastrophically</strong>:</div>
+<ul>
+<li class="slide">
+<p>A <strong>head crash</strong> occurs when a jolt or violent event sends the disk
+heads crashing into the magnetic surface, scraping off material and
+destroying the platter.</p>
+</li>
+<li class="slide">
+<p>When this happens, you have about 20 seconds to say goodbye.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_head_crash">
+<h2>Head Crash</h2>
+
+<div class="videoblock">
+
+<iframe width="640" height="360" src="//www.youtube.com/embed/nXa9oLwsZYY?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_2"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_2"></div><div class="anim-pause slide" data-what="iframe#_iframe_2"></div></div>
+
+</div>
+<div class="slide" id="_handling_failures">
+<h2>Handling Failures</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>We will discuss RAID, a clever way to use multiple disks to create a
+more reliable and better-performing device that looks like a single
+disk.</p>
+</li>
+<li class="slide">
+<p>Many interesting approaches to fault tolerance began with people
+thinking about spinning disks&#x2014;&#x200B;and then have been applied elsewhere.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_disks_are_slow">
+<h2>Disks Are Slow</h2>
+
+<div class="paragraph">
+<p>Disks frequently bottleneck other parts of the operating system.</p>
+</div>
+<div class="ulist">
+<div class="title slide">Operating systems play some of our usual games with disks to try and hide disk latency.</div>
+<ul>
+<li class="slide">
+<p>Use the <strong>past to predict the future</strong>.</p>
+</li>
+<li class="slide">
+<p>Use a <strong>cache</strong>.</p>
+</li>
+<li class="slide">
+<p><strong>Procrastination</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Contrast with memory latencies which are usually hidden <strong>transparently</strong> by
+the processor (through out-of-order execution). Here the operating system
+software is directly involved.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_sources_of_slowness">
+<h2>Sources of Slowness</h2>
+
+<div class="paragraph">
+<p>Reading or writing from the disk requires a series of steps, each of
+which is a potential source of latency.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p><strong>Issue the command.</strong> The operating system has to tell the device
+what to do, the command has to cross the device interconnect (IDE, SATA,
+etc.), and the drive has to select which head to use.</p>
+</li>
+<li class="slide">
+<p><strong>Seek time.</strong> The drive has to move the heads to the appropriate
+track.</p>
+</li>
+<li class="slide">
+<p><strong>Settle time.</strong> The heads have to stabilize on the (very narrow)
+track.</p>
+</li>
+<li class="slide">
+<p><strong>Rotation time.</strong> The platters have to rotate to the position where
+the data is located.</p>
+</li>
+<li class="slide">
+<p><strong>Transfer time.</strong> The data has to be read and transmitted back across
+the interconnect into system memory.</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="slide" id="_what_improves">
+<h2>What Improves?</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>Interconnect speeds</strong>: <span class="slide">seem to be increasing. (SATA-6, anyone?)</span></p>
+</li>
+<li class="slide">
+<p><strong>Seek times</strong>: <span class="slide"><em>not improving</em> rapidly. This is the moving physical
+objects part.</span></p>
+</li>
+<li class="slide">
+<p><strong>Rotation speeds</strong>: <span class="slide">can vary between devices but may not be the primary
+source of latency anyway. Physical limitations come in to play here as
+well.</span></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_the_already_came_io_crisis">
+<h2>The Already-Came I/O Crisis</h2>
+
+<div class="ulist">
+<div class="title slide">Two factors collide:</div>
+<ul>
+<li class="slide">
+<p>Hard drive densities and capacities soar, encouraging users to save
+more stuff and increasing I/O demand.</p>
+</li>
+<li class="slide">
+<p>Seek times limit the ability of disks to keep up.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_the_already_came_io_crisis_2">
+<h2>The Already-Came I/O Crisis</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/disks/storageevolution.gif" alt="storageevolution" style="width: 70%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_the_already_came_io_crisis_3">
+<h2>The Already-Came I/O Crisis</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="http://img.tomshardware.com/us/2006/11/28/15-years-of-hard-drive-history/image016.gif" alt="image016" style="width: 50%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_the_already_came_io_crisis_4">
+<h2>The Already-Came I/O Crisis</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>So three orders of magnitude increase in capacity&#x2026;&#x200B;</p>
+</li>
+<li class="slide">
+<p>But only two in speed.</p>
+</li>
+<li class="slide">
+<p>And think about what happened to processors during that time!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_file_systems_to_the_rescue">
+<h2>File Systems To The Rescue</h2>
+
+<div class="ulist">
+<div class="title slide">Low-level disk interface is messy and very limited:</div>
+<ul>
+<li class="slide">
+<p>Requires reading and writing entire 512-byte blocks.</p>
+</li>
+<li class="slide">
+<p>No notion of files, directories, etc.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>File systems take this limited block-level device and create the <strong>file
+abstraction</strong> almost <em>entirely in software</em>.</p>
+</div>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Compared to the CPU and memory that we have studied previously <strong>more</strong>
+of the file abstraction is implemented in software.</p>
+</li>
+<li class="slide">
+<p>This explains the plethora of available file systems: <span class="spelling_exception">ext2,3 and 4,
+reiserfs, NTFS, jfs, lfs, xfs</span>, etc.</p>
+</li>
+<li class="slide">
+<p>This is probably why many systems people have a soft spot for file
+systems even if they seem a bit outdated these days.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_what_about_flash">
+<h2>What About Flash?</h2>
+
+<div class="paragraph">
+<p>No moving parts! Great! We can eliminate a lot of the complexity of
+modern file systems. Yippee!</p>
+</div>
+<div class="ulist">
+<div class="title slide">Except that&#x2026;&#x200B;</div>
+<ul>
+<li class="slide">
+<p>Have to erase an entire large chunk before we can rewrite it.</p>
+</li>
+<li class="slide">
+<p>And it wears out faster that magnetic drives, and can wear unevenly
+if we are not careful.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Sigh&#x2026;&#x200B; things are sounding complicated again.</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="nooutline slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Hard drive request scheduling algorithms.</p>
+</li>
+<li>
+<p>Introduction to file systems.</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-03-30-disks">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

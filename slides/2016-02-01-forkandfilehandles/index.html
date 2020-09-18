@@ -1,0 +1,947 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Processes and File Handles</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Continuation of a discussion of the process abstraction and introduction to file handles and file descriptors.">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+		<link rel="stylesheet" type="text/css" href="/css/outline.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/" class="active">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row hidden-md hidden-lg">
+			<div class="col-xs-12 text-center spelling_exception" style="margin-top:20px;">
+				<span>
+						<a href="/slides/2016-01-30-processes/" title="Previous: The Process Abstraction" style="margin-right:10px;">
+							<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+						</a>
+					</span>
+					<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+					<a href="/slides/2016-02-03-forksynch/" title="Next: fork() and Synchronization">
+						Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+					</a>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-xs-12 col-md-2">
+				<div id="video" class="text-center fixed-col-md-2 fixed-col-lg-2">
+					<div class="embed-responsive embed-responsive-16by9 hidden-print">
+						<div class="youtube-container" data-id="3ZctdAiEZAE"><img class="youtube-thumb" src="//i.ytimg.com/vi/3ZctdAiEZAE/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+					</div>
+				</div>
+			</div>
+			<div id="slides" class="col-xs-12 col-md-8">
+				<a class="anchor" id="top"></a>
+				<h1>Processes and File Handles</h1>
+				
+
+
+
+
+
+<div class="sect1">
+<a class="anchor" id="_process_example_firefox"></a><h2>Process Example: Firefox</h2>
+<div class="sectionbody">
+<div class="openblock">
+<div class="content">
+<div class="ulist">
+<div class="title"><strong>Firefox has multiple threads. What are they doing?</strong></div>
+<ul>
+<li>
+<p>Waiting for and processing interface events: mouse clicks, keyboard
+input, etc.</p>
+</li>
+<li>
+<p>Redrawing the screen as necessary in response to user input, web page
+loading, etc.</p>
+</li>
+<li>
+<p>Loading web pages&#x2014;&#x200B;usually multiple parts <em>in parallel</em> to speed
+things up.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><strong>Firefox is using memory. For what?</strong></div>
+<ul>
+<li>
+<p>Firefox.exe: the executable code of Firefox itself.</p>
+</li>
+<li>
+<p>Shared libraries for web page parsing, security, etc.</p>
+</li>
+<li>
+<p>Stacks storing local variables for running threads.</p>
+</li>
+<li>
+<p>A heap storing dynamically-allocated memory.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title"><strong>Firefox has files open. Why?</strong></div>
+<ul>
+<li>
+<p>Configuration files.</p>
+</li>
+<li>
+<p>Fonts.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_top_more_process_information"></a><h2>$ top # more process information</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/top.svg" alt="top" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_process_example_bash"></a><h2>Process Example: bash</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Let&#x2019;s do this for real using standard Linux system utilities.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_finding_bash"></a><h2>Finding bash</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/finding-bash.svg" alt="finding bash" style="width: 100%;">
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>ps aux</code> gives me all process, then <code>grep</code> for the one I&#x2019;m after.</p>
+</li>
+<li>
+<p>&#x2026;&#x200B;or, do it all in one shot using <code>pgrep</code>.</p>
+</li>
+<li>
+<p>&#x2026;&#x200B;or, if I know it&#x2019;s running in my current session a bare <code>ps</code> will do.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_bash"></a><h2>bash</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/process-bash-3.svg" alt="process bash 3" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_ps_lf_thread_information"></a><h2><span class="spelling_exception">$ ps -Lf # thread information</span></h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/threads-bash.svg" alt="threads bash" style="width: 100%;">
+</div>
+</div>
+<div class="ulist">
+<div class="title">What are:</div>
+<ul>
+<li>
+<p><code>UID</code>: user the process is running as.</p>
+</li>
+<li>
+<p><code>PID</code>: process ID.</p>
+</li>
+<li>
+<p><code>PPID</code>: parent process ID.</p>
+</li>
+<li>
+<p><code>PRI</code>: scheduling priority.</p>
+</li>
+<li>
+<p><code>SZ</code>: size of the core image of the process (kB).</p>
+</li>
+<li>
+<p><code>WCHAN</code>: if the process is not running, description of what it is
+waiting on.</p>
+</li>
+<li>
+<p><code>RSS</code>: total amount of resident memory is use by the process (kB).</p>
+</li>
+<li>
+<p><code>TIME</code>: measure of the amount of time that the process has spent
+running.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/threads-bash.svg" alt="threads bash" style="width: 100%;">
+</div>
+</div><div class="ulist">
+<ul>
+<li>
+<p>If <code>bash</code> had multiple threads running this view would show them, so
+<code>bash</code> does not have multiple threads.</p>
+</li>
+</ul>
+</div></div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_bash_2"></a><h2>bash</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/process-bash-2.svg" alt="process bash 2" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_ps_process_information"></a><h2>$ ps # process information</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>I wish we could see a process with multiple threads&#x2026;&#x200B;</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_ps_lf_thread_information_3"></a><h2><span class="spelling_exception">$ ps -Lf # thread information</span></h2>
+<div class="sectionbody">
+<div class="imageblock expand">
+<div class="content">
+<img src="/img/slides/figures/ps-threads.svg" alt="ps threads" style="width: 90%;">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_pmap_memory_mappings"></a><h2>$ pmap # memory mappings</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/pmap.svg" alt="pmap" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_bash_3"></a><h2>bash</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/process-bash-1.svg" alt="process bash 1" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_lsof_open_files"></a><h2>$ lsof # open files</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/lsof.svg" alt="lsof" style="width: 100%;">
+</div>
+</div>
+<div class="ulist">
+<div class="title">True confessions: I cheated here.</div>
+<ul>
+<li>
+<p><code>/home/challen/.bashrc</code> was not actually open when I ran this command.</p>
+</li>
+<li>
+<p><code>bash</code> didn&#x2019;t have any interesting files open and I was embarrassed.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/lsof.svg" alt="lsof" style="width: 100%;">
+</div>
+</div><div class="ulist">
+<div class="title">True confessions: I cheated here.</div>
+<ul>
+<li>
+<p><code>/home/challen/.bashrc</code> was not actually open when I ran this command.</p>
+</li>
+<li>
+<p><code>bash</code> didn&#x2019;t have any interesting files open and I was embarrassed.</p>
+</li>
+</ul>
+</div><div class="openblock">
+<div class="content">
+<div class="paragraph">
+<p>Let&#x2019;s imagine we caught bash during startup when it is reading its
+configuration parameters.</p>
+</div>
+</div>
+</div></div>
+</div>
+
+
+<div class="sect1">
+<a class="anchor" id="_bash_4"></a><h2>bash</h2>
+<div class="sectionbody">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/process-bash.svg" alt="process bash" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_aside_the_proc_file_system"></a><h2>Aside: the /proc/ file system</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>How do <code>top</code>, <code>ps</code>, <code>pmap</code>, <code>lsof</code>, and other process examination utilities
+gather information?</p>
+</li>
+<li>
+<p>Linux reuses the <strong>file</strong> abstraction for this purpose.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock slide">
+<div class="content">
+<img src="/img/slides/figures/procfilesystem.svg" alt="procfilesystem" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_os_abstraction_cheat_sheet"></a><h2>OS Abstraction Cheat Sheet</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Threads</strong> save processor state.</p>
+</li>
+<li>
+<p><strong>Address spaces</strong> map the addresses used by processes (virtual
+addresses) to real memory addresses (physical addresses).</p>
+</li>
+<li>
+<p><strong>Files</strong> map offsets into a file to blocks on disk.</p>
+</li>
+<li>
+<p><strong>File-like objects</strong> look like files to a process but are not actually
+stored on disk and may not completely obey file semantics.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>You can&#x2019;t seek on a network socket or open certain network-mounted
+files.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Processes</strong> organize these other operating system abstractions.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+
+
+
+
+
+<div class="sect1">
+<a class="anchor" id="_updated_process_model"></a><h2>Updated Process Model</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>For today&#x2019;s material being precise about how processes use files
+becomes important.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>So let&#x2019;s update our model. Here&#x2019;s what we had last time:</p>
+</li>
+</ul>
+</div>
+<div class="imageblock vbottom expand">
+<div class="content">
+<img src="/img/slides/figures/process.svg" alt="process" style="width: 50%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>So let&#x2019;s update our model. Here&#x2019;s what we had last time:</p>
+</li>
+<li>
+<p>And here&#x2019;s today&#x2019;s change:</p>
+</li>
+</ul>
+</div>
+<div class="imageblock expand vbottom">
+<div class="content">
+<img src="/img/slides/figures/process-updated.svg" alt="process updated" style="width: 50%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_file_handles"></a><h2>File Handles</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>The <strong>file descriptor</strong> that processes receive from <code>open()</code> and pass to
+other file system system calls is just an int, an index into the process
+file table.</p>
+</li>
+<li>
+<p>That int refers to a <strong>file handle</strong> object maintained by the kernel.</p>
+</li>
+<li>
+<p>That file handle object contains a reference a separate <strong>file object</strong>
+also maintained by the kernel.</p>
+</li>
+<li>
+<p>Which then is mapped by the file system to blocks on disk.</p>
+</li>
+<li>
+<p>So <strong>three</strong> levels of indirection:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>file descriptor &#x2192; file handle.</p>
+</li>
+<li>
+<p>file handle &#x2192; file object.</p>
+</li>
+<li>
+<p>file object &#x2192; blocks on disk.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Why?</strong></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+<div class="sect1">
+<a class="anchor" id="_sharing_file_state"></a><h2>Sharing File State</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title">The additional level of indirection allows certain pieces of state to be shared separately.</div>
+<ul>
+<li>
+<p><strong>File descriptors</strong> are private to each process.</p>
+</li>
+<li>
+<p><strong>File handles</strong> are private to each process but shared after process
+creation.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>File handles</strong> store the current file <strong>offset</strong>, or the position in
+the file that the next read will come from or write will go to. File
+handles can be <strong>deliberately</strong> shared between two processes.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>File objects</strong> hold other file state and can be shared <strong>transparently</strong>
+between many processes.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_operating_system_design_principles"></a><h2>Operating System Design Principles</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Separate <strong class="slide">policy</strong> from <strong class="slide">mechanism</strong>.</p>
+</li>
+<li>
+<p>Facilitate control or sharing by adding a <strong class="slide">level of indirection</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_process_creation"></a><h2>Process Creation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Where do processes come from?</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_fork_create_a_new_process"></a><h2><code>fork()</code> # create a new process</h2>
+<div class="sectionbody">
+<div class="ulist">
+<div class="title"><code>fork()</code> is the UNIX system call that creates a new process.</div>
+<ul>
+<li>
+<p><code>fork()</code> creates a new process that is a <strong>copy</strong> of the calling process.</p>
+</li>
+<li>
+<p>After <code>fork()</code> we refer to the caller as the <strong>parent</strong> and the
+newly-created process as the <strong>child</strong>. This relationship enables certain
+capabilities.</p>
+</li>
+</ul>
+</div>
+<div class="imageblock vbottom expand">
+<div class="content">
+<img src="/img/slides/figures/process-updated.svg" alt="process updated" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_fork_semantics"></a><h2><code>fork()</code> Semantics</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Generally <code>fork()</code> tries to make an <strong>exact</strong> copy of the calling process.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Recent version of UNIX have relaxed this requirement and there are
+now many flavors of <code>fork()</code> that copy different amounts of state and are
+suitable for different purposes.</p>
+</li>
+<li>
+<p>For the purposes of this class, ignore them.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Threads are a notable exception!</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_fork_against_threads"></a><h2><code>fork()</code> Against Threads</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Single-threaded <code>fork()</code> has reliable semantics because the <strong>only
+thread</strong> the processes had is the one that called <code>fork()</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>So nothing else is happening while we complete the system call.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Multi-threaded <code>fork()</code> creates a host of problems that many systems
+choose to ignore.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Linux will only copy state for the thread that called <code>fork()</code>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_multi_threaded_fork"></a><h2>Multi-Threaded <code>fork()</code></h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<div class="title">There are two major problems with multi-threaded <code>fork()</code></div>
+<ol class="arabic">
+<li>
+<p>Another thread could be blocked in the middle of doing something
+(uniprocessor systems), or</p>
+</li>
+<li>
+<p>another thread could be <strong>actually</strong> doing something (multiprocessor
+systems).</p>
+</li>
+</ol>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>This ends up being a big mess. Let&#x2019;s just copy the calling thread.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_fork"></a><h2><code>fork()</code></h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>fork()</code> copies one thread&#x2014;&#x200B;the caller.</p>
+</li>
+<li>
+<p><code>fork()</code> copies the address space.</p>
+</li>
+<li>
+<p><code>fork()</code> copies the process file table.</p>
+</li>
+</ol>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vbottom">
+<div class="content">
+<img src="/img/slides/figures/fork-4.svg" alt="image" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vbottom">
+<div class="content">
+<img src="/img/slides/figures/fork-3.svg" alt="image" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vbottom">
+<div class="content">
+<img src="/img/slides/figures/fork-2.svg" alt="image" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vbottom">
+<div class="content">
+<img src="/img/slides/figures/fork-1.svg" alt="image" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock vbottom">
+<div class="content">
+<img src="/img/slides/figures/fork.svg" alt="image" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_after_fork"></a><h2>After <code>fork()</code></h2>
+<div class="sectionbody">
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c">returnCode = fork();
+<span class="hljs-keyword">if</span> (returnCode == <span class="hljs-number">0</span>) {
+  # I am the child.
+} <span class="hljs-keyword">else</span> {
+  # I am the parent.
+}</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The child thread returns executing at the exact same point that its
+parent called <code>fork()</code>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>With one exception: <code>fork()</code> returns <strong>twice</strong>, the PID to the parent and
+0 to the child.</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>All contents of memory in the parent and child are identical.</p>
+</li>
+<li>
+<p>Both child and parent have the same files open at the same position.</p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>But, since they are sharing file handles changes to the file
+offset made by the parent/child will be reflected in the child/parent!</strong></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_calm_like_a_forkbomb"></a><h2>Calm Like A <code>fork()</code>bomb</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>What does this code do?</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-keyword">while</span> (<span class="hljs-number">1</span>) {
+  fork();
+}</code></pre>
+</div>
+</div>
+</div>
+</div>
+
+
+			</div>
+			<div class="col-md-2 spelling_exception">
+				<div id="slide-nav" class="h5 hidden-xs hidden-sm">
+					<span>
+							<a href="/slides/2016-01-30-processes/" title="Previous: The Process Abstraction" style="margin-right:10px;">
+								<span class="glyphicon glyphicon-menu-left" aria-hidden="true"></span>Prev
+							</a>
+						</span>
+						<a href="deck.html" title="Open slide deck" target="_blank" style="margin-right:10px;"><span class="glyphicon glyphicon-film" aria-hidden="true"></span></a>
+						<a href="/slides/2016-02-03-forksynch/" title="Next: fork() and Synchronization">
+							Next<span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+						</a>
+				</div>
+				<div id="scrollspy">
+				<ul id="side" class="nav hidden-xs hidden-sm" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">Process Example: Firefox</a>
+					</li>
+					<li class="h5"><a href="#_top_more_process_information">$ top # more process information</a>
+					</li>
+					<li class="h5"><a href="#_process_example_bash">Process Example: bash</a>
+					</li>
+					<li class="h5"><a href="#_finding_bash">Finding bash</a>
+					</li>
+					<li class="h5"><a href="#_bash">bash</a>
+					</li>
+					<li class="h5"><a href="#_ps_lf_thread_information">$ ps -Lf # thread information</a>
+					</li>
+					<li class="h5"><a href="#_bash_2">bash</a>
+					</li>
+					<li class="h5"><a href="#_ps_process_information">$ ps # process information</a>
+					</li>
+					<li class="h5"><a href="#_ps_lf_thread_information_3">$ ps -Lf # thread information</a>
+					</li>
+					<li class="h5"><a href="#_pmap_memory_mappings">$ pmap # memory mappings</a>
+					</li>
+					<li class="h5"><a href="#_bash_3">bash</a>
+					</li>
+					<li class="h5"><a href="#_lsof_open_files">$ lsof # open files</a>
+					</li>
+					<li class="h5"><a href="#_bash_4">bash</a>
+					</li>
+					<li class="h5"><a href="#_aside_the_proc_file_system">Aside: the /proc/ file system</a>
+					</li>
+					<li class="h5"><a href="#_os_abstraction_cheat_sheet">OS Abstraction Cheat Sheet</a>
+					</li>
+					<li class="h5"><a href="#_updated_process_model">Updated Process Model</a>
+					</li>
+					<li class="h5"><a href="#_file_handles">File Handles</a>
+					</li>
+					<li class="h5"><a href="#_sharing_file_state">Sharing File State</a>
+					</li>
+					<li class="h5"><a href="#_operating_system_design_principles">Operating System Design Principles</a>
+					</li>
+					<li class="h5"><a href="#_process_creation">Process Creation</a>
+					</li>
+					<li class="h5"><a href="#_fork_create_a_new_process">fork() # create a new process</a>
+					</li>
+					<li class="h5"><a href="#_fork_semantics">fork() Semantics</a>
+					</li>
+					<li class="h5"><a href="#_fork_against_threads">fork() Against Threads</a>
+					</li>
+					<li class="h5"><a href="#_multi_threaded_fork">Multi-Threaded fork()</a>
+					</li>
+					<li class="h5"><a href="#_fork">fork()</a>
+					</li>
+					<li class="h5"><a href="#_after_fork">After fork()</a>
+					</li>
+					<li class="h5"><a href="#_calm_like_a_forkbomb">Calm Like A fork()bomb</a>
+					</li>
+				</ul>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/slides/2016/forkandfilehandles.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/slides/2016/forkandfilehandles.adoc" target="_blank">View</a>
+			<br>
+			Built 1/31/2016 @ 19:00 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

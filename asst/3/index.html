@@ -1,0 +1,1113 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Virtual Memory</title>
+		<meta name="description" lang="en-us" content="In ASST3 you will add support for virtual memory to your OS/161 kernel.
+">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle active" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7 col-md-offset-2">
+				<a class="anchor" id="top"></a>
+				<h1>ASST3: Virtual Memory</h1>
+				<div class="openblock visible-print">
+<div class="content">
+<div class="admonitionblock warning alert alert-warning" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span></td>
+<td class="content">
+This assignment is available online at
+<a href="https://www.ops-class.org/asst/3/" class="hidden_print external" target="_blank"><code>https://www.ops-class.org/asst/3/</code></a>.
+The online version is easier to read and includes helpful links, embedded video
+walkthroughs, and other useful resources.
+</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_introduction"></a><h2>1. Introduction</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>In this assignment you will add support for virtual memory to your <a href="http://os161.eecs.harvard.edu" class="hidden-print external" target="_blank">OS/161</a>
+kernel.</p>
+</div>
+<div class="paragraph">
+<p>In <a href="/asst/2/" class="hidden-print">ASST2</a> you improved OS/161 to the point that you could run user
+processes. However, there are a number of shortcomings in the current system.
+A process&#x2019;s size is limited to 64 pages by the number of Translation
+Lookaside Buffer (TLB) entries. In addition, while your kernel allocator
+<code>kmalloc</code> correctly manages sub-page allocations&#x2014;&#x200B;memory requests for under
+4 KB&#x2014;&#x200B;single and multiple-page requests are not properly returned to the
+system, meaning that pages are discarded after use. This severely limits the
+lifetime of your system, as you may have observed. Your current kernel cannot
+run forever.</p>
+</div>
+<div class="paragraph">
+<p>In this assignment we will adapt OS/161 to take full advantage of the
+simulated hardware by implementing management of the MIPS software-managed
+TLB. You will write the code to manage the TLB. You will also write the code
+to implement paging&#x2014;&#x200B;the mechanism by which memory pages of an active process
+can be sent to disk when memory is needed, and restored to memory when
+required by the program. This permits many processes to share limited
+physical memory while providing each process with the abstraction of a very
+large amount of virtual memory. Finally, you will correctly handle page reclamation,
+allowing your system to reclaim memory when processes exit and run forever.</p>
+</div>
+<div class="paragraph">
+<p>ASST3 is harder than <a href="/asst/2/" class="hidden-print">ASST2</a> in many ways. In particular, for a large portion
+of <a href="/asst/2/" class="hidden-print">ASST2</a> you were essentially connecting two interfaces: the system call
+interface and the virtual file system (VFS) interface. There were some new
+features to implement&#x2014;&#x200B;like file tables and process relationship tracking&#x2014;&#x200B;but
+ASST3 is <em>all</em> new features to implement, and requires you to create multiple
+large modules that must interface effectively with each other.</p>
+</div>
+<div class="paragraph">
+<p>This advice from <a href="/asst/2/" class="hidden-print">ASST2</a> is worth reiterating now that you may have learned the
+cost of ignoring it:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>As a final piece of advice, <a href="/asst/2/" class="hidden-print">ASST2</a> and ASST3 begin to produce code bases
+that are large, complex, and potentially <em>very</em> difficult to debug. <strong>You do
+not want to introduce bugs into your kernel</strong> because they will be very hard
+to remove. Our advice&#x2014;&#x200B;slow down, design, think, design again, discuss with
+your partner, and slow down again. Then write some code.</p>
+</div>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Note that the description of ASST3 is somewhat shorter than it was for
+<a href="/asst/2/" class="hidden-print">ASST2</a>. This should make you feel nervous. In fact, there is less to
+introduce you to simply because there is more to do. That said, we <em>strongly</em>
+suggest you look carefully at the <code>dumbvm</code> included in your source tree and
+included in your build for ASST0&#x2013;2. While it is not a good starting
+point for your solution, It may at least give you an idea of some of what
+needs to be done&#x2014;&#x200B;and how not to do it.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_objectives"></a><h3>1.1. Objectives</h3>
+<div class="paragraph">
+<p>After completing ASST3 you should:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Understand how to design a set of interfaces to implement a collection of
+functionality.</p>
+</li>
+<li>
+<p>Be familiar with OS handling of TLB and page faults.</p>
+</li>
+<li>
+<p>Possess a solid intuition about virtual memory and what it means to support it.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_collaboration_guidelines"></a><h3>1.2. Collaboration Guidelines</h3>
+<div class="paragraph">
+<p>The ASST3 collaboration guidelines are pretty much identical to those for <a href="/asst/2/" class="hidden-print">ASST2</a>:</p>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Pair programming to complete the implementation tasks is <strong>strongly
+encouraged</strong>.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Writing a design document with your partner is <strong>strongly encouraged.</strong>
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Answering the code reading questions side-by-side with your partner is
+<strong>strongly encouraged</strong>.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock tip alert alert-success" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span></td>
+<td class="content">
+Discussing the code reading questions and browsing the source tree with
+other students is encouraged.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock warning alert alert-warning" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span></td>
+<td class="content">
+Dividing the code reading questions and development tasks between
+partners is discouraged.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+Any arrangement that results in one partner writing the entire
+design document is cheating.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+Any arrangement that results in one partner writing all or almost
+all of the code is cheating.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+Copying any answers from anyone who is not your partner or anywhere
+else and submitting them as your own is cheating.
+</td>
+</tr>
+</tbody></table>
+</div>
+<div class="admonitionblock caution alert alert-danger" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></td>
+<td class="content">
+You may not refer to or incorporate any external sources without
+explicit permission <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Which you are extremely unlikely to get.&lt;/body&gt;&lt;/html&gt;">1</span>.
+</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_tlb_handling_and_paging"></a><h2>2. TLB Handling and Paging</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>To some degree, implementing virtual memory comes down to managing the TLB.</p>
+</div>
+<div class="paragraph">
+<p>So to begin, it useful to familiarize yourself with how the <code>sys161</code>
+simulated TLB works. Each TLB entry includes a 20-bit virtual page number and
+a 20-bit physical page number as well as the following five fields:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><code>global</code>: 1 bit; if set, ignore the <code>pid</code> bits in the TLB.</p>
+</li>
+<li>
+<p><code>valid</code>: 1 bit; set if the TLB entry contains a valid translation.</p>
+</li>
+<li>
+<p><code>dirty</code>: 1 bit; enables writing to the page referenced by the
+entry; if this bit is 0, the page is only accessible for reading.</p>
+</li>
+<li>
+<p><code>nocache</code>: 1 bit; unused in System/161. In a real processor,
+indicates that the hardware cache will be disabled when accessing this page.</p>
+</li>
+<li>
+<p><code>pid</code>: 6 bits; a context or address space ID that can be used
+to allow entries to remain in the TLB after a context switch.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>All these bits/values are maintained by the operating system. When the
+<code>valid</code> bit is set, the TLB entry contains a valid translation. This implies
+that the virtual page is present in physical memory. A <strong>TLB miss</strong> occurs when
+no TLB entry can be found with a matching virtual page and address space ID
+<span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Unless the global bit is set in which case the address space ID is ignored&lt;/body&gt;&lt;/html&gt;">2</span> with the valid bit set.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_tlb_and_page_faults"></a><h3>2.1. TLB and Page Faults</h3>
+<div class="paragraph">
+<p>The operating system creates the illusion of unlimited memory by using
+physical memory as a cache of <strong>virtual pages</strong>. Paging relaxes the
+requirement that all the pages in a process&#x2019;s virtual address space must
+be in physical memory. Instead, we allow a process to have pages either
+on disk or in memory.</p>
+</div>
+<div class="paragraph">
+<p>When the process issues an access to a page  that is on disk, a <strong>page fault</strong>
+occurs. The operating system must retrieve the page from disk and bring it
+into memory. Pages with valid TLB entries are always in physical memory. This
+means that a reference to a page on disk will always generate a TLB fault.
+At the time of a TLB fault, the hardware generates a TLB exception, trapping
+to the operating system. The operating system then checks its own page table
+to locate the virtual page requested. If that page is currently in memory but
+wasn&#x2019;t mapped by the TLB, then all we need to do is update the TLB. However,
+the page might be on disk.  If this is the case, the operating system must:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Allocate a place in physical memory to store the page;</p>
+</li>
+<li>
+<p>Read the page from disk,</p>
+</li>
+<li>
+<p>Update the page table entry with the new virtual-to-physical
+address translation;</p>
+</li>
+<li>
+<p>Update the TLB to contain the new translation; and</p>
+</li>
+<li>
+<p>Resume execution of the user program.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_paging"></a><h3>2.2. Paging</h3>
+<div class="paragraph">
+<p>Notice that when the operating system selects a location in physical memory
+in which to place the new page, the space may already be occupied. In this
+case, the operating system must <strong>evict</strong> that other page from memory. If the
+page has been modified or does not currently have a copy on disk, then the
+old page must first be written to disk before the physical page can be
+reallocated. If the old page has not been modified and already has a copy on
+disk, then the write to disk can be avoided. The appropriate page table entry
+must be updated to reflect the fact that the page is no longer in memory.</p>
+</div>
+<div class="paragraph">
+<p>As with any caching system, performance of your virtual memory system depends
+on the policy used to decide which things are kept in memory and which are
+evicted. On a page fault, the kernel must decide which page to replace.
+Ideally, it will evict a page that will not be needed soon. Many systems
+(such as UNIX) avoid the delay of synchronously writing memory pages to disk
+on a page fault by writing modified pages to disk in advance, so that
+subsequent page faults can be completed more quickly.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_code_reading"></a><h2>3. Code Reading</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>These should help refresh your memory a bit on the details of address
+translation and the types of memory-related faults.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_virtual_memory"></a><h3>3.1. Virtual Memory</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Assuming that a user program just attempted to access a virtual address,
+describe the conditions under which each of the following can arise. If the
+situation cannot happen, explain why it cannot occur.</p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>TLB miss, page fault</p>
+</li>
+<li>
+<p>TLB miss, no page fault</p>
+</li>
+<li>
+<p>TLB hit, page fault</p>
+</li>
+<li>
+<p>TLB hit, no page fault</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>A friend of yours who foolishly decided not to take this class, but who
+likes OS/161, implemented a TLB that has room for only one entry, and
+experienced a bug that caused a user instruction to generate a TLB fault
+infinitely&#x2014;&#x200B;the instruction never completed executing! Explain how this could
+happen. Recall that after OS/161 handles an exception, it restarts the
+instruction that caused the exception.</p>
+</li>
+<li>
+<p>How many memory-related exceptions&#x2014;-including hardware exceptions and other software exceptional
+conditions&#x2014;-can the following MIPS-like instruction raise? Explain the cause
+of each.</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-mipsasm lang-mipsasm" data-lang="mipsasm"><span class="hljs-comment"># load word from $0 (contains zeros) offset 0x120 into register $3</span>
+<span class="hljs-keyword">lw </span>$<span class="hljs-number">3</span>,<span class="hljs-number">0x0120</span>($<span class="hljs-number">0</span>)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_the_malloc_library_allocator"></a><h3>3.2. The <code>malloc</code> Library Allocator</h3>
+<div class="paragraph">
+<p>Once OS/161 has paging, you can support applications with larger address
+spaces. The <code>malloc</code> and <code>free</code> functions are provided in the standard C
+library. Read the code and answer the following questions.</p>
+</div>
+<div class="paragraph">
+<p>Consider the following (useless) program:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c"><span class="hljs-comment">/* This is bad code: it doesn&apos;t do any error-checking */</span>
+<span class="hljs-meta">#<span class="hljs-meta-keyword">include</span> <span class="hljs-meta-string">&lt;stdio.h&gt;</span></span>
+<span class="hljs-function"><span class="hljs-keyword">int</span> <span class="hljs-title">main</span> <span class="hljs-params">(<span class="hljs-keyword">int</span> argc, <span class="hljs-keyword">char</span> **argv)</span> </span>{
+	<span class="hljs-keyword">int</span> i;
+	<span class="hljs-keyword">void</span> *start, *finish;
+	<span class="hljs-keyword">void</span> *res[<span class="hljs-number">10</span>];
+	start = sbrk(<span class="hljs-number">0</span>);
+	<span class="hljs-keyword">for</span> (i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++) {
+		res[i] = <span class="hljs-built_in">malloc</span>(<span class="hljs-number">10</span>);
+	}
+	finish = sbrk(<span class="hljs-number">0</span>);
+	<span class="hljs-comment">/* INSERT */</span>
+	<span class="hljs-keyword">return</span> <span class="hljs-number">0</span>;
+}</code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic" start="4">
+<li>
+<p>How many times does the system call <code>sbrk</code> get called from within <code>malloc</code>?</p>
+</li>
+<li>
+<p>On the i386 platform, what is the numeric value of <code>(finish - start)</code>?</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Now, suppose that in the example above we now insert the following code at
+location <code>/* INSERT */</code> above:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-c lang-c" data-lang="c">  <span class="hljs-keyword">void</span> *x;
+	<span class="hljs-built_in">free</span>(res[<span class="hljs-number">8</span>]); <span class="hljs-built_in">free</span>(res[<span class="hljs-number">7</span>]); <span class="hljs-built_in">free</span>(res[<span class="hljs-number">6</span>]);
+	<span class="hljs-built_in">free</span>(res[<span class="hljs-number">1</span>]); <span class="hljs-built_in">free</span>(res[<span class="hljs-number">3</span>]); <span class="hljs-built_in">free</span>(res[<span class="hljs-number">2</span>]);
+	x = <span class="hljs-built_in">malloc</span>(<span class="hljs-number">60</span>); <span class="hljs-comment">/* MARK */</span></code></pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic" start="6">
+<li>
+<p>Again on the i386, would <code>malloc</code> call <code>sbrk</code> when doing that last
+allocation at the marked line above? What can you say about <code>x</code>?</p>
+</li>
+<li>
+<p>It is conventional for <code>libc</code> internal functions and variables to be
+prefaced with <code>__</code>. Why do you think this is so?</p>
+</li>
+<li>
+<p>The man page for <code>malloc</code> requires that &quot;the pointer returned must be
+suitably aligned for use with any data type.&quot; How does our implementation of
+<code>malloc</code> guarantee this?</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Note that the operation of <code>malloc</code> and <code>free</code> is a <strong>standard job interview
+question</strong>&#x2014;you should understand this code!</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_design"></a><h2>4. Design</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>Create a design document for ASST3 similar to what you created for <a href="/asst/2/" class="hidden-print">ASST2</a>.</p>
+</div>
+<div class="paragraph">
+<p>Note that because you are designing a much larger and more independent OS
+module, a good design is ever more important for ASST3 than it was for
+<a href="/asst/2/" class="hidden-print">ASST2</a>--although the <a href="/asst/2/#_design">ASST2 instructions</a> are still a
+good starting point.</p>
+</div>
+<div class="paragraph">
+<p>For ASST3 you have several internal interfaces to design and are completely
+free to design them in any way you like. However, some of the key issues to
+consider are:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>What will your page tables look like?</p>
+</li>
+<li>
+<p>What should you put in each page table entry (PTE)?</p>
+</li>
+<li>
+<p>What will your coremap (or reverse page table) look like?</p>
+</li>
+<li>
+<p>In what order can TLB faults and page faults occur? For example, can a page
+fault occur without causing a TLB fault?</p>
+</li>
+<li>
+<p>If you have partner, how will you divide up the work?</p>
+</li>
+<li>
+<p>What is your strategy for splitting the assignment into smaller pieces that
+can be developed and tested and tested separately? <strong>You are strongly
+encouraged to add new user and kernel tests as needed.</strong></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_implementation"></a><h2>5. Implementation</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>Implement virtual memory and swapping.</p>
+</div>
+<div class="paragraph">
+<p>To do this, you must</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Implement the code that services TLB faults.</p>
+</li>
+<li>
+<p>Add paging to your operating system.</p>
+</li>
+<li>
+<p>Add the <code>sbrk</code> system call, so that the <code>malloc</code> library we provide works.</p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<a class="anchor" id="_setup"></a><h3>5.1. Setup</h3>
+<div class="paragraph">
+<p>Consult the ASST3 <code>config</code> file and notice that the <code>arch/mips/vm/dumbvm.c</code>
+file will be omitted from your kernel. You will undoubtedly need to add new
+files to the system for this assignment: <code>kern/vm/vm.c</code> or
+<code>kern/arch/mips/vm/mipsvm.c</code>. Be sure to update the file
+<code>kern/conf/conf.kern</code>, or, for machine-dependent files,
+<code>kern/arch/mips/conf/conf.arch</code>, to include any new files that you create.
+Take care to place files in the correct place, separating machine-dependent
+components from machine-independent components appropriately. You should also
+now restrict your physical memory to 1 MB by editing the <code>ramsize</code> line in
+your <code>sys161.conf</code> file.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_tracking_kernel_page_allocations"></a><h3>5.2. Tracking Kernel Page Allocations</h3>
+<div class="paragraph">
+<p>To begin the assignment you will need to write a kernel page allocator that
+conforms to the interface in <code>include/vm.h</code>. Specifically, you will need to
+handle <code>{alloc,free}_kpages</code> and ensure that <code>coremap_used_bytes</code> returns
+correct values. You will probably also want to add functions to return user
+pages as well.</p>
+</div>
+<div class="paragraph">
+<p>This part of the assignment is very related to the design of your <em>coremap</em>,
+described below. However, you can test your kernel page allocator entirely
+from the kernel using <code>km{3,4}</code>, which should pass repeatedly once you are
+finished. Note that your kernel page allocator must support multi-page kernel
+allocations, although you are not required to deal with external
+fragmentation.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_tlb_handling"></a><h3>5.3. TLB Handling</h3>
+<div class="paragraph">
+<p>In this part of the assignment, you will modify OS/161 to handle TLB
+faults. Additionally, you need to guarantee that the TLB state is
+initialized properly on a context switch.</p>
+</div>
+<div class="paragraph">
+<p>One implementation alternative is to invalidate all the TLB entries on a
+context switch. The entries are then re-loaded by taking TLB faults as pages
+are referenced. If you do this, be sure to copy any relevant state maintained
+by the TLB entries back into the page table before invalidating them. For
+example, in order for the paging algorithm to know which pages must be
+written to disk before eviction, you must make sure that the information
+about whether a page is dirty or not is properly propagated back into the
+page table.</p>
+</div>
+<div class="paragraph">
+<p>An alternative to invalidating everything is to use the 6-bit address space
+IDs and maintain separate processes in the TLB simultaneously. Please
+separate implementation of the TLB entry replacement algorithm from the
+actual piece of code that handles the replacement.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_paging_2"></a><h3>5.4. Paging</h3>
+<div class="paragraph">
+<p>In this part of the assignment, you will modify OS/161 to handle page faults.
+When you have completed this task your system will generate an exception when
+a process tries to access an address that is not memory-resident and then
+handle that exception and continue running the user process.</p>
+</div>
+<div class="paragraph">
+<p>You will need routines to move a page from disk to memory and from memory to
+disk. You will also need to decide how to implement backing store&#x2014;&#x200B;the place
+on disk where you store virtual pages not currently stored in physical
+memory. The default <code>sys161.conf</code> includes two disks; you should use the
+first disk for swapping. Please do swap to a disk and not somewhere else
+--such as a file <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Also, be sure not to use that disk for anything else!&lt;/body&gt;&lt;/html&gt;">3</span>.</p>
+</div>
+<div class="paragraph">
+<p>You will need to store evicted pages and find them when you need them.
+You should maintain a bitmap that describes the space in your swap area.
+Think of the swap area as a collection of chunks, where each chunk holds
+a page. Use the bitmap to keep track of which chunks are full and which
+are empty. The empty chunks can be evicted into. You also need to keep
+track, for each page of a given address space, of which chunk in the swap
+area it maps onto. When there are too many pages to fit in physical
+memory, you can write (modified) pages out to swap.</p>
+</div>
+<div class="paragraph">
+<p>When the time comes to bring a page into memory, you will need to know
+which physical pages are currently in use. One way to manage physical
+memory is to maintain a <strong>coremap</strong>, a sort of reverse page table.
+Instead of being indexed by virtual addresses, a coremap is indexed by
+its physical page number and contains the virtual address and address
+space identifier for the virtual page currently backed by the page in
+physical memory.</p>
+</div>
+<div class="paragraph">
+<p>When you need to evict a page, you first need to determine what page to
+evict. Please implement one page replacement policy for ASST3, although you
+want to experiment with several. Once you have chosen a page, you look up the
+physical address in the coremap, locate the address space whose page you are
+evicting and modify the corresponding state information to indicate that the
+page will no longer be in memory. Then you can evict the page. If the page is
+dirty, it must first be written to the backing store.</p>
+</div>
+<div class="paragraph">
+<p>In some systems, the writing of dirty pages to backing store is done in the
+background by a daemon. As a result, when the time comes to evict a page, the
+page itself usually clean&#x2014;&#x200B;it has been written to backing store, but not
+modified since then. To improve performance you may design and implement this
+functionality in your system. You will need to create a thread that
+periodically examines pages in memory and writes them to backing store if
+they are dirty.</p>
+</div>
+<div class="paragraph">
+<p>Your paging system will also need to support page allocation requests
+generated by <code>kmalloc</code>. You should review <code>kmalloc</code> to understand how these
+requests are generated, so that your system will respond to them correctly.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_grading"></a><h2>6. Grading</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>ASST3 grading is divided into three incremental <code>test161</code> subtargets:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Coremap</strong></p>
+</li>
+<li>
+<p><strong>Virtual Address Spaces</strong></p>
+</li>
+<li>
+<p><strong>Swapping</strong></p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<a class="anchor" id="_coremap_physical_page_allocator"></a><h3>6.1. Coremap (Physical Page Allocator)</h3>
+<div class="paragraph">
+<p>The first part of ASST3 tests your VM subsystem&#x2019;s ability to allocate and track
+physical pages, which consists of your coremap data structure and related
+interface. Your allocator should be an improvement on the <code>dumbvm</code> system
+used in the previous assignments.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Does your coremap free memory?</strong> One of the problems with <code>dumbvm</code> is
+that it once a page has been allocated, it is not properly freed. We use <code>km5</code>
+to test that your your VM has fixed this problem. <strong>Note:</strong> <code>coremap_used_bytes()</code>
+must be implemented to pass this test.</p>
+</li>
+<li>
+<p><strong>Does your coremap support multi-page allocations?</strong> <code>dumbvm</code> also does not
+support multi-page allocations. We test that your VM supports this feature with
+<code>km4</code>.</p>
+</li>
+<li>
+<p><strong>Does <code>kmalloc</code> still work as expected?</strong> The kernel&#x2019;s subpage allocator must
+still work as it did under <code>dumbvm</code>. This is tested with <code>km1</code>, <code>km2</code>, and <code>km3</code>.</p>
+</li>
+<li>
+<p><strong>Can your kernel allocate a reasonable amount of available memory?</strong> The size
+of your kernel and choice of data structures has a direct impact on the amount
+of memory that is available to the rest of the system. We test that your kernel
+is not too bloated with the <code>--avail</code> and <code>--kernel</code> arguments to <code>km5</code>.</p>
+</li>
+<li>
+<p><strong>Are you leaking pages?</strong> Design choices regarding your coremap can lead to
+pages being allocated early in boot that are not properly freed. We test for
+this in various places using <code>khu</code> <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;running &lt;code&gt;khu&lt;/code&gt; before and after any test should report the same number of bytes. If not, you have a memory leak.&lt;/body&gt;&lt;/html&gt;">4</span>.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_pagetables_virtual_address_spaces"></a><h3>6.2. Pagetables (Virtual Address Spaces)</h3>
+<div class="paragraph">
+<p>The second part of ASST3 tests your VM subsystem&#x2019;s ability to maintain
+per-process virtual address spaces, and to multiplex physical memory between
+multiple userspace processes. In ASST2, userspace programs were able to run
+because <code>dumbvm</code> performed these tasks for you. In ASST3, however, your VM
+subsystem is now in charge. After completing this part of the assignment, not
+only should the tests from ASST2 pass, but so too should tests like <code>huge</code> and
+<code>sort</code>, which could not previously run because of the limitations of <code>dumbvm</code>.
+You will be provided with enough memory to run all tests in this section without
+the need for paging to disk.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Basic VM Functionality:</strong> The first group of tests checks that your VM is able
+to properly handle page faults from a single user program, and that it fixes
+some of the limitations imposed by <code>dumbvm</code>. This group of tests includes
+<code>huge</code>, <code>sort</code>, <code>palin</code>, <code>matmult</code>, <code>ctest</code>, and <code>bigexec</code>.</p>
+</li>
+<li>
+<p><strong>Concurrent VM Functionality:</strong> This next group of tests checks that your VM is
+able to properly handle concurrent user programs, which in turn tests both your
+page fault logic and TLB handling. Each of the programs in this group spawn a
+number of processes that run concurrently. Tests in this group include
+<code>bigfork</code>, <code>parallelvm</code>, <code>quintsort</code>, <code>quintmat</code>, and <code>quinthuge</code>.</p>
+</li>
+<li>
+<p><strong>Userspace Heap:</strong> One of the limitations of <code>dumbvm</code> is that it has no support
+for userspace heaps, meaning that all programs running on OS/161 must
+statically declare all memory. Your VM system will change this by implementing
+the <code>sbrk</code> system call, which allows user programs to dynamically allocate and
+free memory by changing the heap breakpoint. We test your <code>sbrk</code> implementation
+with <code>sbrktest</code> and <code>badcall</code>.</p>
+</li>
+<li>
+<p><strong>Stability Tests:</strong> Finally, we will run a few stability tests on your VM. These
+programs include <code>zero</code>, <code>forkbomb</code>, and a combination of previously run
+programs meant to stress test your system.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_swapping"></a><h3>6.3. Swapping</h3>
+<div class="paragraph">
+<p>The third and final part of ASST3 tests your VM subsystem&#x2019;s ability to operate
+with less physical memory than needed by the running processes. To test your
+swapping implementation, we run many of the same tests that were used to test
+your basic VM implementation, but with less memory.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Basic Swapping:</strong> The first group of tests checks that you&#x2019;re able to run a
+single process with less physical memory than the process needs. Tests in this
+group include <code>sort</code> and <code>matmult</code>.</p>
+</li>
+<li>
+<p><strong>Concurrent Swapping:</strong> The second group of tests are designed to stress test
+your swapping implementation by running several multi-process tests. Tests in
+this group include <code>parallelvm</code>, <code>bigfork</code>, <code>quintsort</code>, <code>quintmat</code>, and
+<code>quinthuge</code>.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+
+				<div class="hidden-print">
+					<a class="anchor" id="videos"></a>
+					<h2>Related Videos</h2>
+					<p class="lead">
+					Below are some related videos and slides that may help you
+					complete this assignment.
+					</p>
+					<div class="row">
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="bFxD6NyuwBo"><img class="youtube-thumb" src="//i.ytimg.com/vi/bFxD6NyuwBo/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-09-2014</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="rUP3V1RJRmk"><img class="youtube-thumb" src="//i.ytimg.com/vi/rUP3V1RJRmk/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-16-2014</li>
+								<li>Guru Prasad</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="tN8LGauKCqg"><img class="youtube-thumb" src="//i.ytimg.com/vi/tN8LGauKCqg/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-23-2014</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="8ketMgpZEdQ"><img class="youtube-thumb" src="//i.ytimg.com/vi/8ketMgpZEdQ/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>05-07-2014</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="yNOAuuoO5no"><img class="youtube-thumb" src="//i.ytimg.com/vi/yNOAuuoO5no/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>03-31-2015</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="ZCr6NWDAddU"><img class="youtube-thumb" src="//i.ytimg.com/vi/ZCr6NWDAddU/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-07-2015</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="zaGD95nsZDA"><img class="youtube-thumb" src="//i.ytimg.com/vi/zaGD95nsZDA/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-14-2015</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="wyiXnqZClV8"><img class="youtube-thumb" src="//i.ytimg.com/vi/wyiXnqZClV8/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-21-2015</li>
+								<li>Jinghao Shi</li>
+								
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="cG7zhfHTvmQ"><img class="youtube-thumb" src="//i.ytimg.com/vi/cG7zhfHTvmQ/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>03-30-2016</li>
+								<li>Ali Ben Ali</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlRk4zTV8wRWtHdzA" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="BxEfeWkwT3c"><img class="youtube-thumb" src="//i.ytimg.com/vi/BxEfeWkwT3c/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-05-2016</li>
+								<li>Ali Ben Ali</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlTFl4Y0gyMm94dmc" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="crwdXkjKfMA"><img class="youtube-thumb" src="//i.ytimg.com/vi/crwdXkjKfMA/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-12-2016</li>
+								<li>Ali Ben Ali</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlZV9BYlhzem9mTFk" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="p_BAuMpX3UU"><img class="youtube-thumb" src="//i.ytimg.com/vi/p_BAuMpX3UU/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-27-2016</li>
+								<li>Ali Ben Ali</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlRGdOX3kxRkRDaHc" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="tNzwSD-smiM"><img class="youtube-thumb" src="//i.ytimg.com/vi/tNzwSD-smiM/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>03-15-2017</li>
+								<li>Ali Ben Ali and Carl Nuessle</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlaFY3M2hwTEhCVkE" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="1GB1VupDU5Q"><img class="youtube-thumb" src="//i.ytimg.com/vi/1GB1VupDU5Q/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-04-2017</li>
+								<li>Ali Ben Ali and Carl Nuessle</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlc3p6bDVXejZCQ2c" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="8-vLIA-5B8Y"><img class="youtube-thumb" src="//i.ytimg.com/vi/8-vLIA-5B8Y/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-11-2017</li>
+								<li>Ali Ben Ali and Carl Nuessle</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlOVFCRFJGMjNWMGc" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="ER_gOmxiNTY"><img class="youtube-thumb" src="//i.ytimg.com/vi/ER_gOmxiNTY/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-18-2017</li>
+								<li>Ali Ben Ali and Carl Nuessle</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlWHp4eWZKemVHUTQ" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+						<div class="col-xs-12 col-sm-6 col-md-4">
+							<div class="embed-responsive embed-responsive-16by9 hidden-print" style="margin-top:10px; margin-bottom:10px; border:1px solid grey">
+								<div class="youtube-container" data-id="0hxULBUebqQ"><img class="youtube-thumb" src="//i.ytimg.com/vi/0hxULBUebqQ/mqdefault.jpg" alt="YouTube placeholder"><div class="play-button"><span class="glyphicon glyphicon-play" aria-hidden="true"></span></div></div>
+							</div>
+							<ul class="list-inline dash-list h5">
+								<li>04-25-2017</li>
+								<li>Ali Ben Ali and Carl Nuessle</li>
+								<li><a href="https://drive.google.com/open?id=0B2KANO6SyBWlS0NZWFFBamN5R00" target="_blank" class="external">Slides</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="scrollspy" class="col-md-3 spelling_exception">
+				<ul id="side" class="fixed-md-3 nav hidden-xs hidden-sm hidden-print" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">1. Introduction</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_objectives">1.1. Objectives</a></li>
+							<li class="h6"><a href="#_collaboration_guidelines">1.2. Collaboration Guidelines</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_tlb_handling_and_paging">2. TLB Handling and Paging</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_tlb_and_page_faults">2.1. TLB and Page Faults</a></li>
+							<li class="h6"><a href="#_paging">2.2. Paging</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_code_reading">3. Code Reading</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_virtual_memory">3.1. Virtual Memory</a></li>
+							<li class="h6"><a href="#_the_malloc_library_allocator">3.2. The malloc Library Allocator</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_design">4. Design</a>
+					</li>
+					<li class="h5"><a href="#_implementation">5. Implementation</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_setup">5.1. Setup</a></li>
+							<li class="h6"><a href="#_tracking_kernel_page_allocations">5.2. Tracking Kernel Page Allocations</a></li>
+							<li class="h6"><a href="#_tlb_handling">5.3. TLB Handling</a></li>
+							<li class="h6"><a href="#_paging_2">5.4. Paging</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_grading">6. Grading</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_coremap_physical_page_allocator">6.1. Coremap (Physical Page Allocator)</a></li>
+							<li class="h6"><a href="#_pagetables_virtual_address_spaces">6.2. Pagetables (Virtual Address Spaces)</a></li>
+							<li class="h6"><a href="#_swapping">6.3. Swapping</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#videos">Related Videos</a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/asst/3.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/asst/3.adoc" target="_blank">View</a>
+			<br>
+			Built 9/18/2020 @ 10:49 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

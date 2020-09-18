@@ -1,0 +1,1027 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Address Translation</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="Discussion of efficiently translating virtual addresses to physical addresses.">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="http://meche.mit.edu/people/faculty/aanna@mit.edu" target="_blank"><img src="/img/slides/women/045.jpg" alt="045" style="width: 100%;"></a>
+</div>
+<div class="title">Figure 1. Anuradha Annaswamy</div>
+</div>
+<div class="paragraph h3 center">
+<p><span class="fa fa-music"></span> <a href="http://www.ledzeppelin.com/" target="_blank" class="external">Achilles Last Stand by Led Zeppelin</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/nlRjjGc6pJA?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+
+</div>
+<div class="nooutline slide" id="_today_efficient_translation">
+<h2>Today: Efficient Translation</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Base and bounds.</p>
+</li>
+<li>
+<p>Segmentation.</p>
+</li>
+<li>
+<p>Paging.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_cat_announce_txt">
+<h2>$ cat announce.txt</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>ASST2 is due Friday.</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_virtual_addresses_questions">
+<h2>Virtual Addresses: Questions?</h2>
+
+
+
+</div>
+<div class="nooutline slide" id="_translation_is_control">
+<h2>Translation is Control</h2>
+
+<div class="paragraph">
+<p>Forcing processes to <strong class="slide">translate</strong> a reference to gain access to the
+underlying object provides the kernel with a great deal of <strong class="slide">control</strong>.</p>
+</div>
+<div class="paragraph">
+<p>References can be <strong class="slide">revoked</strong>, <strong class="slide">shared</strong>, <strong class="slide">moved</strong>,
+<strong class="slide">altered</strong>.</p>
+</div>
+
+</div>
+<div class="nooutline slide" id="_virtual_v_physical_addresses">
+<h2>Virtual v. Physical Addresses</h2>
+
+<div class="openblock slide">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>The <strong>address space</strong> abstraction requires <span class="slide">breaking the connection
+between a memory address and physical memory.</span></p>
+</li>
+<li>
+<p>We refer to data accessed via the memory interface as using <strong class="slide">virtual
+addresses</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>A <strong>physical address</strong> points to <span class="slide">memory.</span></p>
+</li>
+<li>
+<p>A <strong>virtual address</strong> points to <span class="slide">something that <em>acts like</em> memory.</span></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="ulist">
+<ul>
+<li>
+<p>Virtual addresses have much richer <strong>semantics</strong> than physical
+addresses, encapsulating <strong class="slide">location</strong>, <strong class="slide">permanence</strong> and
+<strong class="slide">protection</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+
+</div>
+<div class="nooutline slide" id="_creating_virtual_addresses">
+<h2>Creating Virtual Addresses</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p><code>exec()</code>: <span class="slide">creates virtual addresses using an ELF file as a
+blueprint.</span></p>
+</li>
+<li>
+<p><code>fork()</code>: <span class="slide">copies the virtual address space of the parent process.</span></p>
+</li>
+<li>
+<p><code>sbrk()</code>: <span class="slide">extends the process heap.</span></p>
+</li>
+<li>
+<p><code>mmap()</code>: <span class="slide">creates a virtual address region that points to a file.</span></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_example_machine_memory_layout_system161">
+<h2>Example Machine Memory Layout: System/161</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>System/161 emulates a 32-bit MIPS architecture.</p>
+</li>
+<li>
+<p>Addresses are 32-bits wide: from 0x0 to 0xFFFFFFFF.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">This MIPS architecture defines <strong>four</strong> address regions:</div>
+<ul>
+<li class="slide">
+<p><code>0x0&#x2013;0x7FFFFFFF</code>: <strong>process virtual addresses</strong>. Accessible to user
+processes, translated by the kernel. 2 GB.</p>
+</li>
+<li class="slide">
+<p><code>0x80000000&#x2013;0x9FFFFFFF</code>: <strong>kernel direct-mapped addresses</strong>. Only
+accessible to the kernel, translated by subtracting 0x80000000. 512 MB.
+Cached.</p>
+</li>
+<li class="slide">
+<p><code>0xA0000000&#x2013;0xBFFFFFFF</code>: <strong>kernel direct-mapped addresses</strong>. Only
+accessible to the kernel. 512 MB. Uncached.</p>
+</li>
+<li class="slide">
+<p><code>0xC0000000&#x2013;0xFFFFFFFF</code>: <strong>kernel virtual addresses</strong>. Only accessible to
+the kernel, translated by the kernel. 1 GB.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_virtual_addresses_questions_2">
+<h2>Virtual Addresses: Questions?</h2>
+
+
+
+</div>
+<div class="slide" id="_efficient_translation">
+<h2>Efficient Translation</h2>
+
+<div class="paragraph">
+<p><strong>Goal</strong>: almost <em>every</em> virtual address translation should be able to
+proceed without kernel assistance.</p>
+</div>
+<div class="ulist">
+<div class="title slide"><strong>Why?</strong></div>
+<ul>
+<li class="slide">
+<p>The kernel is <strong>too slow</strong>!</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Recall: kernel sets <strong class="slide">policy</strong>, hardware provides the <strong class="slide">mechanism</strong>.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_explicit_translation">
+<h2>Explicit Translation</h2>
+
+<div class="paragraph">
+<p><em>Process:</em> &quot;Dear kernel, I&#x2019;d like to use virtual address 0x10000. Please tell
+me what physical address this maps to. KTHXBAI!&quot;</p>
+</div>
+<div class="ulist">
+<div class="title slide">Does this work?</div>
+<ul>
+<li class="slide">
+<p><strong>No!</strong> Unsafe! We can&#x2019;t allow process to use physical addresses
+directly. <span class="slide">All addresses must be translated.</span></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" style="background-image: url(&quot;http://i.ytimg.com/vi/xpA5juZxuNw/hqdefault.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>All your addresses</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>Are belong to us</p>
+</div>
+
+</div>
+<div class="slide" id="_implicit_translation">
+<h2>Implicit Translation</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><em>Process:</em> &quot;Machine! Store to address 0x10000!&quot;</p>
+</li>
+<li class="slide">
+<p><em>MMU:</em> &quot;Where the heck is virtual address 0x10000 supposed to map to?
+Kernel&#x2026;&#x200B;help!&quot;</p>
+</li>
+<li class="slide">
+<p>(Exception.)</p>
+</li>
+<li class="slide">
+<p><em>Kernel:</em> Machine, virtual address 0x10000 maps to physical address
+0x567400.</p>
+</li>
+<li class="slide">
+<p><em>MMU:</em> Thanks! Process: store completed!</p>
+</li>
+<li class="slide">
+<p><em>Process:</em> KTHXBAI.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_translation_example">
+<h2>Translation Example</h2>
+
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-1.svg" alt="translationexample 1" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-2.svg" alt="translationexample 2" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-3.svg" alt="translationexample 3" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-4.svg" alt="translationexample 4" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-5.svg" alt="translationexample 5" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-6.svg" alt="translationexample 6" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-7.svg" alt="translationexample 7" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-8.svg" alt="translationexample 8" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-9.svg" alt="translationexample 9" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-10.svg" alt="translationexample 10" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-11.svg" alt="translationexample 11" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-12.svg" alt="translationexample 12" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/translationexample-13.svg" alt="translationexample 13" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_k_i_s_s_base_and_bound">
+<h2><span class="spelling_exception">K.I.S.S.: Base and Bound</span></h2>
+
+<div class="paragraph">
+<p><strong>Simplest</strong> virtual address mapping approach.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p>Assign each process a <strong>base</strong> physical address and <strong>bound</strong>.</p>
+</li>
+<li class="slide">
+<p><strong>Check:</strong> Virtual Address is OK if Virtual Address &lt; bound.</p>
+</li>
+<li class="slide">
+<p><strong>Translate:</strong> Physical Address = Virtual Address + base</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="slide" id="_base_and_bounds_example">
+<h2>Base and Bounds: Example</h2>
+
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandbounds-1.svg" alt="baseandbounds 1" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandbounds-2.svg" alt="baseandbounds 2" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandbounds-3.svg" alt="baseandbounds 3" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandbounds-4.svg" alt="baseandbounds 4" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandbounds-5.svg" alt="baseandbounds 5" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandbounds-6.svg" alt="baseandbounds 6" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandbounds-7.svg" alt="baseandbounds 7" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandbounds-8.svg" alt="baseandbounds 8" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandbounds-9.svg" alt="baseandbounds 9" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandbounds-10.svg" alt="baseandbounds 10" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_base_and_bounds_pros">
+<h2>Base and Bounds: Pros</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Pro: <strong>simple</strong>! Hardware only needs to know base and bounds.</p>
+</li>
+<li class="slide">
+<p>Pro: <strong>fast</strong>!</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Protection: <strong>one</strong> comparison.</p>
+</li>
+<li>
+<p>Translation: <strong>one</strong> addition.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_base_and_bounds_cons">
+<h2>Base and Bounds: Cons</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Con: is this a good fit for our address space abstraction?</p>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p><strong>No!</strong> Address spaces encourage discontiguous allocation. Base and
+bounds allocation must be mostly contiguous otherwise we will lose
+memory to <em>internal</em> fragmentation.</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Con: also significant chance of <strong>external</strong> fragmentation due to large
+contiguous allocations.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandboundscon-1.svg" alt="baseandboundscon 1" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandboundscon-2.svg" alt="baseandboundscon 2" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandboundscon-3.svg" alt="baseandboundscon 3" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/baseandboundscon-4.svg" alt="baseandboundscon 4" style="width: 60%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_k_i_simplish_s_segmentation">
+<h2><span class="spelling_exception">K.I.Simplish.S.: Segmentation</span></h2>
+
+<div class="paragraph">
+<p><strong>One</strong> base and bounds isn&#x2019;t a good fit for the address space
+abstraction.</p>
+</div>
+<div class="ulist">
+<div class="title slide">But can we extend this idea?</div>
+<ul>
+<li class="slide">
+<p><strong>Yes!</strong> Multiple bases and bounds per process. We call each a
+<strong>segment</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>We can assign each logical region of the address space&#x2014;code, data,
+heap, stack&#x2014;to its own <strong>segment</strong>.</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Each can be a separate <strong>size</strong>.</p>
+</li>
+<li>
+<p>Each can have separate <strong>permissions</strong>.</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_k_i_simplish_s_segmentation_2">
+<h2><span class="spelling_exception">K.I.Simplish.S.: Segmentation</span></h2>
+
+<div class="paragraph">
+<p><strong>Segmentation</strong> works as follows:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li class="slide">
+<p>Each <strong>segment</strong> has a <strong>start</strong> virtual address, <strong>base</strong> physical
+address, and <strong>bound</strong>.</p>
+</li>
+<li class="slide">
+<p><strong>Check:</strong> Virtual Address is OK if it inside some segment, or for
+some segment:<br>
+Segment Start &lt; V.A. &lt; Segment Start + Segment Bound.</p>
+</li>
+<li class="slide">
+<p><strong>Translate:</strong> For the segment that contains this virtual address:<br>
+Physical Address = (V.A. - Segment Start) + Segment Base</p>
+</li>
+</ol>
+</div>
+
+</div>
+<div class="slide" id="_segmentation_example">
+<h2>Segmentation: Example</h2>
+
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-1.svg" alt="segments 1" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-2.svg" alt="segments 2" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-3.svg" alt="segments 3" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-4.svg" alt="segments 4" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-5.svg" alt="segments 5" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-6.svg" alt="segments 6" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-7.svg" alt="segments 7" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-8.svg" alt="segments 8" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-9.svg" alt="segments 9" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-10.svg" alt="segments 10" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-11.svg" alt="segments 11" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-12.svg" alt="segments 12" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-13.svg" alt="segments 13" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/segments-14.svg" alt="segments 14" style="width: 100%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_2" style="background-image: url(&quot;http://images.clipartpanda.com/mushroom-clipart-dirR5G5i9.jpeg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>Segmentation fault</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>Core dumped</p>
+</div>
+
+</div>
+<div class="slide" id="_segmentation_pros">
+<h2>Segmentation: Pros</h2>
+
+<div class="paragraph">
+<p>Have we found our ideal solution to the address translation challenge?</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Pro: still <em>fairly</em> simple:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Protection (Segment Exists): N comparisons for N segments.</p>
+</li>
+<li>
+<p>Translation: <strong>one</strong> addition. (Once segment located.)</p>
+</li>
+</ul>
+</div>
+</li>
+<li class="slide">
+<p>Pro: can <strong>organize</strong> and <strong>protect</strong> regions of memory appropriately.</p>
+</li>
+<li class="slide">
+<p>Pro: better fit for <strong>address spaces</strong> leading to less internal
+fragmentation.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_segmentation_cons">
+<h2>Segmentation: Cons</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Con: still requires <strong>entire</strong> segment be contiguous in memory!</p>
+</li>
+<li class="slide">
+<p>Con: potential for external fragmentation due to segment contiguity.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide canvas-image" id="_3" style="background-image: url(&quot;http://i68.photobucket.com/albums/i14/AUBURN_MYSTIQUE/Animals_Children/Squirrel_Nut.jpg&quot;);">
+
+
+
+<div class="paragraph meme-top">
+<p>So close!</p>
+</div>
+<div class="paragraph meme-bottom">
+<p>But not quite.</p>
+</div>
+
+</div>
+<div class="slide" id="_lets_regroup">
+<h2>Let&#x2019;s Regroup</h2>
+
+<div class="ulist">
+<div class="title slide">Ideally, what would we like?</div>
+<ul>
+<li class="slide">
+<p><strong>Fast</strong> mapping from <em>any</em> virtual byte to <em>any</em> physical byte.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Operating system <strong>cannot</strong> do this. Can hardware help?</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_translation_lookaside_buffer">
+<h2>Translation Lookaside Buffer</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Common systems trick: when something is too slow, throw a <strong>cache</strong> at
+it.</p>
+</li>
+<li class="slide">
+<p>Translation Lookaside Buffers&#x2014;or TLBs&#x2014;typically use
+<em>content-addressable memory</em> or CAMs to quickly search for a cached
+virtual-physical translation.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_tlb_example">
+<h2>TLB Example</h2>
+
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/tlb-1.svg" alt="tlb 1" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/tlb-2.svg" alt="tlb 2" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/tlb-3.svg" alt="tlb 3" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+<div class="openblock slide replace">
+<div class="content">
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/memory/tlb-4.svg" alt="tlb 4" style="width: 80%;">
+</div>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_whats_the_catch">
+<h2>What&#x2019;s the Catch?</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>CAMs are <strong>limited</strong> in size. We cannot make them arbitrarily large.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">So at this point:</div>
+<ul>
+<li class="slide">
+<p><strong>Segments</strong> are too <em>large</em> and lead to internal fragmentation.</p>
+</li>
+<li class="slide">
+<p>Mapping individual <strong>bytes</strong> would mean that the TLB would not be able
+to cache many entries and performance would suffer.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Is there a middle ground?</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="paragraph">
+<p>Page translation and page management.</p>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2016-03-07-addresstranslation">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>

@@ -1,0 +1,1097 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | CSE 421/521 Spring 2017</title>
+		<meta name="description" lang="en-us" content="Course materials for CSE 421/521 at the University at Buffalo in Spring 2017.
+">
+
+		<link rel="stylesheet" type="text/css" href="/css/site.css">
+
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+
+		<script src="/js/site.js" async></script>
+	</head>
+
+	<body>
+		<div class="container">
+			<nav class="navbar navbar-default navbar-fixed-top">
+				<a class="logo-fixed" href="/"><img src="/img/logos/ops-class.jpg" alt="ops-class.org logo"></a>
+				<div class="container">
+					<div class="navbar-header">
+						<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+							<span class="sr-only">Toggle navigation</span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+							<span class="icon-bar"></span>
+						</button>
+					</div>
+					<div id="navbar" class="navbar-collapse collapse">
+						<div class="row">
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav left">
+									<li><a id="menu-slides" title="Lecture slides, notes, and videos." href="/slides/">lectures</a>
+									</li>
+									<li>
+									<a id="menu-exams" title="Exams to test your knowledge of OS concepts." href="/exams/">exams</a>
+									</li>
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle active" id="menu-courses" title="Courses that have used ops-class.org" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">courses</a>
+										<ul class="dropdown-menu">
+											<li><a href="/courses/buffalo/CSE421_Spring2017">UB CSE 421/521 Spring 2017</a></li>
+											<li role="separator" class="divider"></li>
+											<li>
+											</li><li>
+											<a href="/courses/buffalo/CSE421_Spring2016">UB CSE 421/521 Spring 2016</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2015">UB CSE 421/521 Spring 2015</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2014">UB CSE 421/521 Spring 2014</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2013">UB CSE 421/521 Spring 2013</a>
+											</li>
+											<li>
+											<a href="/courses/buffalo/CSE421_Spring2012">UB CSE 421/521 Spring 2012</a>
+											</li>
+										</ul>
+									</li>
+								</ul>
+							</div>
+							<div class="col-sm-6">
+								<ul class="nav navbar-nav right">
+									<li class="dropdown">
+										<a href="#" class="dropdown-toggle" id="menu-asst" title="Hack the kernel! OS/161-based operating system assignments." data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">assignments</a>
+										<ul class="dropdown-menu">
+											<li><a href="/asst/setup/">Setup</a></li>
+											<li><a href="/asst/0/">ASST0</a></li>
+											<li><a href="/asst/1/">ASST1</a></li>
+											<li><a href="/asst/2/">ASST2</a></li>
+											<li><a href="/asst/3/">ASST3</a></li>
+											<li role="separator" class="divider"></li>
+											<li><a href="/asst/overview/">Overview</a></li>
+											<li><a href="/asst/repos/">Repositories</a></li>
+											<li><a href="/man/">OS/161 man Pages</a></li>
+										</ul>
+									</li>
+									<li><a id="menu-discuss" title="Discourse-based course discussion forum." href="https://discourse.ops-class.org" target="_blank" class="external">discuss</a></li>
+									<li><a id="menu-test161" class="noexternal" title="test161 online testing tool." href="https://test161.ops-class.org">test</a></li>
+								</ul>
+							</div>
+						</div>
+					</div>
+				</div>
+			</nav>
+		</div>
+
+<div id="content">
+	<div class="container">
+		<div class="row">
+			<div class="col-md-7 col-md-offset-2">
+				<a class="anchor" id="top"></a>
+				<h1>CSE 421/521 Spring 2017</h1>
+				<div class="openblock visible-print">
+<div class="content">
+<div class="admonitionblock warning alert alert-warning" role="alert">
+<table>
+<tbody><tr>
+<td class="icon"><span class="glyphicon glyphicon-alert" aria-hidden="true"></span></td>
+<td class="content">
+This syllabus is available online at <a href="https://www.ops-class.org/courses/buffalo/CSE421_Spring2017/" class="hidden_print external" target="_blank"><code>https://www.ops-class.org/courses/buffalo/CSE421_Spring2017/</code></a>.
+The online version is easier to read and includes helpful links, embedded
+videos, and other useful resources.
+</td>
+</tr>
+</tbody></table>
+</div>
+</div>
+</div>
+<div class="openblock hidden-print">
+<div class="content">
+<div class="paragraph">
+<p>This web page serves as the syllabus for the course.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_overview"></a><h2>1. Overview</h2>
+<div class="sectionbody">
+<div class="paragraph lead">
+<p>This course is an introduction to operating system design and implementation.
+We study operating systems because they are examples of mature and elegant
+solutions to a difficult design problem: how to safely and efficiently share
+system resources and provide abstractions useful to applications.</p>
+</div>
+<div class="paragraph">
+<p>For the processor, memory, and disks, we discuss how the operating system
+allocates each resource and explore the design and implementation of related
+abstractions.
+We also establish techniques for testing and improving system performance and
+introduce the idea of hardware virtualization.
+Programming assignments provide hands-on experience with implementing core
+operating system components in a realistic development environment.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="calendar"></a><h2>2. Calendar</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We suggest that you add our <a href="https://goo.gl/DCVaqv" target="_blank" class="external">shared calendar</a> to your
+calendaring program.
+If you are not using a calendaring program, we suggest that you start using a
+calendaring program.</p>
+</div>
+<div class="hidden-xs hidden-sm embed-responsive embed-responsive-4by3 hidden-print">
+	<div class="lazy-iframe" data-src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;mode=WEEK&amp;height=1200&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=l3ahiffhktcd2l6p4dm9gqkau0%40group.calendar.google.com&amp;color=%23B1440E&amp;ctz=America%2FNew_York" id="_lazy_iframe_0"></div>
+</div>
+<div class="hidden-md hidden-lg embed-responsive embed-responsive-4by3 hidden-print">
+	<div class="lazy-iframe" data-src="https://calendar.google.com/calendar/embed?showTitle=0&amp;showPrint=0&amp;mode=AGENDA&amp;height=1200&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=l3ahiffhktcd2l6p4dm9gqkau0%40group.calendar.google.com&amp;color=%23B1440E&amp;ctz=America%2FNew_York" id="_lazy_iframe_1"></div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_information"></a><h2>3. Information</h2>
+<div class="sectionbody">
+<div class="sect2">
+<a class="anchor" id="_course_staff"></a><h3>3.1. Course Staff</h3>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Instructor</strong>: Geoffrey Challen. I go by &quot;Geoff&quot;, &quot;Geoffrey&quot;, or
+&quot;GWA&quot;&#x2014;not &quot;Dr&quot;, &quot;Professor, or &quot;Sir&quot;.
+Please use <a href="mailto:prof@ops-class.org"><code>prof@ops-class.org</code></a> to aid my email
+filtering.
+However, you should rarely contact me directly.
+Instead, 99% of the time use the <a href="https://discourse.ops-class.org" target="_blank" class="external">Discourse
+forum</a> or 1% of the time contact the entire staff at
+<a href="mailto:staff@ops-class.org"><code>staff@ops-class.org</code></a>.</p>
+</li>
+<li>
+<p><strong>Teaching Assistants</strong>:
+<a href="https://www.bluegroup.systems/people/alijmabe/" target="_blank" class="external">Ali Ben Ali</a>,
+<a href="https://www.bluegroup.systems/people/carlnues/" target="_blank" class="external">Carl Nuessle</a>,
+and
+<a href="https://www.linkedin.com/in/vzheng" target="_blank" class="external">Vicky Zheng</a>,
+are your fantastic and hard-working teaching assistants this semester.
+They will be teaching recitation, holding office hours, and grading exams.
+Please do not email them directly&#x2014;&#x200B;instead, use
+<a href="https://discourse.ops-class.org" target="_blank" class="external">the Discourse forum</a>.</p>
+</li>
+<li>
+<p><strong>Ninjas</strong>: In addition to the official TAs, we have a number of volunteers we
+call <em>ninjas</em>.
+Some are members of
+<a href="https://www.bluegroup.systems" target="_blank" class="external">my research group</a>.
+Others are 421/521 students from previous years.
+This year&#x2019;s 17 ninjas are
+<a href="https://www.linkedin.com/in/adhishchugh" target="_blank" class="external">Adhish Chugh</a>,
+<a href="https://www.linkedin.com/in/benjamin-rueda-b5b186b2" target="_blank" class="external">Ben Rueda</a>,
+<a href="https://www.bluegroup.systems/people/brijeshr/" target="_blank" class="external">Brijesh Rakholia</a>,
+<a href="https://www.bluegroup.systems/people/grantwra/" target="_blank" class="external">Grant Wrazen</a>,
+<a href="https://www.bluegroup.systems/people/gurupras/" target="_blank" class="external">Guru Prasad</a>,
+<a href="https://james.droste.im/" target="_blank" class="external">James Droste</a>,
+<a href="https://www.bluegroup.systems/people/jinghaos/" target="_blank" class="external">Jinghao Shi</a>,
+<a href="https://www.linkedin.com/in/matthew-mcgovern-410168107" target="_blank" class="external">Matthew McGovern</a>,
+<a href="https://www.linkedin.com/in/robert-rymarczyk-752b9a107" target="_blank" class="external">Rob Rymarczyk</a>,
+<a href="https://www.bluegroup.systems/people/shaseley/" target="_blank" class="external">Scott Haseley</a>,
+<a href="https://www.bluegroup.systems/people/sriramsh/" target="_blank" class="external">Sriram Shantharam</a>,
+<a href="https://www.linkedin.com/in/bassman5001" target="_blank" class="external">Steve Bass</a>,
+<a href="https://www.linkedin.com/in/timothy-eilinger-ii-a658bab9" target="_blank" class="external">Timothy Eilinger</a>,
+William Burgin,
+<a href="https://www.facebook.com/public/Yousuf-Zubairi" target="_blank" class="external">Yousuf Zubairi</a>,
+and <a href="https://www.acsu.buffalo.edu/~zmwieand/DMS221-Project1/" target="_blank" class="external">Zach Wieand</a>.
+Ninjas will hold office hours but do not do any grading.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_times_and_locations"></a><h3>3.2. Times and Locations</h3>
+<div class="paragraph">
+<p>The <a href="#calendar">online calendar</a> contains up-to-date information about all
+course meetings and activities. Please check it regularly&#x2014;&#x200B;changes do happen.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Lecture</strong>: MWF 2:00&#x2014;&#x200B;2:50PM, Cooke 121 <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Sorry about the room&amp;#x2014;&amp;#x200B;I hate it too.&lt;/body&gt;&lt;/html&gt;">1</span>.</p>
+</li>
+<li>
+<p><strong>Recitations</strong>:
+T 4:00&#x2013;3:50PM, Knox 110; W 3:00&#x2013;3:50PM, Fronczak 454; and F
+8:00&#x2014;&#x200B;8:50AM, NSC 210.
+Ali, Carl, and Vicky will rotate recitation responsibilities.
+Attendance is not mandatory, and you can none, one, or many depending on what
+fits your schedule.
+We will videotape recitations and add them to the recitation playlist.
+<strong>Graduate students may only attend recitations if there is space.</strong>
+However, both Knox 110 and NSC 210 are quite large rooms, so there will
+probably be space.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_exams"></a><h3>3.3. Exams</h3>
+<div class="paragraph">
+<p>A 50-minute midterm will be given in class on Friday 3/31/2017.
+A 3-hour final exam will be Monday 5/15/2017 from 3:30&#x2014;&#x200B;6:30PM in Cooke 121.
+All dates are on the <a href="#calendar">Calendar</a>.
+<strong>Please contact the course staff as soon as possible if you cannot attend a
+scheduled exam for any reason.</strong></p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_undergraduate_prerequisites"></a><h3>3.4. Undergraduate Prerequisites</h3>
+<div class="paragraph">
+<p><a href="http://www.cse.buffalo.edu/shared/course.php?e=CSE&amp;n=250&amp;t=DATA+STRUCTURES" class="hidden_print external" target="_blank">CSE
+250: Data Structures</a>.</p>
+</div>
+<div class="openblock hidden-print">
+<div class="content">
+<div class="paragraph">
+<p>=== Other Important Dates</p>
+</div>
+<div class="paragraph">
+<p>(Also on the <a href="#calendar">Calendar</a>.)</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Last Day to Drop Add</strong>: 2/6/2017</p>
+</li>
+<li>
+<p><strong>Last Day to Resign</strong>: 4/21/2017</p>
+</li>
+<li>
+<p><strong>Last Day of Class</strong>: 5/12/2017</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_description"></a><h2>4. Description</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Operating systems are the masterworks of the programming world: beautiful and
+sophisticated solutions to difficult design problems that have emerged from
+years of effort by thousands of skilled programmers.
+Like budding artists study the works of the great masters for inspiration,
+programmers study operating systems.
+While most of you will never contribute a single line of code to a production
+operating system, we hope that by the end of the course you will have learned
+something from their elegance and maturity.</p>
+</div>
+<div class="paragraph">
+<p>Understanding operating system design will make you a better software
+engineer.
+Struggling with operating system programming will make you a better
+programmer.
+This course gives you a chance to do both.
+We establish a <em>conceptual</em> track through lectures and exams, where we
+discuss the concepts and design principles of modern operating systems and
+how hardware devices such as the CPU, memory, and disks are multiplexed and
+abstracted.
+Equally important, however, is the <em>programming</em> track which proceeds through
+four assignments that give you the chance to implement core operating system
+functionality in a simplified development environment.
+After studying synchronization, you will implement synchronization
+primitives.
+After studying the system call interface, you will implement it.
+After studying virtual memory and address translation, you will design and
+implement a virtual memory subsystem.</p>
+</div>
+<div class="paragraph">
+<p>Designing and implementing operating system concepts is not easy, and neither
+is this course.
+But we are here to help and committed to providing you with the support you
+need to succeed.
+Our <a href="https://test161.ops-class.org" target="_blank" class="external">online grading tools</a> provide helpful
+feedback and allow you to repeatedly test and submit your assignments until
+you earn the grade you desire.
+Our TAs are experienced and will be available for many hours each week to
+provide individual help.
+And a number of successful previous students will return as volunteers to
+offer even more help.
+We expect that you will find this course difficult, but we hope you will also
+learn a large amount, have fun, and develop a passion for computer systems.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_learning_objectives"></a><h3>4.1. Learning Objectives</h3>
+<div class="sect3">
+<a class="anchor" id="_conceptual_objectives"></a><h4>4.1.1. Conceptual Objectives</h4>
+<div class="paragraph">
+<p>When you finish this course, you will be able to:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Outcome</th>
+<th class="tableblock halign-left valign-top">Assessment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="has-rowspan">
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Understand the abstractions</strong> supported by modern operating systems.</p></td>
+<td class="tableblock halign-left valign-top" rowspan="3"><p class="tableblock">Class and recitation participation, midterm, final exam. 70%
+correctly identified marks outcome achieved.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Describe how operating systems safely and efficiently multiplex
+hardware resources</strong> through effective policies and mechanisms.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Analyze the designs and features</strong> of historical, current, and
+emerging operating systems.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<a class="anchor" id="_programming_objectives"></a><h4>4.1.2. Programming Objectives</h4>
+<div class="paragraph">
+<p>When you finish this course, you will be able to:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 50%;">
+<col style="width: 50%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Outcome</th>
+<th class="tableblock halign-left valign-top">Assessment</th>
+</tr>
+</thead>
+<tbody>
+<tr class="has-rowspan">
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Design and implement</strong> working systems software.</p></td>
+<td class="tableblock halign-left valign-top" rowspan="3"><p class="tableblock">Office hours attendance, homework and programming assignments. 70%
+correctly identified marks outcome achieved.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Identify and correct bugs</strong> in complex, multithreaded systems.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Formulate and test</strong> performance hypotheses.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_abet_outcomes"></a><h3>4.2. ABET Outcomes</h3>
+<div class="paragraph">
+<p>The <a href="http://www.abet.org" target="_blank" class="external">Accreditation Board for Engineering and Technology
+(ABET)</a> helps guide curriculum by defining common outcomes that coursework
+should help students achieve by the time they graduate. This course should
+assist you in four of the nine University at Buffalo outcomes:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>(c)</strong> An ability to design, implement and evaluate a computer-based system,
+process, component, or program to meet desired needs.</p>
+</li>
+<li>
+<p><strong>(d)</strong> An ability to function effectively on teams to accomplish a common
+goal.</p>
+</li>
+<li>
+<p><strong>(f)</strong> An ability to communicate effectively with a range of audiences.</p>
+</li>
+<li>
+<p><strong>(i)</strong> An ability to use current techniques, skills, and tools necessary for
+computing practice.</p>
+</li>
+<li>
+<p><strong>(k)</strong> An ability to apply design and development principles in the
+construction of software systems of varying complexity.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>The table below describes how each outcome above is incorporated into this
+course:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 80%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-center valign-top">ABET a&#x2014;&#x200B;k</th>
+<th class="tableblock halign-left valign-top">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><strong>c</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All four assignments challenge your ability to <em>&quot;design, implement, and
+evaluate&quot;</em> components of an operating system.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><strong>d</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All four programming assignments are performed in pairs, helping you
+<em>&quot;function effectively on teams to accomplish a common goal&quot;</em>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><strong>f</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Preparing design documents is an integral part of the two large
+assignments, providing practice at effective technical communication, part of
+the ability to <em>&quot;communicate effectively with a range of audiences&quot;</em>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><strong>i</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">This course requires students to develop in a virtual machine, use
+<a href="http://git-scm.com/" target="_blank" class="external">Git</a> for collaborative development, and use modern
+debugging and code editing tools, all preparing you to <em>&quot;use current
+techniques, skills, and tools necessary for computing practice&quot;</em>.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-center valign-top"><p class="tableblock"><strong>k</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">The course assignments increase in complexity as the semester goes on,
+allowing students to <em>&quot;apply design and development principles in the
+construction of software systems of varying complexity&quot;</em>.</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<a class="anchor" id="_outline"></a><h3>4.3. Outline</h3>
+<div class="paragraph">
+<p>I reserve the right to alter this rough outline as needed to the keep the
+class current, and our completion of the material will depend on the pace
+that we are able to establish and your understanding of the material.</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Processes and the system call interface</strong></p>
+</li>
+<li>
+<p><strong>Abstracting and multiplexing the CPU</strong></p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Interrupts.</p>
+</li>
+<li>
+<p>Context switches.</p>
+</li>
+<li>
+<p>The thread abstraction.</p>
+</li>
+<li>
+<p>Synchronization.</p>
+<div class="olist lowerroman">
+<ol class="lowerroman" type="i">
+<li>
+<p>Atomicity and concurrency.</p>
+</li>
+<li>
+<p>Critical sections.</p>
+</li>
+<li>
+<p>Synchronization primitives: locks, semaphores, and condition variables.</p>
+</li>
+<li>
+<p>Solving synchronization problems.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p>Thread scheduling.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p><strong>Abstracting and multiplexing memory</strong></p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>The address space abstraction.</p>
+</li>
+<li>
+<p>Virtual addresses.</p>
+</li>
+<li>
+<p>Efficient address translation.</p>
+</li>
+<li>
+<p>Segmentation and paging.</p>
+</li>
+<li>
+<p>Swapping.</p>
+</li>
+<li>
+<p>Page replacement policies.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p><strong>Abstracting and multiplexing disks</strong></p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Basics of disk operation.</p>
+</li>
+<li>
+<p>The file abstraction.</p>
+</li>
+<li>
+<p>File system basics.</p>
+</li>
+<li>
+<p>File system structures.</p>
+</li>
+<li>
+<p>File system operations.</p>
+</li>
+<li>
+<p>File system caching.</p>
+</li>
+<li>
+<p>The Berkeley Fast File Systems (FFS).</p>
+</li>
+<li>
+<p>Log-structured file systems.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p><strong>Operating system structure: micro, macro, exo and multikernels.</strong></p>
+</li>
+<li>
+<p><strong>Performance improvement.</strong></p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Measurement.</p>
+</li>
+<li>
+<p>Benchmarking.</p>
+</li>
+<li>
+<p>Analysis.</p>
+</li>
+<li>
+<p>Improvement and Amdahl&#x2019;s Law.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p><strong>Hardware virtualization.</strong></p>
+<div class="olist loweralpha">
+<ol class="loweralpha" type="a">
+<li>
+<p>Intro to virtualization.</p>
+</li>
+<li>
+<p>Types of virtualization.</p>
+</li>
+<li>
+<p>Full hardware virtualization.</p>
+</li>
+<li>
+<p>Binary translation and paravirtualization.</p>
+</li>
+</ol>
+</div>
+</li>
+<li>
+<p><strong>Special topics (time permitting.</strong></p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_programming_assignments"></a><h3>4.4. Programming Assignments</h3>
+<div class="paragraph">
+<p>The course includes four programming assignments of increasing difficulty.
+The assignments themselves are hosted on this website.
+You also use the website to submit your answers and view your grades.
+Assignments are graded automatically and you may submit them as often as you
+like, using the autograder output to improve your submission.</p>
+</div>
+<div class="paragraph">
+<p>All programming assignments are done in pairs.
+<strong>Both students in each pair receive the same grade for each programming
+assignment.</strong>
+Each programming assignment also has specific collaboration guidelines that
+you must indicate you have followed each time you submit.</p>
+</div>
+<div class="paragraph">
+<p>A description of each assignment along with due dates are listed below.
+This year we expect these to be firm and <strong>no extensions will be given.</strong></p>
+</div>
+<div class="sect3">
+<a class="anchor" id="_asst0_introduction_to_os161"></a><h4>4.4.1. <a href="/asst/0/"><code>ASST0</code>: Introduction to OS/161</a></h4>
+<div class="paragraph">
+<p>Introduces you to the programming environment you will be working in this
+semester: the OS/161 operating system, the <code>sys161</code> simulator, the GNU
+debugger (GDB), and the Git revision control system.
+Consists of code reading questions and a very simple implementation task.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_asst1_synchronization"></a><h4>4.4.2. <a href="/asst/1/"><code>ASST1</code>: Synchronization</a></h4>
+<div class="paragraph">
+<p><strong>Deadline</strong>: Friday 2/17/2017 @ 5PM.</p>
+</div>
+<div class="paragraph">
+<p>Your first real taste of kernel programming.
+After completing a set of code reading questions, you implement locks,
+condition variables and reader-writer locks.
+Next, you use them to solve a few simple toy synchronization problems.</p>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_asst2_system_calls_and_process_support"></a><h4>4.4.3. <a href="/asst/2/"><code>ASST2</code>: System Calls and Process Support</a></h4>
+<div class="paragraph">
+<p>The first big and complex assignment.
+Start by completing a design that indicates you understand all of the moving
+pieces and what to do.
+Next, implement the system call interface.
+When you are finished, your kernel should be able to run user programs.</p>
+</div>
+<div class="paragraph">
+<p>We split the <a href="/asst/2/" class="hidden_print">ASST2</a> deadlines into two parts:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>ASST2.1</strong>: Setup and first steps. <strong>Deadline</strong>: Friday 2/24/2017 @ 5PM.</p>
+</li>
+<li>
+<p><strong>ASST2.2</strong>: Finish the job: implement the file system system calls
+(<code>open()</code>, <code>close()</code>, <code>read()</code>, <code>write()</code>, <code>lseek()</code>, <code>dup2()</code>, <code>chdir()</code>, and
+<code>getcwd()</code>) and the process-related system calls (<code>fork()</code>, <code>execv()</code>,
+<code>waitpid()</code>, <code>\_exit()</code>). <strong>Deadline</strong>: Friday 3/17/2017 @ 5PM.</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect3">
+<a class="anchor" id="_asst3_virtual_memory"></a><h4>4.4.4. <a href="/asst/3/"><code>ASST3</code>: Virtual Memory</a></h4>
+<div class="paragraph">
+<p>The mountain top.
+A large amount of code to implement and many internal interfaces to design.
+As always, start with a careful design.
+Then implement virtual memory, including address translation, TLB management,
+page replacement and swapping.
+When you are finished, your kernel should be able to run forever without
+running out of memory, and you will have completed the course.</p>
+</div>
+<div class="paragraph">
+<p>We split the <a href="/asst/3/" class="hidden_print">ASST3</a> deadlines into three parts:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>ASST3.1</strong>: working core map. <strong>Deadline</strong>: Friday 4/7/2017 @ 5PM.</p>
+</li>
+<li>
+<p><strong>ASST3.2</strong>: user paging. <strong>Deadline</strong>: Friday 4/21/2017 @ 5PM.</p>
+</li>
+<li>
+<p><strong>ASST3.3</strong>: swapping. <strong>Deadline</strong>: Friday 5/5/2017 @ 5PM.</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_textbook"></a><h3>4.5. Textbook</h3>
+<div class="openblock spelling_exception">
+<div class="content">
+<div class="paragraph">
+<p>There is no required textbook for this course. You can consider
+<a href="http://www.amazon.com/Modern-Operating-Systems-Andrew-Tanenbaum/dp/013359162X/" class="hidden_print external" target="_blank">Modern Operating Systems</a>
+to be a supplemental reference for those interested in learning more.
+<a href="http://www.amazon.com/C-Programming-Language-2nd/dp/0131103628/" class="hidden_print external" target="_blank">The C Programming Language</a>
+by Kernighan and Ritchie may be a helpful reference
+when completing the assignments, particularly if you are new to C.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_policies"></a><h2>5. Policies</h2>
+<div class="sectionbody">
+<div class="sect2">
+<a class="anchor" id="_grading"></a><h3>5.1. Grading</h3>
+<div class="paragraph">
+<p>Grading is evenly divided between conceptual material and programming
+assignments.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>50% Conceptual</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>15% Midterm Exam, 35% Final Exam</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>50% Programming</strong></p>
+<div class="ulist">
+<ul>
+<li>
+<p>5% <a href="/asst/1/" class="hidden_print">ASST1</a>, 15% <a href="/asst/2/" class="hidden_print">ASST2</a>, 30% <a href="/asst/3/" class="hidden_print">ASST3</a></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect3">
+<a class="anchor" id="_extra_credit"></a><h4>5.1.1. Extra credit</h4>
+<div class="paragraph">
+<p>This year we will provide up to 5% extra credit to students that help us
+improve our course materials.
+All the assignments and lecture slides, as well as other resources including
+our Vagrant virtual machine configuration and the <code>test161</code> OS/161 testing
+tool, are online at our <a href="https://github.com/ops-class" target="_blank" class="external"><code>ops-class.org</code> GitHub
+repository</a>.
+The amount of extra credit that will be provided will be commensurate with
+your contribution and entirely at the discretion of the course staff.</p>
+</div>
+<div class="paragraph">
+<p>To take advantage of this offer you must also present your updates to the
+course staff in a way that makes them straightforward to incorporate.
+Do not email us, or post in the forum.
+Clone our repository, fix the problem, and send us a pull request.
+If you are curious about how much credit a particular change will earn you,
+post it as an issue on GitHub first and we&#x2019;ll discuss.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_incomplete_grades"></a><h3>5.2. Incomplete Grades</h3>
+<div class="paragraph">
+<p>Please refer to the
+<a href="http://undergrad-catalog.buffalo.edu/policies/grading/explanation.shtml#incomplete" target="_blank" class="external">undergraduate</a>
+or
+<a href="http://grad.buffalo.edu/Academics/Policies-Procedures/Grading-Procedures.html#incomplete" target="_blank" class="external">graduate</a>
+incomplete policy as appropriate. Of particular importance is this language
+from the undergraduate incomplete policy (the graduate language is similar):</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+Students may only be given an <strong>I</strong> grade if they have a passing average in
+coursework that has been completed and have well-defined parameters to
+complete the course requirements that could result in a grade better than the
+default grade. <em>An <strong>I</strong> grade may not be assigned to a student who
+  did not attend the course.</em>
+</blockquote>
+</div>
+<div class="paragraph">
+<p>Note that for graduate students, &quot;the default grade accompanying an interim
+grade of <strong>I</strong> shall be <strong>U</strong> and will be displayed on the UB record as
+<strong class="spelling_exception">IU</strong>.&quot;</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_academic_integrity"></a><h3>5.3. Academic Integrity</h3>
+<div class="paragraph">
+<p>Please review the <a href="http://www.cse.buffalo.edu/shared/policies/academic.php" target="_blank" class="external">CSE
+Department academic integrity policy</a> and the UB
+<a href="https://catalog.buffalo.edu/policies/integrity.html" target="_blank" class="external">undergraduate</a>
+or <a href="http://grad.buffalo.edu/study/progress/policies.html#preamble" target="_blank" class="external">graduate</a>
+academic integrity policy as appropriate to familiarize yourself with the
+relevant academic integrity policies and procedures. In general, the rule of
+thumb is that talking <em>about</em> code in English is OK, but talking <em>in</em> or
+<em>exchanging</em> code is cheating. Each assignment has specific guidelines about
+what types of collaboration are encouraged, discouraged, and forbidden. We
+will use automated plagiarism detection software to check every submission
+against solutions submitted in prior years as well as all publicly-available
+solutions online.</p>
+</div>
+<div class="paragraph">
+<p><strong>Students that submit plagiarized work will receive a grade of F for the
+course.</strong></p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_disabilities"></a><h3>5.4. Disabilities</h3>
+<div class="paragraph">
+<p>Please register and coordinate with the Office of Disability Services. Let
+the course staff know when accommodations need to be made. We are committed
+to helping you learn.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_getting_help"></a><h2>6. Getting Help</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The operating systems programming assignments are difficult and most students
+require a fair amount of help during the semester. Here&#x2019;s how to&#x2014;&#x200B;and how
+not to&#x2014;&#x200B;get help.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_great_ways_to_get_help"></a><h3>6.1. Great Ways to Get Help</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Use the <a href="https://discourse.ops-class.org" target="_blank" class="external">the forum</a>.</strong> This is by far your
+best resource because it allows you to get help from anyone&#x2014;&#x200B;not just a TA or
+Ninja&#x2014;&#x200B;at any time&#x2014;&#x200B;not just during office hours. Please use and contribute
+to this valuable shared resource.</p>
+</li>
+<li>
+<p><strong>Come to office hours.</strong> We don&#x2019;t hold them for our health and
+the staff gets bored when there isn&#x2019;t anyone to help! So please don&#x2019;t
+hesitate to come in. Office hours are also a great time to work on your
+assignments, since if (when) you get stuck help is already nearby.</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_bad_ways_to_get_help"></a><h3>6.2. Bad Ways to Get Help</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Emailing any staff member using their <code>@buffalo.edu</code> email address.</strong> I
+instruct the staff to ignore these emails and I will as well.</p>
+</li>
+<li>
+<p>Emailing <a href="mailto:staff@ops-class.org"><code>staff@ops-class.org</code></a>.
+This address is only for administrative uses, not for getting help on
+assignments.</p>
+</li>
+<li>
+<p>Emailing <a href="mailto:prof@ops-class.org"><code>prof@ops-class.org</code></a>.
+This address is only for highly-sensitive administrative uses, not for
+getting help on assignments.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<a class="anchor" id="_online_resources"></a><h2>7. Online Resources</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This website is the source for all information about the class: the syllabus
+(which you are reading) lecture slides, assignments, previous exams, lecture
+videos, and other useful information.</p>
+</div>
+<div class="sect2">
+<a class="anchor" id="_videos"></a><h3>7.1. Videos</h3>
+<div class="paragraph">
+<p>We try to tape all
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp_z8pkiuvHo7Vz-eQEKsk-I" class="hidden_print external" target="_blank">lectures</a>,
+and
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp9fbHf9b1kl8TiVYIg9uq-Y" class="hidden_print external" target="_blank">recitations</a>.
+A playlist of the music played before class is also
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp9hMbxGwJketoIzKNLGxaOw" class="hidden_print external" target="_blank">available</a>.
+Finally, we are experimenting with screencasts which are embedded into the
+assignments and also available in a
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp9PC8fyzc2meL4XvrVSyP8O" class="hidden_print external" target="_blank">playlist</a>.</p>
+</div>
+<div class="openblock hidden-print">
+<div class="content">
+<div class="paragraph">
+<p>Previous years have also been recorded:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>2016</strong>:
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp-kbEcVR2W3vfx0Pdca0BD3" target="_blank" class="external">Lectures</a>,
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp_YJn8wu9aJTPOgeWqiaJDF" target="_blank" class="external">recitations</a>.</p>
+</li>
+<li>
+<p><strong>2015</strong>:
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp8U4xVODdQtgJ945HeMwosQ" target="_blank" class="external">Lectures</a>,
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp9DnLcZFyX2f_JnUsmeS7vL" target="_blank" class="external">recitations</a>.</p>
+</li>
+<li>
+<p><strong>2014</strong>:
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp_Dugcm7mBsEahZS5Xr-zWe" target="_blank" class="external">Lectures</a>,
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp9POq3yWUBM3XLsW2il8U32" target="_blank" class="external">recitations</a>.</p>
+</li>
+<li>
+<p><strong>2013</strong>:
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp-qxcxaYtTf5zQXdcfzrW_r" target="_blank" class="external">Lectures</a>.</p>
+</li>
+<li>
+<p><strong>2012</strong>:
+<a href="https://www.youtube.com/playlist?list=PLE6LEE8y2Jp8tllE40n3tHfWXqxFeyFuY" target="_blank" class="external">Lectures</a>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_forum"></a><h3>7.2. Forum</h3>
+<div class="paragraph">
+<p>We are using a <a href="https://discourse.ops-class.org" target="_blank" class="external">Discourse forum</a> this semester
+for all class-related communications.
+Please update your profile on it and use it for all lecture- and
+assignment-related Q&amp;A.</p>
+</div>
+<div class="paragraph">
+<p>Before we got tired of it and it&#x2019;s strange approach to pedagogy we used Piazza
+in past years.
+Unfortunately, there seems to be no way to make the previous forums contents
+public <span class="badge footnote default-tooltip" data-toggle="popover" data-placement="top" data-html="true" data-content="&lt;html&gt;&lt;head&gt;&lt;/head&gt;&lt;body&gt;Yet another thing to dislike about Piazza&amp;#x2026;&amp;#x200B;&lt;/body&gt;&lt;/html&gt;">2</span>.</p>
+</div>
+</div>
+<div class="sect2">
+<a class="anchor" id="_mailing_list"></a><h3>7.3. Mailing List</h3>
+<div class="paragraph">
+<p>All enrolled students will be added to a mailing list which we will use for
+course communication.
+<strong>You are responsible for email messages sent to this list.</strong>
+If you are not enrolled and would like to be added to the list, you can sign
+up <a href="https://www.ops-class.org/mailman/listinfo/ub" target="_blank" class="external">here</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1 hidden-print">
+<a class="anchor" id="_videos_2"></a><h2>8. Videos</h2>
+<div class="sectionbody">
+<h3>Lectures</h3>
+<div class="embed-responsive embed-responsive-16by9 hidden-print">
+	<div class="lazy-iframe" data-src="//www.youtube.com/embed/videoseries?list=PLE6LEE8y2Jp_z8pkiuvHo7Vz-eQEKsk-I&amp;showinfo=1" id="_lazy_iframe_2"></div>
+</div>
+
+<h3>Recitations</h3>
+<div class="embed-responsive embed-responsive-16by9 hidden-print">
+	<div class="lazy-iframe" data-src="//www.youtube.com/embed/videoseries?list=PLE6LEE8y2Jp9fbHf9b1kl8TiVYIg9uq-Y&amp;showinfo=1" id="_lazy_iframe_3"></div>
+</div>
+</div>
+</div>
+
+			</div>
+			<div id="scrollspy" class="col-md-3 spelling_exception">
+				<ul id="side" class="nav fixed-md-3 hidden-xs hidden-sm hidden-print" data-spy="affix" style="padding-top:20px; padding-right:10px;">
+					<li class="h5"><a href="#top">1. Overview</a>
+					</li>
+					<li class="h5"><a href="#calendar">2. Calendar</a>
+					</li>
+					<li class="h5"><a href="#_information">3. Information</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_course_staff">3.1. Course Staff</a></li>
+							<li class="h6"><a href="#_times_and_locations">3.2. Times and Locations</a></li>
+							<li class="h6"><a href="#_exams">3.3. Exams</a></li>
+							<li class="h6"><a href="#_undergraduate_prerequisites">3.4. Undergraduate Prerequisites</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_description">4. Description</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_learning_objectives">4.1. Learning Objectives</a></li>
+							<li class="h6"><a href="#_abet_outcomes">4.2. ABET Outcomes</a></li>
+							<li class="h6"><a href="#_outline">4.3. Outline</a></li>
+							<li class="h6"><a href="#_programming_assignments">4.4. Programming Assignments</a></li>
+							<li class="h6"><a href="#_textbook">4.5. Textbook</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_policies">5. Policies</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_grading">5.1. Grading</a></li>
+							<li class="h6"><a href="#_incomplete_grades">5.2. Incomplete Grades</a></li>
+							<li class="h6"><a href="#_academic_integrity">5.3. Academic Integrity</a></li>
+							<li class="h6"><a href="#_disabilities">5.4. Disabilities</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_getting_help">6. Getting Help</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_great_ways_to_get_help">6.1. Great Ways to Get Help</a></li>
+							<li class="h6"><a href="#_bad_ways_to_get_help">6.2. Bad Ways to Get Help</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_online_resources">7. Online Resources</a>
+						<ul class="nav">
+							<li class="h6"><a href="#_videos">7.1. Videos</a></li>
+							<li class="h6"><a href="#_forum">7.2. Forum</a></li>
+							<li class="h6"><a href="#_mailing_list">7.3. Mailing List</a></li>
+						</ul>
+					</li>
+					<li class="h5"><a href="#_videos_2">8. Videos</a>
+						<ul class="nav">
+							<li class="h6"><a href="#">Lectures</a></li>
+							<li class="h6"><a href="#">Recitations</a></li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div class="container hidden-print">
+  <div class="row" style="margin-top: 10px; margin-bottom: 20px;">
+    <div class="col-xs-12">
+      <hr>
+    </div>
+    <div class="small col-xs-12 col-md-4 col-md-offset-4 text-center">
+      Created 2/17/2017 <br>
+      Updated 9/18/2020
+    </div>
+		<div class="small col-xs-12 col-md-4 text-center">
+			<a class="link_exception external" href="https://github.com/ops-class/www/commit/4eceaabe974b1900498251230a2fe4cffd0ff3d8" target="_blank">Commit <code>4eceaab</code></a>
+			//
+			<a class="link_exception external" href="https://github.com/ops-class/www/commits/master/src/courses/buffalo/CSE421_Spring2017.adoc" target="_blank">History</a> //
+			<a class="link_exception external" href="https://github.com/ops-class/www/blob/master/src/courses/buffalo/CSE421_Spring2017.adoc" target="_blank">View</a>
+			<br>
+			Built 9/18/2020 @ 10:49 EDT
+		</div>
+  </div>
+</div>
+
+
+
+</body></html>

@@ -1,0 +1,681 @@
+<!DOCTYPE html><html lang="en"><head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+
+		<title>ops-class.org | Journaling and FFS</title>
+		<meta content="Geoffrey Challen" name="author">
+		<meta name="description" lang="en-us" content="The UNIX Fast File System (FFS).">
+
+		<link href="/css/slides.css" rel="stylesheet">
+		
+		<link rel="apple-touch-icon" sizes="57x57" href="/img/favicon/apple-icon-57x57.png">
+		<link rel="apple-touch-icon" sizes="60x60" href="/img/favicon/apple-icon-60x60.png">
+		<link rel="apple-touch-icon" sizes="72x72" href="/img/favicon/apple-icon-72x72.png">
+		<link rel="apple-touch-icon" sizes="76x76" href="/img/favicon/apple-icon-76x76.png">
+		<link rel="apple-touch-icon" sizes="114x114" href="/img/favicon/apple-icon-114x114.png">
+		<link rel="apple-touch-icon" sizes="120x120" href="/img/favicon/apple-icon-120x120.png">
+		<link rel="apple-touch-icon" sizes="144x144" href="/img/favicon/apple-icon-144x144.png">
+		<link rel="apple-touch-icon" sizes="152x152" href="/img/favicon/apple-icon-152x152.png">
+		<link rel="apple-touch-icon" sizes="180x180" href="/img/favicon/apple-icon-180x180.png">
+		<link rel="icon" type="image/png" sizes="192x192" href="/img/favicon/android-icon-192x192.png">
+		<link rel="icon" type="image/png" sizes="32x32" href="/img/favicon/favicon-32x32.png">
+		<link rel="icon" type="image/png" sizes="96x96" href="/img/favicon/favicon-96x96.png">
+		<link rel="icon" type="image/png" sizes="16x16" href="/img/favicon/favicon-16x16.png">
+		<meta name="msapplication-TileColor" content="#ffffff">
+		<meta name="msapplication-TileImage" content="/img/favicon/ms-icon-144x144.png">
+		<meta name="theme-color" content="#ffffff">
+
+		<!--[if lt IE 9]>
+			<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+			<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+		<![endif]-->
+		
+		<script src="/js/slides.js" async></script>
+	</head>
+
+	<body>
+		<div id="content">
+			<div class="deck-container">
+				<div class="nooutline spelling_exception slide" id="_technical_women">
+<h2>Technical Women</h2>
+
+<div class="imageblock hascaption">
+<div class="content">
+<a class="image" href="https://en.wikipedia.org/wiki/Kristina_M._Johnson" target="_blank"><img src="/img/slides/women/003.jpg" alt="003" style="width: 100%;"></a>
+</div>
+<div class="title">Figure 1. Kristina Johnson</div>
+</div>
+<div class="paragraph h4 center">
+<p><span class="fa fa-music"></span> <a href="http://aimeemann.com/" target="_blank" class="external">Patient Zero by Aimee Mann</a></p>
+</div>
+<div class="videoblock">
+
+<iframe width="0" height="0" src="//www.youtube.com/embed/en8HZ6X20Og?rel=0&amp;enablejsapi=1" allowfullscreen id="_iframe_0"></iframe>
+
+<div class="anim-play slide" data-what="iframe#_iframe_0"></div><div class="anim-pause slide" data-what="iframe#_iframe_0"></div></div>
+
+</div>
+<div class="nooutline slide" id="_today">
+<h2>Today</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Journaling review</p>
+</li>
+<li>
+<p>The Berkeley Fast File System (FFS)</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_asst3_2_checkpoint">
+<h2><a href="/asst/3/"><code>ASST3.2</code></a> Checkpoint</h2>
+
+<div class="ulist">
+<div class="title">At this point:</div>
+<ul>
+<li>
+<p>If you have not started <code>ASST3.2</code>, <strong>you&#x2019;re behind.</strong></p>
+</li>
+<li>
+<p>If you have basic address translation and TLB management working, you&#x2019;re OK.</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong><a href="/asst/3/"><code>ASST3.2</code></a> is due in one week. Get started!</strong></p>
+</div>
+
+</div>
+<div class="nooutline slide" id="_midterm_return">
+<h2>Midterm Return</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Starting <strong>Monday</strong> during office hours.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_another_approach_to_consistency">
+<h2>Another Approach to Consistency</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>What&#x2019;s <em>not</em> atomic? <span class="slide">Writing <strong>multiple</strong> disk blocks.</span></p>
+</li>
+<li class="slide">
+<p>What <em>is</em> atomic? <span class="slide">Writing <strong>one</strong> disk block.</span></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_journaling">
+<h2>Journaling</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Track pending changes to the file system in a special area on disk
+called the <strong>journal</strong>.</p>
+</li>
+<li class="slide">
+<p>Following a failure, <strong>replay</strong> the journal to bring the file system back
+to a consistent state.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide small">
+<div class="content">
+<div class="paragraph">
+<p>Creation example:</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Dear Journal, here&#x2019;s what I&#x2019;m going to do today:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Allocate inode 567 for a new file.</p>
+</li>
+<li>
+<p>Associate data blocks 5, 87, and 98 with inode 567.</p>
+</li>
+<li>
+<p>Add inode 567 to the directory with inode 33.</p>
+</li>
+<li>
+<p>That&#x2019;s it!</p>
+</li>
+</ol>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_journaling_checkpoints">
+<h2>Journaling: Checkpoints</h2>
+
+<div class="ulist">
+<div class="title slide">What happens when we flush cached data to disk?</div>
+<ul>
+<li class="slide">
+<p>Update the journal!</p>
+</li>
+<li class="slide">
+<p>This is called a <strong>checkpoint</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="quoteblock slide small">
+<blockquote>
+<div class="paragraph">
+<p>Dear Journal, here&#x2019;s what I&#x2019;m going to do today:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong class="line-through">Allocate inode 567 for a new file.</strong></p>
+</li>
+<li>
+<p><strong class="line-through">Associate data blocks 5, 87, and 98 with inode 567.</strong></p>
+</li>
+<li>
+<p><strong class="line-through">Add inode 567 to the directory with inode 33.</strong></p>
+</li>
+<li>
+<p><strong class="line-through">That&#x2019;s it!</strong></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Dear Journal, I already did everything mentioned above! Checkpoint!</p>
+</div>
+</blockquote>
+</div>
+
+</div>
+<div class="slide" id="_journaling_recovery">
+<h2>Journaling: Recovery</h2>
+
+<div class="ulist">
+<div class="title slide">What happens on recovery?</div>
+<ul>
+<li class="slide">
+<p>Start at the <strong>last checkpoint</strong> and work forward, updating on-disk
+structures as needed.</p>
+</li>
+</ul>
+</div>
+<div class="quoteblock slide small">
+<blockquote>
+<div class="paragraph">
+<p>Dear Journal, I already did everything mentioned above! Checkpoint!</p>
+</div>
+<div class="paragraph">
+<p>Dear Journal, here&#x2019;s what I&#x2019;m going to do today:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Allocate inode 567 for a new file. <strong class="slide">Did this already!</strong></p>
+</li>
+<li>
+<p>Associate data blocks 5, 87, and 98 with inode 567. <strong class="slide">Didn&#x2019;t do
+this&#x2026;&#x200B; OK, done!</strong></p>
+</li>
+<li>
+<p>Add inode 567 to the directory with inode 33. <strong class="slide">Didn&#x2019;t do this
+either! OK, done.</strong></p>
+</li>
+<li>
+<p>That&#x2019;s it! <strong class="slide">All caught up!</strong></p>
+</li>
+</ol>
+</div>
+</blockquote>
+</div>
+
+</div>
+<div class="slide" id="_journaling_recovery_2">
+<h2>Journaling: Recovery</h2>
+
+<div class="ulist">
+<div class="title slide">What about incomplete journal entries?</div>
+<ul>
+<li class="slide">
+<p>These are <strong>ignored</strong> as they may leave the file system in an incomplete
+state.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide small">
+<div class="content">
+<div class="paragraph">
+<p>What would happen if we processed the following incomplete journal entry?</p>
+</div>
+<div class="quoteblock">
+<blockquote>
+<div class="paragraph">
+<p>Dear Journal, here&#x2019;s what I&#x2019;m going to do today:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Allocate inode 567 for a new file.</p>
+</li>
+<li>
+<p>Associate data blocks 5, 87, and 98 with inode 567.</p>
+</li>
+</ol>
+</div>
+</blockquote>
+</div>
+</div>
+</div>
+
+</div>
+<div class="slide" id="_journaling_implications">
+<h2>Journaling: Implications</h2>
+
+<div class="paragraph">
+<p>Observation: <strong>metadata</strong> updates (allocate inode, free data block, add
+to directory, etc.) can be represented compactly and probably written to
+the journal <strong>atomically</strong>.</p>
+</div>
+<div class="ulist">
+<div class="title slide">What about data blocks themselves changed by write()?</div>
+<ul>
+<li class="slide">
+<p>We could <strong>include them in the journal</strong> meaning that each data block
+would potentially be written <em>twice</em> (ugh).</p>
+</li>
+<li class="slide">
+<p>We could <strong>exclude them from the journal</strong> meaning that file system
+structures are maintained but not file data.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_caching_consistency_questions">
+<h2>Caching, Consistency: Questions?</h2>
+
+
+
+</div>
+<div class="slide" id="_the_berkeley_fast_file_system">
+<h2>The Berkeley Fast File System</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>First included in the Berkeley Software Distribution (BSD) UNIX
+release in <strong>August, 1982.</strong></p>
+</li>
+<li class="slide">
+<p>Developed by Kirk McKusick. (<strong>One guy!</strong>)</p>
+</li>
+<li class="slide">
+<p>FFS is the basis of the Unix File System (UFS), which is still in use
+and still developed by Kirk today.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_exploiting_geometry">
+<h2>Exploiting Geometry</h2>
+
+<div class="paragraph">
+<p>FFS made <em>many</em> contributions to file system design. Some were lasting,
+others less so.</p>
+</div>
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>The less lasting features had to do with tailoring file system
+performance to disk geometry.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">What are some geometry-related questions that file systems might try to address?</div>
+<ul>
+<li class="slide">
+<p>Where to put <strong>inodes</strong>?</p>
+</li>
+<li class="slide">
+<p>Where to put <strong>data blocks</strong>, particularly where with respect to the
+inodes that they are linked to?</p>
+</li>
+<li class="slide">
+<p>Where to put <strong>related</strong> files?</p>
+</li>
+<li class="slide">
+<p>What files are <strong>likely</strong> to be related?</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="small slide" id="_introducing_standard_file_system_features">
+<h2>Introducing Standard File System Features</h2>
+
+<div class="paragraph">
+<p>FFS also responded to many problems with earlier file system implementations
+and introduced many common features we have already learned about.</p>
+</div>
+<div class="ulist">
+<div class="title slide">Early file systems had a <strong>small block size</strong> of 512 B.</div>
+<ul>
+<li class="slide">
+<p>FFS introduced larger <strong>4K blocks</strong>.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Early file systems had no way to allocate <strong>contiguous blocks</strong> on disk.</div>
+<ul>
+<li class="slide">
+<p>FFS introduced an ordered free block list allowing contiguous or
+near-contiguous block allocation.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Early file systems lacked many features.</div>
+<ul>
+<li class="slide">
+<p>FFS added <strong>symbolic links</strong>, <strong>file
+locking</strong>, unrestricted <strong>file name lengths</strong> and user <strong>quotas</strong>.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_whats_close_on_disk">
+<h2>What&#x2019;s Close On Disk?</h2>
+
+<div class="olist arabic">
+<div class="title">Two enemies of closeness:</div>
+<ol class="arabic">
+<li class="slide">
+<p>Lateral movement, or seek times. This is <strong>major</strong>.</p>
+</li>
+<li class="slide">
+<p>Rotational movement or delay. This is <strong>minor</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/disks/chs.svg" alt="chs" style="width: 80%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_seek_planning_cylinder_groups">
+<h2>Seek Planning: Cylinder Groups</h2>
+
+<div class="paragraph">
+<p><strong>Cylinder group:</strong> All of the data that can be read on the disk without
+moving the head. Comes from <strong>multiple platters</strong>.</p>
+</div>
+<div class="ulist">
+<div class="title slide">On FFS each <strong>cylinder group</strong> has:</div>
+<ul>
+<li class="slide">
+<p>A (backup) copy of the superblock.</p>
+</li>
+<li class="slide">
+<p>A cylinder-specific header with superblock-like statistics.</p>
+</li>
+<li class="slide">
+<p>A number of inodes.</p>
+</li>
+<li class="slide">
+<p>Data blocks.</p>
+</li>
+<li class="slide">
+<p>It&#x2019;s almost like it&#x2019;s own mini file system!</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="nooutline slide" id="_its_own_mini_file_system">
+<h2>It&#x2019;s Own Mini File System!</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/disks/minime.jpg" alt="minime" style="width: 40%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_groups">
+<h2>Groups!</h2>
+
+<div class="imageblock">
+<div class="content">
+<img src="/img/slides/figures/disks/debugfs-show_super_stats2.svg" alt="debugfs show super stats2" style="width: 90%;">
+</div>
+</div>
+
+</div>
+<div class="slide" id="_rotational_planning">
+<h2>Rotational Planning</h2>
+
+<div class="paragraph">
+<p>FFS superblock contained detailed disk geometry information allowing FFS to
+attempt to perform better block placement.</p>
+</div>
+<div class="ulist">
+<div class="title slide">Example:</div>
+<ul>
+<li class="slide">
+<p>Imagine that the speed at which the heads can read information off
+the disk is greater than the speed at which the disk can return data to
+the operating system.</p>
+</li>
+<li class="slide">
+<p>So the disk <strong>cannot</strong> read consecutive blocks off of the disk. Can&#x2019;t
+read 0, 1, 2, 3, etc., because after I finish transferring Block 0 the
+heads are over a different block.</p>
+</li>
+<li class="slide">
+<p>FFS will incorporate this delay and attempt to lay out consecutive
+blocks for a single file as 0, 3, 6, 9, etc.</p>
+</li>
+<li class="slide">
+<p><strong>Wow/<span class="spelling_exception">eww</span>!</strong></p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_back_to_the_future">
+<h2>Back to the Future</h2>
+
+<div class="ulist">
+<ul>
+<li class="slide">
+<p>Does this stuff matter anymore?</p>
+</li>
+<li class="slide">
+<p>If not, why not, and is it a good thing that it doesn&#x2019;t?</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_hardware_weenies_v_software_weenies">
+<h2>Hardware Weenies v. Software Weenies</h2>
+
+<div class="paragraph">
+<p>Continuing battle for the soul of your computer between the forces of light
+(us/them) and darkness (them/us).</p>
+</div>
+<div class="ulist">
+<div class="title slide">Who should be responsible for making the slow disk fast?</div>
+<ul>
+<li class="slide">
+<p><strong>Hardware:</strong> <strong>fixed</strong> and <strong>fast</strong>.</p>
+</li>
+<li class="slide">
+<p><strong>Software:</strong> <strong>flexible</strong> and <strong>slow</strong>.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_put_the_os_in_control">
+<h2>Put the OS in Control</h2>
+
+<div class="quoteblock small">
+<blockquote>
+<div class="paragraph">
+<p><strong>OS</strong>&#x2014;Put this block exactly where I tell you to right now, slave!</p>
+</div>
+<div class="paragraph">
+<p><strong>Disk</strong>&#x2014;Yes master.</p>
+</div>
+</blockquote>
+</div>
+<div class="ulist">
+<div class="title slide"><strong>Pros:</strong></div>
+<ul>
+<li class="slide">
+<p>OS has better <strong>visibility</strong> into workloads, users, relationships,
+consistency requirements, etc. This information can improve performance.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide"><strong>Cons:</strong></div>
+<ul>
+<li class="slide">
+<p>Operating systems are slow and buggy.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_leave_it_to_hardware">
+<h2>Leave it to Hardware</h2>
+
+<div class="quoteblock slide">
+<blockquote>
+<div class="paragraph">
+<p><strong>OS</strong>--Oh disk, you are so clever. Here&#x2019;s some data! I trust you&#x2019;ll do the
+right thing with it.</p>
+</div>
+<div class="paragraph">
+<p><strong>Disk</strong>&#x2014;I <strong>am</strong> so clever.</p>
+</div>
+</blockquote>
+</div>
+<div class="ulist">
+<div class="title slide"><strong>Pros:</strong></div>
+<ul>
+<li class="slide">
+<p>The device knows much more about itself than the operating system can
+be expected to.</p>
+</li>
+<li class="slide">
+<p>Device buffers and caches are closer to the disk.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide"><strong>Cons:</strong></div>
+<ul>
+<li class="slide">
+<p>Device opaqueness may violate guarantees that the operating system is
+trying to provide.</p>
+</li>
+</ul>
+</div>
+
+</div>
+<div class="slide" id="_ffs_continues_to_improve">
+<h2>FFS Continues To Improve</h2>
+
+<div class="ulist">
+<div class="title slide"><strong>Block sizing:</strong> continues to respond to changes to average file sizes.</div>
+<ul>
+<li class="slide">
+<p>Small blocks: less internal fragmentation, more seeks.</p>
+</li>
+<li class="slide">
+<p>Large blocks: more internal fragmentation, fewer seeks.</p>
+</li>
+</ul>
+</div>
+<div class="ulist">
+<div class="title slide">Co-locating inodes and directories.</div>
+<ul>
+<li class="slide">
+<p><strong>Problem:</strong> accessing directory contents is slow.</p>
+</li>
+<li class="slide">
+<p><strong>Solution:</strong> jam inodes for directory <em>into</em> directory file itself.</p>
+</li>
+</ul>
+</div>
+<div class="openblock slide">
+<div class="content">
+<div class="paragraph">
+<p>Separate solution to consistency called <strong>soft updates</strong>, which has
+recently been combined with journaling. (Worth its own lecture.)</p>
+</div>
+</div>
+</div>
+
+</div>
+<div class="nooutline slide" id="_next_time">
+<h2>Next Time</h2>
+
+<div class="ulist">
+<ul>
+<li>
+<p>Log-structured file systems</p>
+</li>
+<li>
+<p>How to read a paper</p>
+</li>
+</ul>
+</div>
+
+</div>
+
+				<div data-progress-size=": spe.bottom(3, 24) ; left: slide.left+&apos;px&apos; ; height: (4*designRatio)+&apos;px&apos;" data-progress="width: pFull * slide.width" style="background: #191995; position: absolute; z-index:-1"></div>
+				<div class="deck-status deck-progress-10"></div>
+				<div class="deck-status-wrapper" data-progress-size=": spe.bottom(16, 20);left:(slide.left+10)+&apos;px&apos;;height:(30*designRatio)+&apos;px&apos;" style="padding-top:2px; position: absolute; display:none; z-index:10">
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/">Home</a></span>
+					<span style="margin-right:20px;"><a target="_blank" href="/slides/2017-04-14-ffs">Outline</a></span>
+					<span style="margin-right:20px;">
+						(<span class="deck-status-current"></span> / <span class="deck-status-total"></span>)
+					</span>
+				</div>
+				<div>
+					<a class="deck-prev-link" href="#" title="Previous">&#x2190;</a>
+					<a class="deck-next-link" href="#" title="Next">&#x2192;</a>
+				</div>
+			</div>
+		</div>
+	
+
+</body></html>
